@@ -36,6 +36,15 @@ Route::get('/lang/{locale}', function ($locale) {
 // Homepage
 Route::get('/', [FrontController::class, 'getHome'])->name('home');
 
+// Route compatibile con gli scaffold auth Laravel/Breeze usati dai test
+Route::get('/dashboard', function () {
+    $user = request()->user();
+
+    return $user?->isAdmin()
+        ? redirect()->route('admin.dashboard')
+        : redirect()->route('home');
+})->middleware('auth')->name('dashboard');
+
 // Pagine statiche
 Route::get('/about', [FrontController::class, 'getAbout'])->name('about');
 Route::get('/contact', [FrontController::class, 'getContact'])->name('contact');
