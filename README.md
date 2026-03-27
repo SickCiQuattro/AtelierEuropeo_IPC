@@ -64,8 +64,8 @@ Follow these instructions to set up the project locally.
 
 1. Clone the repository:
     ```bash
-    git clone [https://github.com/SickCiQuattro/AtelierEuropeo_IPC.git](https://github.com/SickCiQuattro/AtelierEuropeo_IPC.git)
-    cd eu-mobility-portal
+    git clone https://github.com/SickCiQuattro/AtelierEuropeo_IPC.git
+    cd AtelierEuropeo_IPC
     ```
 2. Install PHP dependencies:
     ```bash
