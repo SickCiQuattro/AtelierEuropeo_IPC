@@ -13,6 +13,7 @@
     <link rel="stylesheet" href="{{ url('/') }}/css/style.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <link rel="stylesheet" href="{{ asset('css/custom.css') }}">
 
     <!-- JS -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -29,425 +30,454 @@
 </head>
 
 <body class="d-flex flex-column min-vh-100">
-    <nav class="navbar navbar-expand-lg bg-dark" data-bs-theme="dark">
-        <div class="container">
-            <a class="navbar-brand" href="{{ route('home') }}">
-                <img src="{{ asset('img/ae-icon.svg') }}" alt="Atelier Europeo" height="40">
+    @php
+        $isAdmin = auth()->check() && auth()->user()->isAdmin();
+        $isAdminPreview = $isAdmin && session('admin_user_view', false) && !request()->routeIs('admin.*');
+        $showAdminNav = $isAdmin && !$isAdminPreview;
+        $brandRoute = $showAdminNav ? route('admin.dashboard') : route('home');
+        $isWideLocale = in_array(app()->getLocale(), ['fr', 'es'], true);
+    @endphp
+
+    <nav class="navbar navbar-expand-lg navbar-dark main-navbar {{ $isWideLocale ? 'main-navbar--wide-locale' : '' }}">
+        <div class="container d-flex flex-wrap align-items-center main-navbar-inner">
+            <!-- Logo (Sinistra) -->
+            <a class="navbar-brand d-flex align-items-center me-lg-4" href="{{ $brandRoute }}">
+                <img src="{{ asset('img/ae-icon.svg') }}" alt="Atelier Europeo" class="navbar-logo">
+
+                @if (!$showAdminNav)
+                    <span class="ms-2 fw-semibold">{{ __('master.brand') }}</span>
+                @else
+                    <span class="ms-2 small text-warning fw-bold">{{ __('master.admin_panel') }}</span>
+                @endif
             </a>
 
-            <!-- Contenitore per toggle button e dropdown utente -->
-            <div class="d-flex align-items-center order-lg-2">
-                @if (auth()->check())
-                    <!-- Dropdown utente sempre visibile -->
-                    <div class="dropdown me-2">
-                        <button class="btn btn-dark dropdown-toggle d-flex align-items-center gap-2" type="button"
-                            id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                            <div class="d-flex align-items-center gap-2">
-                                <!-- Icona utente -->
-                                <i class="bi bi-person-fill fs-5"></i>
-                                <!-- Nome utente (nascosto su mobile) -->
-                                <span class="d-none d-md-inline">{{ auth()->user()->name }}</span>
-                            </div>
+            <!-- Destra: utente + lingua + hamburger (sempre visibili su mobile) -->
+            <div class="d-flex align-items-center gap-2 ms-auto order-2 order-lg-3 navbar-actions">
+                @guest
+                    <!-- Variante 1: GUEST -->
+                    <div class="dropdown">
+                        <button class="btn border-0 text-white p-0 navbar-icon-trigger d-inline-flex align-items-center"
+                            type="button" id="guestUserDropdown" data-bs-toggle="dropdown" aria-expanded="false"
+                            aria-label="{{ __('master.aria.user_menu') }}">
+                            <i class="bi bi-person-fill fs-5"></i>
+                            <i class="bi bi-caret-down-fill ms-1 small"></i>
                         </button>
-                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                            <li>
-                                <h6 class="dropdown-header">
-                                    <i class="bi bi-person me-1"></i>
-                                    {{ auth()->user()->name }}
-                                </h6>
-                            </li>
-                            <li>
-                                <hr class="dropdown-divider">
-                            </li>
-
-                            <!-- Profilo utente -->
-                            <li>
-                                <a class="dropdown-item d-flex align-items-center" href="{{ route('profile.edit') }}">
-                                    <i class="bi bi-person-gear me-2"></i>
-                                    @if(app()->getLocale() === 'it')
-                                        Il Mio Profilo
-                                    @else
-                                        My Profile
-                                    @endif
+                        <div class="dropdown-menu dropdown-menu-end p-3 shadow border-0 navbar-access-dropdown"
+                            aria-labelledby="guestUserDropdown">
+                            <div class="d-grid gap-2" style="min-width: 12rem;">
+                                <a href="{{ route('login') }}"
+                                    class="btn btn-primary btn-access-login d-flex align-items-center justify-content-center gap-2">
+                                    <i class="bi bi-box-arrow-in-right"></i>
+                                    <span>{{ __('master.auth.login') }}</span>
                                 </a>
-                            </li>
-
-                            @if (auth()->user()->role !== 'admin')
-                                <!-- Le mie candidature (solo per utenti non admin) -->
-                                <li>
-                                    <a class="dropdown-item d-flex align-items-center" href="{{ route('applications.index') }}">
-                                        <i class="bi bi-file-earmark-text me-2"></i>
-                                        @if(app()->getLocale() === 'it')
-                                            Le Mie Candidature
-                                        @else
-                                            My Applications
-                                        @endif
-                                    </a>
-                                </li>
-                                <!-- I miei preferiti (solo per utenti non admin) -->
-                                <li>
-                                    <a class="dropdown-item d-flex align-items-center" href="{{ route('favorites.index') }}">
-                                        <i class="bi bi-heart-fill me-2"></i>
-                                        @if(app()->getLocale() === 'it')
-                                            I Miei Preferiti
-                                        @else
-                                            My Favorites
-                                        @endif
-                                    </a>
-                                </li>
-                            @else
-                                <!-- Dashboard admin (solo per admin) -->
-                                <li>
-                                    <a class="dropdown-item d-flex align-items-center" href="{{ route('admin.dashboard') }}">
-                                        <i class="bi bi-speedometer2 me-2"></i>
-                                        @if(app()->getLocale() === 'it')
-                                            Dashboard Admin
-                                        @else
-                                            Admin Dashboard
-                                        @endif
-                                    </a>
-                                </li>
-                                <li>
-                                    <a class="dropdown-item d-flex align-items-center" href="{{ route('project.create') }}">
-                                        <i class="bi bi-plus-circle me-2"></i>
-                                        @if(app()->getLocale() === 'it')
-                                            Nuovo Progetto
-                                        @else
-                                            New Project
-                                        @endif
-                                    </a>
-                                </li>
-                            @endif
-
-                            <li>
-                                <hr class="dropdown-divider">
-                            </li>
-
-                            <!-- Logout -->
-                            <li>
-                                <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-inline">
-                                    @csrf
-                                    <button type="submit" class="dropdown-item d-flex align-items-center text-danger">
-                                        <i class="bi bi-box-arrow-right me-2"></i>
-                                        @if(app()->getLocale() === 'it')
-                                            Esci
-                                        @else
-                                            Logout
-                                        @endif
-                                    </button>
-                                </form>
-                            </li>
-                        </ul>
+                                <a href="{{ route('register') }}"
+                                    class="btn btn-warning d-flex align-items-center justify-content-center gap-2">
+                                    <i class="bi bi-plus-square"></i>
+                                    <span>{{ __('master.auth.register') }}</span>
+                                </a>
+                            </div>
+                        </div>
                     </div>
-                @else
-                    <!-- Bottoni di accesso per utenti non autenticati -->
-                    <div class="d-flex gap-2 me-2">
-                        <a href="{{ route('login') }}" class="btn btn-outline-light">{{ __('common.login') }}</a>
-                        <a href="{{ route('register') }}" class="btn btn-warning">{{ __('common.register') }}</a>
-                    </div>
-                @endif
+                @endguest
 
-                <!-- Language Selector -->
-                <div class="dropdown me-3">
-                    <button class="btn btn-light dropdown-toggle btn-sm" type="button" id="languageDropdown"
-                        data-bs-toggle="dropdown" aria-expanded="false">
-                        @if(app()->getLocale() === 'it')
-                            <span class="fi fi-it" style="font-size: 0.8em;"></span> IT
-                        @else
-                            <span class="fi fi-gb" style="font-size: 0.8em;"></span> EN
-                        @endif
-                    </button>
-                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="languageDropdown">
-                        <li>
-                            <a class="dropdown-item" href="{{ route('lang.switch', 'it') }}">
-                                <span class="fi fi-it" style="font-size: 0.8em;"></span> {{ __('common.italian') }}
-                            </a>
-                        </li>
-                        <li>
-                            <a class="dropdown-item" href="{{ route('lang.switch', 'en') }}">
-                                <span class="fi fi-gb" style="font-size: 0.8em;"></span> {{ __('common.english') }}
-                            </a>
-                        </li>
-                    </ul>
-                </div>
+                @auth
+                    @if ($isAdmin)
+                        <!-- Variante 3: ADMIN -->
+                        <div class="dropdown">
+                            <button class="btn btn-outline-warning btn-sm dropdown-toggle fw-semibold" type="button"
+                                id="adminUserDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                {{ __('master.auth.admin') }}
+                            </button>
+                            <div class="dropdown-menu dropdown-menu-end p-3 shadow border-0"
+                                aria-labelledby="adminUserDropdown">
+                                <div class="d-grid gap-2" style="min-width: 12rem;">
+                                    <a href="{{ route('profile.edit') }}"
+                                        class="btn btn-primary btn-access-login d-flex align-items-center justify-content-center gap-2">
+                                        <i class="bi bi-person-fill-gear"></i>
+                                        <span>{{ __('master.auth.profile') }}</span>
+                                    </a>
 
-                <!-- Toggle button della navbar -->
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
-                    data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
-                    aria-expanded="false" aria-label="Toggle navigation">
+                                    @if ($isAdminPreview)
+                                        <a href="{{ route('admin.return') }}"
+                                            class="btn btn-secondary d-flex align-items-center justify-content-center gap-2">
+                                            <i class="bi bi-arrow-counterclockwise"></i>
+                                            <span>{{ __('master.auth.return_admin') }}</span>
+                                        </a>
+                                    @else
+                                        <a href="{{ route('admin.view-user') }}"
+                                            class="btn btn-secondary d-flex align-items-center justify-content-center gap-2">
+                                            <i class="bi bi-eye-fill"></i>
+                                            <span>{{ __('master.auth.user_view') }}</span>
+                                        </a>
+                                    @endif
+                                    <form action="{{ route('logout') }}" method="POST">
+                                        @csrf
+                                        <button type="submit"
+                                            class="btn btn-outline-danger w-100 d-inline-flex align-items-center justify-content-center gap-2">
+                                            <i class="bi bi-box-arrow-right"></i>
+                                            <span>{{ __('master.auth.logout') }}</span>
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    @else
+                        <!-- Variante 2: USER -->
+                        <div class="dropdown">
+                            <button class="btn btn-outline-warning btn-sm dropdown-toggle fw-semibold" type="button"
+                                id="standardUserDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                {{ auth()->user()->name ?? __('master.auth.user_fallback') }}
+                            </button>
+                            <div class="dropdown-menu dropdown-menu-end p-3 shadow border-0"
+                                aria-labelledby="standardUserDropdown">
+                                <div class="d-grid gap-2" style="min-width: 12rem;">
+                                    <a href="{{ route('profile.edit') }}"
+                                        class="btn btn-primary btn-access-login d-flex align-items-center justify-content-center gap-2">
+                                        <i class="bi bi-person-fill-gear"></i>
+                                        <span>{{ __('master.auth.profile') }}</span>
+                                    </a>
+                                    <form action="{{ route('logout') }}" method="POST">
+                                        @csrf
+                                        <button type="submit"
+                                            class="btn btn-outline-danger w-100 d-inline-flex align-items-center justify-content-center gap-2">
+                                            <i class="bi bi-box-arrow-right"></i>
+                                            <span>{{ __('master.auth.logout') }}</span>
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    @endif
+                @endauth
+
+                <!-- Bottone lingua (apre modale) -->
+                <button class="btn border-0 text-white p-0 navbar-icon-trigger navbar-lang-trigger" type="button"
+                    data-bs-toggle="modal" data-bs-target="#languageModal"
+                    aria-label="{{ __('master.aria.open_language_selector') }}">
+                    @if(app()->getLocale() === 'it')
+                        <span class="fi fi-it"></span>
+                    @elseif(app()->getLocale() === 'en')
+                        <span class="fi fi-gb"></span>
+                    @elseif(app()->getLocale() === 'es')
+                        <span class="fi fi-es"></span>
+                    @else
+                        <span class="fi fi-fr"></span>
+                    @endif
+                </button>
+
+                <!-- Hamburger -->
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbarLinks"
+                    aria-controls="mainNavbarLinks" aria-expanded="false"
+                    aria-label="{{ __('master.aria.toggle_navigation') }}">
                     <span class="navbar-toggler-icon"></span>
                 </button>
             </div>
 
-            <!-- Menu collassabile -->
-            <div class="collapse navbar-collapse order-lg-1" id="navbarSupportedContent">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    <li class="nav-item">
-                        <a class="nav-link @yield('active_home')" aria-current="page"
-                            href="{{ route('home') }}">{{ __('common.home') }}</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link @yield('active_chi-siamo')" aria-current="page"
-                            href="{{ route('about') }}">{{ __('common.about') }}</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link @yield('active_portfolio')" aria-current="page"
-                            href="{{ route('project.portfolio') }}">{{ __('projects.title') }} Portfolio</a>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle @yield('active_viaggiare')" href="#" role="button"
-                            data-bs-toggle="dropdown" aria-expanded="false">
-                            @if(app()->getLocale() === 'it')
-                                Viaggiare all'Estero
-                            @else
-                                Travel Abroad
-                            @endif
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="{{ route('corpo-europeo')}}">
-                                    @if(app()->getLocale() === 'it')
-                                        Corpo Europeo di Solidarietà
-                                    @else
-                                        European Solidarity Corps
-                                    @endif
-                                </a></li>
-                            <li><a class="dropdown-item" href="{{ route('scambi-giovanili')}}">
-                                    @if(app()->getLocale() === 'it')
-                                        Scambi Giovanili
-                                    @else
-                                        Youth Exchanges
-                                    @endif
-                                </a></li>
-                            <li><a class="dropdown-item" href="{{ route('corsi-formazione')}}">
-                                    @if(app()->getLocale() === 'it')
-                                        Corsi di Formazione
-                                    @else
-                                        Training Courses
-                                    @endif
-                                </a></li>
-                        </ul>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link @yield('active_progetti')" aria-current="page"
-                            href="{{ route('project.index') }}">
-                            @if(app()->getLocale() === 'it')
-                                Progetti disponibili
-                            @else
-                                Available Projects
-                            @endif
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link @yield('active_contatti')" aria-current="page"
-                            href="{{ route('contact') }}">{{ __('common.contact') }}</a>
-                    </li>
+            <!-- Centro: Link navigazione -->
+            <div class="collapse navbar-collapse order-3 order-lg-2 w-100 flex-lg-grow-1 mt-3 mt-lg-0 main-navbar-collapse"
+                id="mainNavbarLinks">
+                <hr class="d-lg-none border-light opacity-50 mt-0 mb-3">
+
+                <ul class="navbar-nav mx-lg-auto gap-lg-2">
+                    @if ($showAdminNav)
+                        <li class="nav-item">
+                            <a class="nav-link {{ request()->routeIs('admin.dashboard') ? 'is-active' : '' }}"
+                                href="{{ route('admin.dashboard') }}">{{ __('master.nav.dashboard') }}</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {{ request()->routeIs('project.*') ? 'is-active' : '' }}"
+                                href="{{ route('project.index') }}">{{ __('master.nav.projects') }}</a>
+                        </li>
+                        <li class="nav-item">
+                            {{-- TODO: inserire route dedicata alla lista candidature admin (globale) --}}
+                            <a class="nav-link {{ request()->routeIs('admin.applications.*') ? 'is-active' : '' }}"
+                                href="{{ route('admin.dashboard') }}">{{ __('master.nav.applications') }}</a>
+                        </li>
+                    @else
+                        <li class="nav-item">
+                            <a class="nav-link {{ request()->routeIs('home') ? 'is-active' : '' }}"
+                                href="{{ route('home') }}">{{ __('master.nav.home') }}</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {{ request()->routeIs('about') ? 'is-active' : '' }}"
+                                href="{{ route('about') }}">{{ __('master.nav.about') }}</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {{ request()->routeIs('project.index') ? 'is-active' : '' }}"
+                                href="{{ route('project.index') }}">{{ __('master.nav.available_projects') }}</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {{ request()->routeIs('project.portfolio') ? 'is-active' : '' }}"
+                                href="{{ route('project.portfolio') }}">{{ __('master.nav.project_archive') }}</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {{ request()->routeIs('contact') ? 'is-active' : '' }}"
+                                href="{{ route('contact') }}">{{ __('master.nav.contacts') }}</a>
+                        </li>
+                    @endif
                 </ul>
             </div>
         </div>
     </nav>
+
+    <!-- Modale Lingua -->
+    <div class="modal fade" id="languageModal" tabindex="-1" aria-labelledby="languageModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content language-modal-content">
+                <div class="modal-header border-0 pb-1">
+                    <h5 class="modal-title" id="languageModalLabel">{{ __('master.language_modal.title') }}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                        aria-label="{{ __('master.aria.close') }}"></button>
+                </div>
+                <div class="modal-body pt-1">
+                    <hr class="language-divider mt-0 mb-3">
+                    <p class="text-secondary small mb-3">
+                        {{ __('master.language_modal.description') }}
+                    </p>
+                    <hr class="language-divider mt-0 mb-3">
+
+                    <div class="language-options-grid">
+                        {{-- TODO: mantenere/estendere la logica Laravel di cambio lingua --}}
+                        <a href="{{ route('lang.switch', ['locale' => 'it']) }}"
+                            class="language-option-card p-3 border text-decoration-none">
+                            <div class="language-option-head">
+                                <strong>{{ __('master.language_modal.options.it.label', [], 'it') }}</strong>
+                                <span class="fi fi-it language-option-flag" aria-hidden="true"></span>
+                            </div>
+                            <small>{{ __('master.language_modal.options.it.description', [], 'it') }}</small>
+                        </a>
+
+                        <a href="{{ route('lang.switch', ['locale' => 'en']) }}"
+                            class="language-option-card p-3 border text-decoration-none">
+                            <div class="language-option-head">
+                                <strong>{{ __('master.language_modal.options.en.label', [], 'en') }}</strong>
+                                <span class="fi fi-gb language-option-flag" aria-hidden="true"></span>
+                            </div>
+                            <small>{{ __('master.language_modal.options.en.description', [], 'en') }}</small>
+                        </a>
+
+                        <a href="{{ route('lang.switch', ['locale' => 'es']) }}"
+                            class="language-option-card p-3 border text-decoration-none">
+                            <div class="language-option-head">
+                                <strong>{{ __('master.language_modal.options.es.label', [], 'es') }}</strong>
+                                <span class="fi fi-es language-option-flag" aria-hidden="true"></span>
+                            </div>
+                            <small>{{ __('master.language_modal.options.es.description', [], 'es') }}</small>
+                        </a>
+
+                        <a href="{{ route('lang.switch', ['locale' => 'fr']) }}"
+                            class="language-option-card p-3 border text-decoration-none">
+                            <div class="language-option-head">
+                                <strong>{{ __('master.language_modal.options.fr.label', [], 'fr') }}</strong>
+                                <span class="fi fi-fr language-option-flag" aria-hidden="true"></span>
+                            </div>
+                            <small>{{ __('master.language_modal.options.fr.description', [], 'fr') }}</small>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     @yield('breadcrumb')
 
     @yield('body')
 
     <!-- Footer -->
-    <footer class="bg-dark text-light mt-auto" data-bs-theme="dark">
-        <div class="container py-4">
-            <div class="row g-4">
-                <!-- Colonna Logo e Descrizione -->
-                <div class="col-lg-4 col-md-6">
-                    <div class="d-flex align-items-center mb-3">
-                        <img src="{{ asset('img/ae-icon.svg') }}" alt="Atelier Europeo" height="40" class="me-2">
-                        <h5 class="mb-0 text-warning">Atelier Europeo</h5>
-                    </div>
-                    <p class="text-light-emphasis small mb-3">
-                        @if(app()->getLocale() === 'it')
-                            Organizziamo progetti di mobilità europea per giovani: Corpo Europeo di Solidarietà,
-                            Scambi Giovanili e Corsi di Formazione per costruire un'Europa più inclusiva e solidale.
-                        @else
-                            We organize European mobility projects for young people: European Solidarity Corps,
-                            Youth Exchanges and Training Courses to build a more inclusive and supportive Europe.
-                        @endif
+    <footer class="footer-main bg-primary text-white mt-auto">
+        <div class="container py-4 py-md-5">
+            <!-- Brand (sempre visibile) -->
+            <div class="d-flex align-items-center mb-3">
+                <a href="{{ $brandRoute }}" class="d-inline-flex align-items-center text-decoration-none">
+                    <img src="{{ asset('img/ae-icon.svg') }}" alt="Atelier Europeo" height="40" class="me-2">
+                    <h5 class="mb-0 footer-brand-title">{{ __('master.brand') }}</h5>
+                </a>
+            </div>
+            <p class="mb-4 footer-brand-text">
+                {{ __('master.footer.about') }}
+            </p>
+
+            <!-- Desktop: griglia 4 colonne -->
+            <div class="row g-4 d-none d-md-flex">
+                <div class="col-md-3">
+                    <h6 class="footer-title mb-3">
+                        {{ __('master.brand') }}
+                    </h6>
+                    <p class="footer-text mb-0">
+                        {{ __('master.footer.programs_description') }}
                     </p>
-                    <!-- Social Media -->
-                    <div class="d-flex gap-2">
-                        <a href="https://www.facebook.com/AtelierEuropeo/" target="_blank"
-                            class="btn btn-outline-light btn-sm">
+                </div>
+
+                <div class="col-md-3">
+                    <h6 class="footer-title mb-3">{{ __('master.footer.quick_links') }}</h6>
+                    <ul class="list-unstyled mb-0 d-grid gap-2">
+                        <li><a class="footer-link" href="{{ route('home') }}">{{ __('master.nav.home') }}</a></li>
+                        <li><a class="footer-link" href="{{ route('about') }}">{{ __('master.nav.about') }}</a></li>
+                        <li><a class="footer-link"
+                                href="{{ route('project.index') }}">{{ __('master.nav.available_projects') }}</a></li>
+                        <li><a class="footer-link"
+                                href="{{ route('project.portfolio') }}">{{ __('master.nav.project_archive') }}</a></li>
+                        <li><a class="footer-link" href="{{ route('contact') }}">{{ __('master.nav.contacts') }}</a>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="col-md-3">
+                    <h6 class="footer-title mb-3">{{ __('master.footer.contacts') }}</h6>
+                    <ul class="list-unstyled mb-0 d-grid gap-2">
+                        <li class="d-flex align-items-center gap-2">
+                            <i class="bi bi-telephone-fill"></i>
+                            <a class="footer-link" href="tel:+390302284900">+39 030 22 84 900</a>
+                        </li>
+                        <li class="d-flex align-items-center gap-2">
+                            <i class="bi bi-envelope-fill"></i>
+                            <a class="footer-link" href="mailto:info@ateliereuropeo.eu">info@ateliereuropeo.eu</a>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="col-md-3">
+                    <h6 class="footer-title mb-3">{{ __('master.footer.social') }}</h6>
+                    <ul class="list-unstyled mb-0 d-grid gap-2">
+                        <li class="d-flex align-items-center gap-2">
                             <i class="bi bi-facebook"></i>
-                        </a>
-                        <a href="https://www.instagram.com/ateliereuropeo/" target="_blank"
-                            class="btn btn-outline-light btn-sm">
+                            <a class="footer-link" href="https://www.facebook.com/AtelierEuropeo/" target="_blank"
+                                rel="noopener noreferrer">Facebook</a>
+                        </li>
+                        <li class="d-flex align-items-center gap-2">
                             <i class="bi bi-instagram"></i>
-                        </a>
-                        <a href="https://www.linkedin.com/company/atelier-europeo/" target="_blank"
-                            class="btn btn-outline-light btn-sm">
+                            <a class="footer-link" href="https://www.instagram.com/ateliereuropeo/" target="_blank"
+                                rel="noopener noreferrer">Instagram</a>
+                        </li>
+                        <li class="d-flex align-items-center gap-2">
                             <i class="bi bi-linkedin"></i>
-                        </a>
-                    </div>
-                </div>
-
-                <!-- Colonna Link Rapidi -->
-                <div class="col-lg-2 col-md-6">
-                    <h6 class="text-white mb-3">
-                        @if(app()->getLocale() === 'it')
-                            Link Rapidi
-                        @else
-                            Quick Links
-                        @endif
-                    </h6>
-                    <ul class="nav flex-column">
-                        <li class="nav-item">
-                            <a href="{{ route('home') }}" class="nav-link p-1">
-                                {{ __('common.home') }}
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="{{ route('about') }}" class="nav-link p-1">
-                                {{ __('common.about') }}
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="{{ route('project.portfolio') }}" class="nav-link p-1">
-                                @if(app()->getLocale() === 'it')
-                                    Portfolio progetti
-                                @else
-                                    Projects Portfolio
-                                @endif
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="{{ route('project.index') }}" class="nav-link p-1">
-                                @if(app()->getLocale() === 'it')
-                                    Progetti disponibili
-                                @else
-                                    Available Projects
-                                @endif
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="{{ route('contact') }}" class="nav-link p-1">
-                                {{ __('common.contact') }}
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-
-                <!-- Colonna Programmi -->
-                <div class="col-lg-3 col-md-6">
-                    <h6 class="text-white mb-3">
-                        @if(app()->getLocale() === 'it')
-                            I Nostri Programmi
-                        @else
-                            Our Programs
-                        @endif
-                    </h6>
-                    <ul class="nav flex-column">
-                        <li class="nav-item">
-                            <a href="{{ route('corpo-europeo') }}" class="nav-link p-1">
-                                @if(app()->getLocale() === 'it')
-                                    Corpo Europeo di Solidarietà
-                                @else
-                                    European Solidarity Corps
-                                @endif
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="{{ route('scambi-giovanili') }}" class="nav-link p-1">
-                                @if(app()->getLocale() === 'it')
-                                    Scambi Giovanili
-                                @else
-                                    Youth Exchanges
-                                @endif
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="{{ route('corsi-formazione') }}" class="nav-link p-1">
-                                @if(app()->getLocale() === 'it')
-                                    Corsi di Formazione
-                                @else
-                                    Training Courses
-                                @endif
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-
-                <!-- Colonna Contatti -->
-                <div class="col-lg-3 col-md-6">
-                    <h6 class="text-white mb-3">
-                        @if(app()->getLocale() === 'it')
-                            Contatti
-                        @else
-                            Contact
-                        @endif
-                    </h6>
-                    <ul class="nav flex-column">
-                        <li class="nav-item d-flex align-items-start py-1">
-                            <i class="bi bi-geo-alt-fill text-white me-2 mt-1"></i>
-                            <div>
-                                <a href="https://maps.google.com/?q=Via+Salgari+43/b,+25125+Brescia,+Italia"
-                                    target="_blank" class="nav-link p-0">
-                                    <small>
-                                        C/o CSV, Via Salgari 43/b<br>
-                                        25125 Brescia, Italia
-                                    </small>
-                                </a>
-                            </div>
-                        </li>
-                        <li class="nav-item">
-                            <a href="tel:+390302284900" class="nav-link p-1 d-flex align-items-center">
-                                <i class="bi bi-telephone-fill text-white me-2"></i>
-                                +39 030 22 84 900
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="mailto:info@ateliereuropeo.eu" class="nav-link p-1 d-flex align-items-center">
-                                <i class="bi bi-envelope-fill text-white me-2"></i>
-                                info@ateliereuropeo.eu
-                            </a>
+                            <a class="footer-link" href="https://www.linkedin.com/company/atelier-europeo/"
+                                target="_blank" rel="noopener noreferrer">LinkedIn</a>
                         </li>
                     </ul>
                 </div>
             </div>
 
-            <!-- Separatore -->
-            <hr class="my-4 border-secondary">
-
-            <!-- Copyright e Info Legali -->
-            <div class="row align-items-center">
-                <div class="col-md-6">
-                    <small class="text-light-emphasis">
-                        @if(app()->getLocale() === 'it')
-                            © {{ date('Y') }} Atelier Europeo. Tutti i diritti riservati.
-                        @else
-                            © {{ date('Y') }} Atelier Europeo. All rights reserved.
-                        @endif
-                    </small>
-                </div>
-                <div class="col-md-6 text-md-end">
-                    <div class="d-flex flex-wrap justify-content-md-end gap-3">
-                        <a href="#" class="nav-link text-light-emphasis p-0">
-                            @if(app()->getLocale() === 'it')
-                                Privacy Policy
-                            @else
-                                Privacy Policy
-                            @endif
-                        </a>
-                        <a href="#" class="nav-link text-light-emphasis p-0">
-                            @if(app()->getLocale() === 'it')
-                                Cookie Policy
-                            @else
-                                Cookie Policy
-                            @endif
-                        </a>
-                        <small class="text-light-emphasis">
-                            P.IVA: 03747110983
-                        </small>
+            <!-- Mobile: accordion -->
+            <div class="d-md-none d-block">
+                <div class="accordion accordion-flush footer-accordion" id="footerAccordion">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="footerLinksHeading">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                data-bs-target="#footerLinksCollapse" aria-expanded="false"
+                                aria-controls="footerLinksCollapse">
+                                {{ __('master.footer.quick_links') }}
+                            </button>
+                        </h2>
+                        <div id="footerLinksCollapse" class="accordion-collapse collapse"
+                            aria-labelledby="footerLinksHeading" data-bs-parent="#footerAccordion">
+                            <div class="accordion-body">
+                                <ul class="list-unstyled mb-0 d-grid gap-2">
+                                    <li><a class="footer-link"
+                                            href="{{ route('home') }}">{{ __('master.nav.home') }}</a></li>
+                                    <li><a class="footer-link"
+                                            href="{{ route('about') }}">{{ __('master.nav.about') }}</a></li>
+                                    <li><a class="footer-link"
+                                            href="{{ route('project.index') }}">{{ __('master.nav.available_projects') }}</a>
+                                    </li>
+                                    <li><a class="footer-link"
+                                            href="{{ route('project.portfolio') }}">{{ __('master.nav.project_archive') }}</a>
+                                    </li>
+                                    <li><a class="footer-link"
+                                            href="{{ route('contact') }}">{{ __('master.nav.contacts') }}</a></li>
+                                </ul>
+                            </div>
+                        </div>
                     </div>
+
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="footerContactsHeading">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                data-bs-target="#footerContactsCollapse" aria-expanded="false"
+                                aria-controls="footerContactsCollapse">
+                                {{ __('master.footer.contacts') }}
+                            </button>
+                        </h2>
+                        <div id="footerContactsCollapse" class="accordion-collapse collapse"
+                            aria-labelledby="footerContactsHeading" data-bs-parent="#footerAccordion">
+                            <div class="accordion-body">
+                                <ul class="list-unstyled mb-0 d-grid gap-2">
+                                    <li class="d-flex align-items-center gap-2">
+                                        <i class="bi bi-telephone-fill"></i>
+                                        <a class="footer-link" href="tel:+390302284900">+39 030 22 84 900</a>
+                                    </li>
+                                    <li class="d-flex align-items-center gap-2">
+                                        <i class="bi bi-envelope-fill"></i>
+                                        <a class="footer-link"
+                                            href="mailto:info@ateliereuropeo.eu">info@ateliereuropeo.eu</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="footerSocialHeading">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                data-bs-target="#footerSocialCollapse" aria-expanded="false"
+                                aria-controls="footerSocialCollapse">
+                                {{ __('master.footer.social_links') }}
+                            </button>
+                        </h2>
+                        <div id="footerSocialCollapse" class="accordion-collapse collapse"
+                            aria-labelledby="footerSocialHeading" data-bs-parent="#footerAccordion">
+                            <div class="accordion-body">
+                                <ul class="list-unstyled mb-0 d-grid gap-2">
+                                    <li class="d-flex align-items-center gap-2">
+                                        <i class="bi bi-facebook"></i>
+                                        <a class="footer-link" href="https://www.facebook.com/AtelierEuropeo/"
+                                            target="_blank" rel="noopener noreferrer">Facebook</a>
+                                    </li>
+                                    <li class="d-flex align-items-center gap-2">
+                                        <i class="bi bi-instagram"></i>
+                                        <a class="footer-link" href="https://www.instagram.com/ateliereuropeo/"
+                                            target="_blank" rel="noopener noreferrer">Instagram</a>
+                                    </li>
+                                    <li class="d-flex align-items-center gap-2">
+                                        <i class="bi bi-linkedin"></i>
+                                        <a class="footer-link" href="https://www.linkedin.com/company/atelier-europeo/"
+                                            target="_blank" rel="noopener noreferrer">LinkedIn</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <hr class="footer-divider my-4">
+
+            <div
+                class="d-flex flex-column flex-md-row justify-content-between align-items-center gap-2 text-center text-md-start">
+                <small class="footer-bottom-text">
+                    {{ __('master.footer.copyright', ['year' => date('Y')]) }}
+                </small>
+                <div class="d-flex gap-3">
+                    <a href="#" class="footer-link">{{ __('master.footer.privacy_policy') }}</a>
+                    <a href="#" class="footer-link">{{ __('master.footer.cookie_policy') }}</a>
                 </div>
             </div>
         </div>
     </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const navbar = document.querySelector('.main-navbar');
+            if (!navbar) return;
+
+            const syncNavbarState = () => {
+                navbar.classList.toggle('navbar-compact', window.scrollY > 24);
+            };
+
+            syncNavbarState();
+            window.addEventListener('scroll', syncNavbarState, { passive: true });
+        });
+    </script>
 
     @yield('scripts')
 

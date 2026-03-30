@@ -18,7 +18,7 @@ class SetLocale
     public function handle(Request $request, Closure $next): Response
     {
         // Array delle lingue supportate
-        $supportedLocales = ['it', 'en'];
+        $supportedLocales = ['it', 'en', 'es', 'fr'];
         
         // Ottieni la lingua dalla sessione, dai parametri URL o usa quella predefinita
         $locale = $request->get('lang') ?? Session::get('locale') ?? config('app.locale');

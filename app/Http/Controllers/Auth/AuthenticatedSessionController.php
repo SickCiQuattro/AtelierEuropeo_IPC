@@ -36,6 +36,15 @@ class AuthenticatedSessionController extends Controller
         $request->authenticate();
     
         $request->session()->regenerate();
+
+        $user = $request->user();
+
+        if ($user && $user->isAdmin()) {
+            $request->session()->forget('admin_user_view');
+
+            return redirect()->route('admin.dashboard')
+                ->with('success', 'Login effettuato con successo. Benvenuto!');
+        }
     
         // Ottiene l'URL intended dalla sessione
         $intendedUrl = $request->session()->pull('url.intended', '/');

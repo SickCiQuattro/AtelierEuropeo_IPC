@@ -19,6 +19,8 @@ if (!function_exists('getAvailableLocales')) {
         return [
             'it' => __('common.italian'),
             'en' => __('common.english'),
+            'es' => 'Español',
+            'fr' => 'Français',
         ];
     }
 }

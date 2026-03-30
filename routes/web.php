@@ -20,7 +20,7 @@ require __DIR__.'/auth.php';
 
 // Route per il cambio lingua
 Route::get('/lang/{locale}', function ($locale) {
-    if (in_array($locale, ['it', 'en'])) {
+    if (in_array($locale, ['it', 'en', 'es', 'fr'])) {
         session(['locale' => $locale]);
     }
     return redirect()->back();
@@ -127,6 +127,17 @@ Route::middleware('auth')->group(function () {
 */
 
 Route::middleware(['auth', 'isAdmin'])->group(function () {
+
+    // Toggle vista admin/vista utente per account amministratore
+    Route::get('/admin/view-user', function () {
+        session(['admin_user_view' => true]);
+        return redirect()->route('home');
+    })->name('admin.view-user');
+
+    Route::get('/admin/return', function () {
+        session()->forget('admin_user_view');
+        return redirect()->route('admin.dashboard');
+    })->name('admin.return');
     
     /*
     |--------------------------------------------------------------------------

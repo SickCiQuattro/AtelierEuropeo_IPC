@@ -1,0 +1,509 @@
+/* =========================================================
+   Bootstrap 5 theme overrides + semantic utilities
+   Loaded AFTER Bootstrap CDN in master.blade.php
+   ========================================================= */
+
+:root {
+    /* Brand / Bootstrap palette */
+    --bs-primary: #001d3d;
+    --bs-primary-rgb: 0, 29, 61;
+
+    --bs-secondary: #64748b;
+    --bs-secondary-rgb: 100, 116, 139;
+
+    /* Choose the modern green for success */
+    --bs-success: #10b981;
+    --bs-success-rgb: 16, 185, 129;
+
+    --bs-danger: #ef4444;
+    --bs-danger-rgb: 239, 68, 68;
+
+    --bs-warning: #fdc500;
+    --bs-warning-rgb: 253, 197, 0;
+
+    --bs-info: #6366f1;
+    --bs-info-rgb: 99, 102, 241;
+
+    --bs-dark: #052c65;
+    --bs-dark-rgb: 5, 44, 101;
+
+    /* Link colors */
+    --bs-link-color: #001d3d;
+    --bs-link-color-rgb: 0, 29, 61;
+    --bs-link-hover-color: #fdc500;
+    --bs-link-hover-color-rgb: 253, 197, 0;
+
+    /* Optional semantic aliases */
+    --color-primary-dark: #001d3d;
+    --color-admin-secondary: #64748b;
+    --color-success-alt: #198754;
+
+    /* Program colors */
+    --prog-ces: #0f766e;
+    --prog-ces-accent: #10b981;
+
+    --prog-sg: #ef4444;
+    --prog-sg-accent: #f43f5e;
+
+    --prog-cf: #4f46e5;
+    --prog-cf-accent: #6366f1;
+}
+
+/* ---------------------------------------------------------
+   Generic utility helpers
+   --------------------------------------------------------- */
+
+.bg-primary-dark {
+    background-color: #001d3d !important;
+}
+
+.text-primary-dark {
+    color: #001d3d !important;
+}
+
+.border-primary-dark {
+    border-color: #001d3d !important;
+}
+
+/* ---------------------------------------------------------
+   Program semantic utilities - CES
+   --------------------------------------------------------- */
+
+.bg-prog-ces {
+    background-color: var(--prog-ces) !important;
+    color: #fff !important;
+}
+
+.text-prog-ces {
+    color: var(--prog-ces) !important;
+}
+
+.border-prog-ces {
+    border-color: var(--prog-ces) !important;
+}
+
+.bg-prog-ces-accent {
+    background-color: var(--prog-ces-accent) !important;
+    color: #fff !important;
+}
+
+.text-prog-ces-accent {
+    color: var(--prog-ces-accent) !important;
+}
+
+.badge-prog-ces {
+    background-color: var(--prog-ces-accent) !important;
+    color: #fff !important;
+}
+
+.btn-prog-ces {
+    --bs-btn-color: #fff;
+    --bs-btn-bg: var(--prog-ces);
+    --bs-btn-border-color: var(--prog-ces);
+    --bs-btn-hover-color: #fff;
+    --bs-btn-hover-bg: #0b5f58;
+    --bs-btn-hover-border-color: #0b5f58;
+    --bs-btn-focus-shadow-rgb: 15, 118, 110;
+    --bs-btn-active-color: #fff;
+    --bs-btn-active-bg: #094b46;
+    --bs-btn-active-border-color: #094b46;
+    --bs-btn-disabled-color: #fff;
+    --bs-btn-disabled-bg: var(--prog-ces);
+    --bs-btn-disabled-border-color: var(--prog-ces);
+}
+
+/* ---------------------------------------------------------
+   Program semantic utilities - SG
+   --------------------------------------------------------- */
+
+.bg-prog-sg {
+    background-color: var(--prog-sg) !important;
+    color: #fff !important;
+}
+
+.text-prog-sg {
+    color: var(--prog-sg) !important;
+}
+
+.border-prog-sg {
+    border-color: var(--prog-sg) !important;
+}
+
+.bg-prog-sg-accent {
+    background-color: var(--prog-sg-accent) !important;
+    color: #fff !important;
+}
+
+.text-prog-sg-accent {
+    color: var(--prog-sg-accent) !important;
+}
+
+.badge-prog-sg {
+    background-color: var(--prog-sg-accent) !important;
+    color: #fff !important;
+}
+
+.btn-prog-sg {
+    --bs-btn-color: #fff;
+    --bs-btn-bg: var(--prog-sg);
+    --bs-btn-border-color: var(--prog-sg);
+    --bs-btn-hover-color: #fff;
+    --bs-btn-hover-bg: #dc2626;
+    --bs-btn-hover-border-color: #dc2626;
+    --bs-btn-focus-shadow-rgb: 239, 68, 68;
+    --bs-btn-active-color: #fff;
+    --bs-btn-active-bg: #b91c1c;
+    --bs-btn-active-border-color: #b91c1c;
+    --bs-btn-disabled-color: #fff;
+    --bs-btn-disabled-bg: var(--prog-sg);
+    --bs-btn-disabled-border-color: var(--prog-sg);
+}
+
+/* ---------------------------------------------------------
+   Program semantic utilities - CF
+   --------------------------------------------------------- */
+
+.bg-prog-cf {
+    background-color: var(--prog-cf) !important;
+    color: #fff !important;
+}
+
+.text-prog-cf {
+    color: var(--prog-cf) !important;
+}
+
+.border-prog-cf {
+    border-color: var(--prog-cf) !important;
+}
+
+.bg-prog-cf-accent {
+    background-color: var(--prog-cf-accent) !important;
+    color: #fff !important;
+}
+
+.text-prog-cf-accent {
+    color: var(--prog-cf-accent) !important;
+}
+
+.badge-prog-cf {
+    background-color: var(--prog-cf-accent) !important;
+    color: #fff !important;
+}
+
+.btn-prog-cf {
+    --bs-btn-color: #fff;
+    --bs-btn-bg: var(--prog-cf);
+    --bs-btn-border-color: var(--prog-cf);
+    --bs-btn-hover-color: #fff;
+    --bs-btn-hover-bg: #4338ca;
+    --bs-btn-hover-border-color: #4338ca;
+    --bs-btn-focus-shadow-rgb: 79, 70, 229;
+    --bs-btn-active-color: #fff;
+    --bs-btn-active-bg: #3730a3;
+    --bs-btn-active-border-color: #3730a3;
+    --bs-btn-disabled-color: #fff;
+    --bs-btn-disabled-bg: var(--prog-cf);
+    --bs-btn-disabled-border-color: var(--prog-cf);
+}
+
+/* ---------------------------------------------------------
+   Main navbar
+   --------------------------------------------------------- */
+
+.main-navbar {
+    position: sticky;
+    top: 0;
+    z-index: 1040;
+    background-color: var(--bs-primary) !important;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    padding-block: 0.85rem;
+    transition: padding 220ms ease, box-shadow 220ms ease;
+}
+
+.main-navbar.navbar-compact {
+    padding-block: 0.45rem;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.18);
+}
+
+.main-navbar .main-navbar-inner {
+    align-items: center;
+}
+
+.main-navbar .navbar-logo {
+    height: 40px;
+    width: auto;
+    transition: height 220ms ease;
+}
+
+.main-navbar.navbar-compact .navbar-logo {
+    height: 34px;
+}
+
+.main-navbar .navbar-brand {
+    color: #fff;
+    line-height: 1;
+}
+
+.main-navbar .navbar-brand:hover,
+.main-navbar .navbar-brand:focus {
+    color: #fff;
+}
+
+.main-navbar .navbar-actions {
+    align-items: center;
+}
+
+.main-navbar .navbar-actions .btn,
+.main-navbar .navbar-actions .navbar-toggler {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 2.1rem;
+}
+
+.main-navbar .nav-link {
+    color: rgba(248, 250, 252, 0.85);
+    font-weight: 500;
+    padding-top: 0.45rem;
+    padding-bottom: 0.45rem;
+}
+
+.main-navbar .nav-link:hover,
+.main-navbar .nav-link:focus {
+    color: var(--bs-warning);
+}
+
+.main-navbar .nav-link.is-active {
+    color: var(--bs-warning) !important;
+    font-weight: 700;
+}
+
+.main-navbar .navbar-icon-trigger {
+    min-width: 2.1rem;
+    min-height: 2.1rem;
+    padding-inline: 0.45rem;
+    border-radius: 0.55rem;
+    transition: background-color 160ms ease, color 160ms ease;
+}
+
+.main-navbar .navbar-icon-trigger:hover,
+.main-navbar .navbar-icon-trigger:focus-visible {
+    color: #fff !important;
+    background-color: rgba(255, 255, 255, 0.16);
+}
+
+.main-navbar .navbar-lang-trigger .fi {
+    font-size: 1.05rem;
+    line-height: 1;
+}
+
+.main-navbar .navbar-access-dropdown {
+    border-radius: 0.85rem;
+}
+
+.main-navbar .btn-access-login {
+    background-color: var(--bs-dark);
+    border-color: var(--bs-dark);
+}
+
+.main-navbar .btn-access-login:hover,
+.main-navbar .btn-access-login:focus {
+    background-color: #063a88;
+    border-color: #063a88;
+}
+
+.language-modal-content {
+    border: 0;
+    border-radius: 1rem;
+    box-shadow: 0 20px 44px rgba(0, 0, 0, 0.2);
+}
+
+.language-divider {
+    border-top: 1px solid rgba(0, 29, 61, 0.12);
+    opacity: 1;
+    margin-inline: calc(var(--bs-modal-padding, 1rem) * -1);
+}
+
+.language-options-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+}
+
+.language-options-grid .language-option-card {
+    display: block;
+    height: 100%;
+    color: inherit;
+    border-color: rgba(0, 29, 61, 0.16) !important;
+    border-radius: 0.75rem;
+    transition: background-color 160ms ease, border-color 160ms ease;
+}
+
+.language-options-grid .language-option-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 0.75rem;
+    margin-bottom: 0.25rem;
+}
+
+.language-options-grid .language-option-flag {
+    font-size: 1.35rem;
+    line-height: 1;
+    margin-top: 0.05rem;
+    margin-right: -0.05rem;
+    flex-shrink: 0;
+}
+
+.language-options-grid .language-option-card small {
+    display: block;
+    color: #5d6d7e;
+    line-height: 1.35;
+    margin-top: 0.15rem;
+}
+
+.language-options-grid .language-option-card:hover,
+.language-options-grid .language-option-card:focus {
+    color: inherit;
+    text-decoration: none;
+    background-color: rgba(0, 196, 169, 0.08);
+    border-color: rgba(0, 196, 169, 0.36) !important;
+}
+
+@media (min-width: 992px) {
+    .main-navbar .nav-link {
+        white-space: nowrap;
+    }
+
+    .main-navbar.main-navbar--wide-locale .navbar-nav {
+        gap: 0.125rem !important;
+    }
+
+    .main-navbar.main-navbar--wide-locale .nav-link {
+        font-size: 0.94rem;
+        padding-inline: 0.35rem;
+    }
+
+    .main-navbar .navbar-actions .navbar-toggler {
+        display: none !important;
+    }
+
+    .main-navbar .main-navbar-inner {
+        position: relative;
+        flex-wrap: nowrap !important;
+        min-height: 72px;
+        transition: min-height 220ms ease;
+    }
+
+    .main-navbar.navbar-compact .main-navbar-inner {
+        min-height: 60px;
+    }
+
+    .main-navbar .main-navbar-collapse {
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        width: auto !important;
+        flex-grow: 0 !important;
+        margin-top: 0 !important;
+    }
+
+    .main-navbar .navbar-nav {
+        align-items: center;
+    }
+}
+
+@media (max-width: 991.98px) {
+    .main-navbar .navbar-actions .navbar-toggler {
+        display: inline-flex;
+    }
+
+    .main-navbar {
+        padding-block: 0.6rem;
+    }
+
+    .main-navbar .main-navbar-collapse {
+        margin-top: 0.85rem !important;
+    }
+}
+
+/* ---------------------------------------------------------
+   Footer
+   --------------------------------------------------------- */
+
+.footer-main {
+    background-color: var(--bs-primary) !important;
+}
+
+.footer-brand-title {
+    color: var(--bs-warning);
+    font-weight: 700;
+}
+
+.footer-brand-text,
+.footer-text,
+.footer-bottom-text {
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.footer-title {
+    color: #fff;
+    font-weight: 700;
+}
+
+.footer-link {
+    color: #fff;
+    text-decoration: none;
+    opacity: 0.92;
+    transition: opacity 160ms ease;
+}
+
+.footer-link:hover,
+.footer-link:focus {
+    color: #fff;
+    opacity: 0.7;
+}
+
+.footer-divider {
+    border-color: rgba(255, 255, 255, 0.35);
+}
+
+/* Mobile accordion reset on dark background */
+.footer-main .footer-accordion {
+    --bs-accordion-bg: transparent;
+    --bs-accordion-color: #fff;
+    --bs-accordion-btn-bg: transparent;
+    --bs-accordion-btn-color: #fff;
+    --bs-accordion-active-bg: transparent;
+    --bs-accordion-active-color: #fff;
+    --bs-accordion-border-color: transparent;
+    --bs-accordion-btn-focus-box-shadow: none;
+    --bs-accordion-btn-icon: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='white' stroke-linecap='round' stroke-linejoin='round'%3e%3cpath d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+    --bs-accordion-btn-active-icon: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='white' stroke-linecap='round' stroke-linejoin='round'%3e%3cpath d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+}
+
+.footer-main .footer-accordion .accordion-item {
+    background-color: transparent;
+    border: 0;
+}
+
+.footer-main .footer-accordion .accordion-header {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.35);
+}
+
+.footer-main .footer-accordion .accordion-button {
+    background-color: transparent;
+    color: #fff;
+    box-shadow: none;
+    padding-inline: 0;
+}
+
+.footer-main .footer-accordion .accordion-button:not(.collapsed) {
+    box-shadow: none;
+}
+
+.footer-main .footer-accordion .accordion-body {
+    background-color: transparent;
+    color: #fff;
+    padding-inline: 0;
+}
