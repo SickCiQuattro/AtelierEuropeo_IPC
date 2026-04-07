@@ -10,57 +10,28 @@ class UserSeeder extends Seeder
 {
     public function run(): void
     {
-        // ---- Admin fissi (credenziali certe per il testing) ----
-        User::factory()->create([
-            'name'     => 'Admin AtelierEuropeo',
-            'email'    => 'admin@atelier.it',
-            'password' => Hash::make('password'),
-            'role'     => 'admin',
-        ]);
-        User::factory()->create([
-            'name'     => 'Giulia Amministratore',
-            'email'    => 'giulia.admin@atelier.it',
-            'password' => Hash::make('password'),
-            'role'     => 'admin',
-        ]);
-        User::factory()->create([
-            'name'     => 'Roberto Ferretti',
-            'email'    => 'roberto.admin@atelier.it',
-            'password' => Hash::make('password'),
-            'role'     => 'admin',
-        ]);
+        // ---- Utenti fissi (credenziali certe per il testing) ----
+        $fixedUsers = [
+            ['name' => 'Admin AtelierEuropeo', 'email' => 'admin@atelier.it', 'role' => 'admin'],
+            ['name' => 'Giulia Amministratore', 'email' => 'giulia.admin@atelier.it', 'role' => 'admin'],
+            ['name' => 'Roberto Ferretti', 'email' => 'roberto.admin@atelier.it', 'role' => 'admin'],
+            ['name' => 'Marco Esposito', 'email' => 'user@atelier.it', 'role' => 'registered_user'],
+            ['name' => 'Chiara Romano', 'email' => 'chiara.romano@atelier.it', 'role' => 'registered_user'],
+            ['name' => 'Luca Moretti', 'email' => 'luca.moretti@atelier.it', 'role' => 'registered_user'],
+            ['name' => 'Sofia Bianchi', 'email' => 'sofia.bianchi@atelier.it', 'role' => 'registered_user'],
+            ['name' => 'Andrea Conti', 'email' => 'andrea.conti@atelier.it', 'role' => 'registered_user'],
+        ];
 
-        // ---- Utenti registrati fissi (credenziali certe per il testing) ----
-        User::factory()->create([
-            'name'     => 'Marco Esposito',
-            'email'    => 'user@atelier.it',
-            'password' => Hash::make('password'),
-            'role'     => 'registered_user',
-        ]);
-        User::factory()->create([
-            'name'     => 'Chiara Romano',
-            'email'    => 'chiara.romano@atelier.it',
-            'password' => Hash::make('password'),
-            'role'     => 'registered_user',
-        ]);
-        User::factory()->create([
-            'name'     => 'Luca Moretti',
-            'email'    => 'luca.moretti@atelier.it',
-            'password' => Hash::make('password'),
-            'role'     => 'registered_user',
-        ]);
-        User::factory()->create([
-            'name'     => 'Sofia Bianchi',
-            'email'    => 'sofia.bianchi@atelier.it',
-            'password' => Hash::make('password'),
-            'role'     => 'registered_user',
-        ]);
-        User::factory()->create([
-            'name'     => 'Andrea Conti',
-            'email'    => 'andrea.conti@atelier.it',
-            'password' => Hash::make('password'),
-            'role'     => 'registered_user',
-        ]);
+        foreach ($fixedUsers as $fixedUser) {
+            User::query()->updateOrCreate(
+                ['email' => $fixedUser['email']],
+                [
+                    'name'     => $fixedUser['name'],
+                    'password' => Hash::make('password'),
+                    'role'     => $fixedUser['role'],
+                ]
+            );
+        }
 
         // ---- Utenti casuali con nomi italiani ----
         User::factory()->italian()->count(20)->create();
