@@ -58,7 +58,7 @@ return [
 
     'footer' => [
         'about' => 'Organizziamo progetti di mobilita europea per giovani, favorendo inclusione e crescita attraverso esperienze internazionali.',
-        'programs_description' => 'Progetti di mobilita europea per giovani, volontariato, scambi e formazione.',
+        'programs_description' => 'Opportunità per crescere, viaggiare e imparare. Costruiamo insieme un\'Europa più inclusiva e solidale.',
         'quick_links' => 'Link Rapidi',
         'contacts' => 'Contatti',
         'social' => 'Social',

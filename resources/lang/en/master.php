@@ -58,7 +58,7 @@ return [
 
     'footer' => [
         'about' => 'We organize European mobility projects for young people, promoting inclusion and growth through international experiences.',
-        'programs_description' => 'European mobility projects for young people, volunteering, exchanges and training.',
+        'programs_description' => 'Opportunities to grow, travel, and learn. Let\'s build a more inclusive and united Europe together.',
         'quick_links' => 'Quick Links',
         'contacts' => 'Contacts',
         'social' => 'Social',
