@@ -10,9 +10,9 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 class CategoryFactory extends Factory
 {
     private const CATEGORIE = [
-        ['name' => 'European Solidarity Corps', 'tag' => 'ESC'],
-        ['name' => 'Youth',                     'tag' => 'YTH'],
-        ['name' => 'Training',                  'tag' => 'TRG'],
+        ['name' => 'Corpo Europeo Solidarietà', 'tag' => 'CES'],
+        ['name' => 'Scambi Giovanili',         'tag' => 'SG'],
+        ['name' => 'Corsi Formazione',          'tag' => 'CF'],
     ];
 
     public function definition(): array
