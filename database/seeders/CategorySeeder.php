@@ -15,16 +15,16 @@ class CategorySeeder extends Seeder
     {
         $categories = [
             [
-                'name' => 'European Solidarity Corps',
-                'tag' => 'ESC',   
+                'name' => 'Corpo Europeo Solidarietà',
+                'tag' => 'CES',   
             ],
             [
-                'name' => 'Youth',
-                'tag' => 'YTH',
+                'name' => 'Scambi Giovanili',
+                'tag' => 'SG',
             ],
             [
-                'name' => 'Training',
-                'tag' => 'TRG',
+                'name' => 'Corsi Formazione',
+                'tag' => 'CF',
             ],
             
         ];

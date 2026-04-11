@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('categories', function (Blueprint $table) {
             $table->id();
-            $table->enum('name', ['European Solidarity Corps', 'Youth', 'Training']);
-            $table->enum('tag', ['ESC', 'YTH', 'TRG']);
+            $table->enum('name', ['Corpo Europeo Solidarietà', 'Scambi Giovanili', 'Corsi Formazione']);
+            $table->enum('tag', ['CES', 'SG', 'CF']);
             $table->timestamps();
         });
     }
