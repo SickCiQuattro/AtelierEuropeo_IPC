@@ -1,0 +1,124 @@
+:root{
+        /* Project Card */
+        --project-card-bg: #ffffff;
+        --project-card-border: #DEE2E6;
+}
+
+/* ---------------------------------------------------------
+   Project Card
+   --------------------------------------------------------- */
+
+.project-card {
+    width: 360px;
+    height: 420px;
+    border-radius: 20px;
+    border-color: var(--project-card-border);
+    border-style: solid;
+    border-width: 2px;
+    background-color: var(--project-card-bg);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    position: relative;
+}
+
+.project-card-image {
+    border-radius: 20px;
+    width: 100%;
+    height: 200px;
+    position: relative;
+    object-fit: cover;
+}
+
+.project-card-body {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 10px;
+    position: relative;
+}
+.project-card-title {
+    text-align: center !important;
+    padding: 0%;
+    margin: 0%;
+}
+
+.project-card-description {
+    text-align: center !important;
+    padding: 0%;
+    margin: 0%;
+}
+
+.project-progress-bar {
+    width: 120px;
+    height: 8px;
+    background-color: #E9ECEF;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.project-progress-fill {
+    height: 100%;
+    border-radius: 4px;
+}
+
+.progress-fill-success {
+    background-color: #10B981;
+}
+
+.progress-fill-warning {
+    background-color: #F59E0B;
+}
+
+.progress-fill-danger {
+    background-color: #EF4444;
+}
+
+.progress-fill-full {
+    background-color: #9CA3AF;
+}
+
+.text-full {
+    color: #9CA3AF;
+}
+
+.btn-favorite {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: #F9FAFB;
+    opacity: 0.8;
+    border: none;
+    border-radius: 100%;
+    color: #000000;
+    font-size: 24px;
+    z-index: 1;
+}
+
+.badge-departure {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    text-transform: capitalize;
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    padding: 4px;
+    background-color: #F9FAFBCC;
+    border: none;
+    border-radius:6px;
+    z-index: 1;
+}
+
+.badge-duration {
+    top: 170px;
+    left: 10px;
+    padding: 0px 4px;
+    position: absolute;
+    background-color: #F9FAFBCC;
+    border-radius: 6px;
+    z-index: 1;
+}
+
+
+
+
