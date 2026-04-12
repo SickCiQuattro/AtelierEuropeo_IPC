@@ -94,6 +94,11 @@
 .badge-prog-ces {
     background-color: var(--prog-ces-accent) !important;
     color: #fff !important;
+    padding: 0px 8px;
+    border-radius: 16px;
+    border-width: 0px;
+    box-shadow: 0 2px 6px rgba(16, 185, 129, 0.4);
+    z-index: 1;
 }
 
 .btn-prog-ces {
@@ -141,6 +146,11 @@
 .badge-prog-sg {
     background-color: var(--prog-sg-accent) !important;
     color: #fff !important;
+    padding: 0px 8px;
+    border-radius: 16px;
+    border-width: 0px;
+    box-shadow: 0 2px 6px rgba(244, 63, 94, 0.4);
+    z-index: 1;
 }
 
 .btn-prog-sg {
@@ -188,6 +198,11 @@
 .badge-prog-cf {
     background-color: var(--prog-cf-accent) !important;
     color: #fff !important;
+    padding: 0px 8px;
+    border-radius: 16px;
+    border-width: 0px;
+    box-shadow: 0 2px 6px rgba(99, 102, 241, 0.4);
+    z-index: 1;
 }
 
 .btn-prog-cf {
@@ -263,7 +278,7 @@
 
 .main-navbar .nav-link {
     color: rgba(248, 250, 252, 0.85);
-    font-weight: 500;
+    /* font-weight: 500; */
     padding-top: 0.45rem;
     padding-bottom: 0.45rem;
 }
@@ -275,7 +290,7 @@
 
 .main-navbar .nav-link.is-active {
     color: var(--bs-warning) !important;
-    font-weight: 700;
+     font-weight: 500; 
 }
 
 .main-navbar .navbar-icon-trigger {
@@ -443,7 +458,7 @@
 .footer-brand-text,
 .footer-text,
 .footer-bottom-text {
-    color: rgba(255, 255, 255, 0.9);
+    color: rgba(255, 255, 255, 0.8);
 }
 
 .footer-title {
