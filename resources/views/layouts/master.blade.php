@@ -10,7 +10,8 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <!-- CSS -->
-    <link rel="stylesheet" href="{{ url('/') }}/css/style.css">
+    {{-- <link rel="stylesheet" href="{{ url('/') }}/css/style.css"> --}}
+    <link rel="stylesheet" href="{{ url('/') }}/css/project.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
     <link rel="stylesheet" href="{{ asset('css/custom.css') }}">
@@ -44,9 +45,7 @@
             <a class="navbar-brand d-flex align-items-center me-lg-4" href="{{ $brandRoute }}">
                 <img src="{{ asset('img/ae-icon.svg') }}" alt="Atelier Europeo" class="navbar-logo">
 
-                @if (!$showAdminNav)
-                    <span class="ms-2 fw-semibold">{{ __('master.brand') }}</span>
-                @else
+                @if ($showAdminNav)
                     <span class="ms-2 small text-warning fw-bold">{{ __('master.admin_panel') }}</span>
                 @endif
             </a>
@@ -64,7 +63,7 @@
                         </button>
                         <div class="dropdown-menu dropdown-menu-end p-3 shadow border-0 navbar-access-dropdown"
                             aria-labelledby="guestUserDropdown">
-                            <div class="d-grid gap-2" style="min-width: 12rem;">
+                            <div class="d-grid gap-2" style="min-width: 8rem;">
                                 <a href="{{ route('login') }}"
                                     class="btn btn-primary btn-access-login d-flex align-items-center justify-content-center gap-2">
                                     <i class="bi bi-box-arrow-in-right"></i>
@@ -90,7 +89,7 @@
                             </button>
                             <div class="dropdown-menu dropdown-menu-end p-3 shadow border-0"
                                 aria-labelledby="adminUserDropdown">
-                                <div class="d-grid gap-2" style="min-width: 12rem;">
+                                <div class="d-grid gap-2" style="min-width: 8rem;">
                                     <a href="{{ route('profile.edit') }}"
                                         class="btn btn-primary btn-access-login d-flex align-items-center justify-content-center gap-2">
                                         <i class="bi bi-person-fill-gear"></i>
@@ -130,7 +129,7 @@
                             </button>
                             <div class="dropdown-menu dropdown-menu-end p-3 shadow border-0"
                                 aria-labelledby="standardUserDropdown">
-                                <div class="d-grid gap-2" style="min-width: 12rem;">
+                                <div class="d-grid gap-2" style="min-width: 8rem;">
                                     <a href="{{ route('profile.edit') }}"
                                         class="btn btn-primary btn-access-login d-flex align-items-center justify-content-center gap-2">
                                         <i class="bi bi-person-fill-gear"></i>
@@ -154,7 +153,7 @@
                 <button class="btn border-0 text-white p-0 navbar-icon-trigger navbar-lang-trigger" type="button"
                     data-bs-toggle="modal" data-bs-target="#languageModal"
                     aria-label="{{ __('master.aria.open_language_selector') }}">
-                    @if(app()->getLocale() === 'it')
+                    @if (app()->getLocale() === 'it')
                         <span class="fi fi-it"></span>
                     @elseif(app()->getLocale() === 'en')
                         <span class="fi fi-gb"></span>
@@ -166,8 +165,8 @@
                 </button>
 
                 <!-- Hamburger -->
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbarLinks"
-                    aria-controls="mainNavbarLinks" aria-expanded="false"
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#mainNavbarLinks" aria-controls="mainNavbarLinks" aria-expanded="false"
                     aria-label="{{ __('master.aria.toggle_navigation') }}">
                     <span class="navbar-toggler-icon"></span>
                 </button>
@@ -178,7 +177,7 @@
                 id="mainNavbarLinks">
                 <hr class="d-lg-none border-light opacity-50 mt-0 mb-3">
 
-                <ul class="navbar-nav mx-lg-auto gap-lg-2">
+                <ul class="navbar-nav ms-lg-3 me-lg-auto gap-lg-2">
                     @if ($showAdminNav)
                         <li class="nav-item">
                             <a class="nav-link {{ request()->routeIs('admin.dashboard') ? 'is-active' : '' }}"
@@ -221,7 +220,8 @@
     </nav>
 
     <!-- Modale Lingua -->
-    <div class="modal fade" id="languageModal" tabindex="-1" aria-labelledby="languageModalLabel" aria-hidden="true">
+    <div class="modal fade" id="languageModal" tabindex="-1" aria-labelledby="languageModalLabel"
+        aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content language-modal-content">
                 <div class="modal-header border-0 pb-1">
@@ -286,43 +286,38 @@
     <!-- Footer -->
     <footer class="footer-main bg-primary text-white mt-auto">
         <div class="container py-4 py-md-5">
-            <!-- Brand (sempre visibile) -->
-            <div class="d-flex align-items-center mb-3">
-                <a href="{{ $brandRoute }}" class="d-inline-flex align-items-center text-decoration-none">
-                    <img src="{{ asset('img/ae-icon.svg') }}" alt="Atelier Europeo" height="40" class="me-2">
-                    <h5 class="mb-0 footer-brand-title">{{ __('master.brand') }}</h5>
-                </a>
-            </div>
-            <p class="mb-4 footer-brand-text">
-                {{ __('master.footer.about') }}
-            </p>
-
             <!-- Desktop: griglia 4 colonne -->
-            <div class="row g-4 d-none d-md-flex">
-                <div class="col-md-3">
-                    <h6 class="footer-title mb-3">
-                        {{ __('master.brand') }}
-                    </h6>
+            <div class="row g-4 d-none d-md-flex justify-content-between">
+                <div class="col-md-5 col-lg-4">
+                    <div class="d-flex align-items-center mb-3">
+                        <a href="{{ $brandRoute }}" class="d-inline-flex align-items-center text-decoration-none">
+                            <img src="{{ asset('img/ae-icon.svg') }}" alt="Atelier Europeo" height="40"
+                                class="me-2">
+                            <h5 class="mb-0 footer-brand-title">{{ __('master.brand') }}</h5>
+                        </a>
+                    </div>
                     <p class="footer-text mb-0">
                         {{ __('master.footer.programs_description') }}
                     </p>
                 </div>
 
-                <div class="col-md-3">
+                <div class="col-md-auto">
                     <h6 class="footer-title mb-3">{{ __('master.footer.quick_links') }}</h6>
                     <ul class="list-unstyled mb-0 d-grid gap-2">
                         <li><a class="footer-link" href="{{ route('home') }}">{{ __('master.nav.home') }}</a></li>
                         <li><a class="footer-link" href="{{ route('about') }}">{{ __('master.nav.about') }}</a></li>
                         <li><a class="footer-link"
-                                href="{{ route('project.index') }}">{{ __('master.nav.available_projects') }}</a></li>
+                                href="{{ route('project.index') }}">{{ __('master.nav.available_projects') }}</a>
+                        </li>
                         <li><a class="footer-link"
-                                href="{{ route('project.portfolio') }}">{{ __('master.nav.project_archive') }}</a></li>
+                                href="{{ route('project.portfolio') }}">{{ __('master.nav.project_archive') }}</a>
+                        </li>
                         <li><a class="footer-link" href="{{ route('contact') }}">{{ __('master.nav.contacts') }}</a>
                         </li>
                     </ul>
                 </div>
 
-                <div class="col-md-3">
+                <div class="col-md-auto">
                     <h6 class="footer-title mb-3">{{ __('master.footer.contacts') }}</h6>
                     <ul class="list-unstyled mb-0 d-grid gap-2">
                         <li class="d-flex align-items-center gap-2">
@@ -336,7 +331,7 @@
                     </ul>
                 </div>
 
-                <div class="col-md-3">
+                <div class="col-md-auto">
                     <h6 class="footer-title mb-3">{{ __('master.footer.social') }}</h6>
                     <ul class="list-unstyled mb-0 d-grid gap-2">
                         <li class="d-flex align-items-center gap-2">
@@ -360,6 +355,21 @@
 
             <!-- Mobile: accordion -->
             <div class="d-md-none d-block">
+                <div class="d-flex align-items-start mb-4 px-3">
+                    <a href="{{ $brandRoute }}" class="flex-shrink-0 me-3 text-decoration-none mt-1">
+                        <img src="{{ asset('img/ae-icon.svg') }}" alt="Atelier Europeo" height="48">
+                    </a>
+
+                    <div>
+                        <h5 class="mb-1 footer-brand-title">{{ __('master.brand') }}</h5>
+                        <p class="footer-text mb-0 small" style="line-height: 1.4;">
+                            {{ __('master.footer.programs_description') }}
+                        </p>
+                    </div>
+                </div>
+
+                <hr class="footer-divider">
+
                 <div class="accordion accordion-flush footer-accordion" id="footerAccordion">
                     <div class="accordion-item">
                         <h2 class="accordion-header" id="footerLinksHeading">
@@ -440,8 +450,9 @@
                                     </li>
                                     <li class="d-flex align-items-center gap-2">
                                         <i class="bi bi-linkedin"></i>
-                                        <a class="footer-link" href="https://www.linkedin.com/company/atelier-europeo/"
-                                            target="_blank" rel="noopener noreferrer">LinkedIn</a>
+                                        <a class="footer-link"
+                                            href="https://www.linkedin.com/company/atelier-europeo/" target="_blank"
+                                            rel="noopener noreferrer">LinkedIn</a>
                                     </li>
                                 </ul>
                             </div>
@@ -450,7 +461,7 @@
                 </div>
             </div>
 
-            <hr class="footer-divider my-4">
+            <hr class="footer-divider">
 
             <div
                 class="d-flex flex-column flex-md-row justify-content-between align-items-center gap-2 text-center text-md-start">
@@ -458,15 +469,15 @@
                     {{ __('master.footer.copyright', ['year' => date('Y')]) }}
                 </small>
                 <div class="d-flex gap-3">
-                    <a href="#" class="footer-link">{{ __('master.footer.privacy_policy') }}</a>
-                    <a href="#" class="footer-link">{{ __('master.footer.cookie_policy') }}</a>
+                    <a href="#" class="footer-link"><u>{{ __('master.footer.privacy_policy') }}</u></a>
+                    <a href="#" class="footer-link"><u>{{ __('master.footer.cookie_policy') }}</u></a>
                 </div>
             </div>
         </div>
     </footer>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
             const navbar = document.querySelector('.main-navbar');
             if (!navbar) return;
 
@@ -475,7 +486,9 @@
             };
 
             syncNavbarState();
-            window.addEventListener('scroll', syncNavbarState, { passive: true });
+            window.addEventListener('scroll', syncNavbarState, {
+                passive: true
+            });
         });
     </script>
 
