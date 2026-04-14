@@ -1,0 +1,219 @@
+/* =========================================================
+   1. STILI GENERALI E HERO
+   ========================================================= */
+
+.card-home {
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+}
+
+/* =========================================================
+   2. CHI SIAMO – STAT CARDS
+   ========================================================= */
+
+.stat-number {
+    color: #00509D;
+    font-weight: 700;
+    font-size: 2rem;
+}
+
+.stat-label {
+    color: #6B7280;
+    font-size: 0.95rem;
+}
+
+.stat-card-1 { width: 201px; height: 108px; }
+.stat-card-2 { width: 240px; height: 108px; }
+.stat-card-3 { width: 196px; height: 108px; }
+
+.btn-chi-siamo {
+    background-color: transparent;
+    color: #00509D;
+    border: 2px solid #00509D;
+    border-radius: 20px;
+    padding: 0.6rem 2rem;
+    text-decoration: none;
+    display: inline-block;
+    transition: all 0.2s ease;
+}
+
+.btn-chi-siamo:hover {
+    background-color: #00509D;
+    color: #ffffff;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 80, 157, 0.3);
+}
+
+/* =========================================================
+   3. SCOPRI. PARTECIPA. – BOTTONI E PROGRAMMI
+   ========================================================= */
+
+.btn-ces { background-color: #0F766E; color: #ffffff; border: none; border-radius: 6px; padding: 0.6rem 1.5rem; font-size: 15px; text-decoration: none; display: inline-block; transition: all 0.2s ease; }
+.btn-ces:hover { background-color: #0a5c55; color: #ffffff; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(15, 118, 110, 0.3); }
+
+.btn-sg { background-color: #F43F5E; color: #ffffff; border: none; border-radius: 6px; padding: 0.6rem 1.5rem; font-size: 15px; text-decoration: none; display: inline-block; transition: all 0.2s ease; }
+.btn-sg:hover { background-color: #d42d4a; color: #ffffff; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(244, 63, 94, 0.3); }
+
+.btn-cf { background-color: #4F46E5; color: #ffffff; border: none; border-radius: 6px; padding: 0.6rem 1.5rem; font-size: 15px; text-decoration: none; display: inline-block; transition: all 0.2s ease; }
+.btn-cf:hover { background-color: #3d35c4; color: #ffffff; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3); }
+
+.program-card {
+    width: 360px;
+    height: 222px;
+    overflow: hidden;
+}
+
+.program-card-title { font-size: 18px; font-weight: 600; }
+.program-card-text { font-size: 15px; }
+
+.program-card-divider {
+    border: none;
+    border-top: 1px solid #DEE2E6;
+    margin: 0;
+    position: absolute;
+    top: 166px;
+    left: 0;
+    right: 0;
+}
+
+/* =========================================================
+   4. TESTIMONIANZE (FIXED & RESPONSIVE)
+   ========================================================= */
+
+.testimonial-card {
+    width: 360px;
+    /* Rimosso height fisso per evitare il bug del testo che esce */
+    min-height: 260px; 
+    height: auto;
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 16px 24px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    border: none;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+}
+
+.quote {
+    font-size: 32px;
+    font-weight: bold;
+    color: #00509D;
+    line-height: 0.8;
+    margin-bottom: 0;
+    text-align: left;
+}
+
+.author {
+    font-size: 18px;
+    font-weight: bold;
+    color: #000000;
+    margin-top: -6px;
+    margin-bottom: 2px;
+}
+
+.project {
+    font-size: 14px;
+    color: #002B5B;
+    margin-bottom: 8px;
+    font-weight: 500;
+}
+
+.text {
+    font-size: 14px;
+    color: #000000;
+    line-height: 1.4;
+    margin-bottom: 12px;
+    /* FIX: Tronca il testo se eccessivamente lungo (oltre 5 righe) */
+    display: -webkit-box;
+    -webkit-line-clamp: 5;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.link {
+    font-size: 14px;
+    color: #00509D;
+    font-weight: bold;
+    text-decoration: none;
+    margin-top: auto;
+    margin-bottom: 4px;
+    align-self: center;
+    display: inline-block;
+}
+
+.link:hover { text-decoration: underline; }
+
+.project-arrow {
+    -webkit-text-stroke: 1px #00509D;
+    margin-left: 2px;
+    vertical-align: middle;
+}
+
+/* Frecce Carousel */
+.testimonial-arrow {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    border: 3px solid #00509D;
+    background: white;
+    color: #00509D;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    font-size: 1.1rem;
+    -webkit-text-stroke: 1px #00509D;
+    outline: none !important;
+}
+
+/* FIX: Hover solo su Desktop per evitare tasto blu fisso su Mobile */
+@media (hover: hover) {
+    .testimonial-arrow:hover {
+        background: #00509D;
+        color: white;
+        -webkit-text-stroke: 1px white;
+    }
+}
+
+/* FIX: Reset stato attivo su Mobile */
+.testimonial-arrow:active, 
+.testimonial-arrow:focus {
+    background: white;
+    color: #00509D;
+    box-shadow: none;
+}
+
+/* Indicatori */
+.carousel-indicators {
+    position: static;
+    margin-top: 16px;
+    gap: 8px;
+}
+
+.testimonial-indicators button {
+    width: 32px !important;
+    height: 10px !important;
+    border-radius: 10px !important;
+    background-color: #DEE2E6 !important;
+    border: none !important;
+    opacity: 1 !important;
+    margin: 0 !important;
+}
+
+.testimonial-indicators .active {
+    background-color: #00509D !important;
+}
+
+/* Mobile Responsive Fixes */
+@media (max-width: 991.98px) {
+    .testimonial-card {
+        width: 100%;
+        max-width: 340px;
+        min-height: 280px;
+    }
+    
+    .stat-card-1, .stat-card-2, .stat-card-3 {
+        width: 100%;
+        max-width: 240px;
+    }
+}
