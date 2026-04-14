@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\DataLayer;
 use App\Http\Requests\ProjectRequest;
+use App\Models\Category;
 use App\Models\Project;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -17,14 +18,82 @@ class ProjectController extends Controller
      */
     public function index(Request $request)
     {
-        $dl = new DataLayer();
-        $status = $request->get('status', 'all'); // default 'all'
+        $status = $request->get('status', 'published');
+        $allowedStatuses = ['published', 'completed', 'draft', 'all'];
 
-        // Determina quali progetti mostrare in base al ruolo e ai filtri
-        $projectsList = $this->getFilteredProjects($dl, $status);
+        if (!in_array($status, $allowedStatuses, true)) {
+            $status = 'published';
+        }
+
+        $query = Project::query();
+
+        if ($status !== 'all') {
+            $query->where('status', $status);
+        }
+
+        if ($request->filled('q')) {
+            $search = trim($request->q);
+            $query->where(function ($q) use ($search) {
+                $q->where('title', 'like', "%{$search}%")
+                    ->orWhere('sum_description', 'like', "%{$search}%")
+                    ->orWhere('location', 'like', "%{$search}%");
+            });
+        }
+
+        if ($request->filled('category') && is_array($request->category)) {
+            $query->whereIn('category_id', $request->category);
+        }
+
+        if ($request->filled('duration') && is_array($request->duration)) {
+            $durations = array_filter($request->duration, fn($item) => in_array($item, ['short', 'medium', 'long', 'very_long'], true));
+
+            if (!empty($durations)) {
+                $query->where(function ($durationQuery) use ($durations) {
+                    foreach ($durations as $duration) {
+                        if ($duration === 'short') {
+                            $durationQuery->orWhereRaw('DATEDIFF(end_date, start_date) < 15');
+                        }
+
+                        if ($duration === 'medium') {
+                            $durationQuery->orWhereRaw('DATEDIFF(end_date, start_date) BETWEEN 15 AND 60');
+                        }
+
+                        if ($duration === 'long') {
+                            $durationQuery->orWhereRaw('DATEDIFF(end_date, start_date) BETWEEN 60 AND 180');
+                        }
+
+                        if ($duration === 'very_long') {
+                            $durationQuery->orWhereRaw('DATEDIFF(end_date, start_date) > 180');
+                        }
+                    }
+                });
+            }
+        }
+
+        if ($request->filled('date_from')) {
+            $query->whereDate('start_date', '>=', $request->date_from);
+        }
+
+        if ($request->filled('date_to')) {
+            $query->whereDate('start_date', '<=', $request->date_to);
+        }
+
+        $sort = $request->get('sort', 'relevance');
+
+        if ($sort === 'expiring_soon') {
+            $query->orderBy('expire_date', 'asc');
+        } else {
+            $query->orderBy('created_at', 'desc');
+        }
+
+        $projects = $query->paginate(6);
+        $projects->appends($request->all());
+
+        $categories = Category::orderBy('name')->get();
 
         return view('project.projects')
-            ->with('projectsList', $projectsList)
+            ->with('projects', $projects)
+            ->with('categories', $categories)
             ->with('currentStatus', $status);
     }
 
@@ -316,18 +385,75 @@ class ProjectController extends Controller
     /**
      * Display portfolio of completed projects with testimonials.
      */
-    public function portfolio()
+    public function portfolio(Request $request)
     {
-        $dl = new DataLayer();
-        $completedProjects = $dl->listProjectsByStatus('completed');
+        $query = Project::query()->where('status', 'completed');
 
-        // Carica le testimonianze per ogni progetto
-        foreach ($completedProjects as $project) {
-            $project->load(['testimonial.author', 'category', 'association']);
+        if ($request->filled('q')) {
+            $search = trim($request->q);
+            $query->where(function ($q) use ($search) {
+                $q->where('title', 'like', "%{$search}%")
+                    ->orWhere('sum_description', 'like', "%{$search}%")
+                    ->orWhere('location', 'like', "%{$search}%");
+            });
         }
 
+        if ($request->filled('category') && is_array($request->category)) {
+            $query->whereIn('category_id', $request->category);
+        }
+
+        if ($request->filled('duration') && is_array($request->duration)) {
+            $durations = array_filter($request->duration, fn($item) => in_array($item, ['short', 'medium', 'long', 'very_long'], true));
+
+            if (!empty($durations)) {
+                $query->where(function ($durationQuery) use ($durations) {
+                    foreach ($durations as $duration) {
+                        if ($duration === 'short') {
+                            $durationQuery->orWhereRaw('DATEDIFF(end_date, start_date) < 15');
+                        }
+
+                        if ($duration === 'medium') {
+                            $durationQuery->orWhereRaw('DATEDIFF(end_date, start_date) BETWEEN 15 AND 60');
+                        }
+
+                        if ($duration === 'long') {
+                            $durationQuery->orWhereRaw('DATEDIFF(end_date, start_date) BETWEEN 60 AND 180');
+                        }
+
+                        if ($duration === 'very_long') {
+                            $durationQuery->orWhereRaw('DATEDIFF(end_date, start_date) > 180');
+                        }
+                    }
+                });
+            }
+        }
+
+        if ($request->filled('date_from')) {
+            $query->whereDate('start_date', '>=', $request->date_from);
+        }
+
+        if ($request->filled('date_to')) {
+            $query->whereDate('start_date', '<=', $request->date_to);
+        }
+
+        $sort = $request->get('sort', 'relevance');
+
+        if ($sort === 'oldest') {
+            $query->orderBy('end_date', 'asc');
+        } elseif ($sort === 'latest') {
+            $query->orderBy('created_at', 'desc');
+        } else {
+            $query->orderBy('end_date', 'desc');
+        }
+
+        $projects = $query->paginate(6);
+        $projects->appends($request->all());
+
+        $categories = Category::orderBy('name')->get();
+
         return view('project.portfolio')
-            ->with('completedProjects', $completedProjects);
+            ->with('projects', $projects)
+            ->with('categories', $categories);
     }
 
     /**

@@ -32,20 +32,31 @@
 
 <div class="project-card">
     <a href="{{ route('project.show', ['project' => $project->id]) }}" class="stretched-link"></a>
-    <div class="badge-departure">
-        <span style="rotate: 45deg; font-size: 10px;"><i class="bi bi-airplane-fill"></i></span>
-        <b>{{ \Carbon\Carbon::parse($project->start_date)->translatedFormat('M') }}</b>
-        <b>{{ $project->start_date->format('j') }}</b>
-    </div>
+    @if ($project->status == 'published')
+        <div class="badge-departure">
+            <span style="rotate: 45deg; font-size: 12px;"><i class="bi bi-airplane-fill"></i></span>
+            <b>{{ \Carbon\Carbon::parse($project->start_date)->translatedFormat('M') }}</b>
+            <b>{{ $project->start_date->format('j') }}</b>
+        </div>
+    @endif
     <div>
         <img src="{{ $project->image_url }}" alt="{{ $project->title }}" class="project-card-image">
         @if ($showFavoriteIcon)
-            <button type="button" class="btn-favorite" data-project-id="{{ $project->id }}">
-                <i class="bi bi-heart{{ auth()->user() && auth()->user()->favorites->contains($project->id) ? '-fill' : '' }}"
-                    style="opacity: 1.0 !important;"></i>
-            </button>
+            @guest
+                <button type="button" class="btn-favorite" data-project-id="{{ $project->id }}" data-bs-toggle="modal"
+                    data-bs-target="#loginRequiredModal">
+                    <i class="bi bi-heart"></i>
+                </button>
+            @endguest
+
+            @auth
+                <button type="button" class="btn-favorite" data-project-id="{{ $project->id }}">
+                    <i class="bi bi-heart{{ auth()->user()->favorites->contains($project->id) ? '-fill' : '' }}"></i>
+                </button>
+            @endauth
         @endif
     </div>
+
     <span class="badge-duration"><i class="bi bi-calendar2-week-fill"></i> <b>{{ $durationText }}</b></span>
 
 
@@ -54,7 +65,7 @@
         <div class="d-flex justify-content-between align-items-center">
             <span><i class="bi bi-geo-alt-fill me-2"></i>{{ $project->location }}</span>
             <button type="button" class="{{ $badge }}" data-bs-toggle="modal"
-                data-bs-target="#categoryModal-{{ $category->name }}">{{ $category->tag }} <i
+                data-bs-target="#infoModal-{{ $category->tag }}">{{ $category->tag }} <i
                     class="bi bi-info-circle ms-1"></i></button>
         </div>
         {{-- Titolo --}}
@@ -62,10 +73,39 @@
         {{-- Breve Descrizione --}}
         <p class="project-card-description">{{ $project->sum_description }}</p>
         {{-- Footer --}}
-        <div class="d-flex justify-content-between align-items-center">
-            <x-participants-progress :current="$approvedCount" :max="$project->requested_people" />
-            <span><i class="bi bi-calendar2-event-fill me-2"></i>Scadenza:
-                {{ $project->expire_date->format('d/m/Y') }}</span>
-        </div>
+        @if ($project->status == 'published')
+            <div class="d-flex justify-content-between align-items-center">
+                <x-participants-progress :current="$approvedCount" :max="$project->requested_people" />
+                <span><i clas s="bi bi-calendar2-event-fill me-2"></i>Scadenza:
+                    {{ $project->expire_date->format('d/m/Y') }}</span>
+            </div>
+        @else
+            <span class="text-center"><i class="bi bi-calendar-check-fill me-2"></i>Terminato il:
+                {{ $project->end_date->format('d/m/Y') }}</span>
+        @endif
+
     </div>
 </div>
+
+@once
+    @guest
+        <div class="modal fade" id="loginRequiredModal" tabindex="-1" aria-labelledby="loginRequiredModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="loginRequiredModalLabel">Accesso Richiesto</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        Devi accedere al tuo account per poter salvare i progetti nei preferiti e ritrovarli in seguito.
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Annulla</button>
+                        <a href="{{ route('login') }}" class="btn btn-primary">Accedi</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endguest
+@endonce

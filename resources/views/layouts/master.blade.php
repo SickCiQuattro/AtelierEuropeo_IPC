@@ -490,6 +490,8 @@
         });
     </script>
 
+    <x-category-info-modals />
+
     @yield('scripts')
 
 </body>
