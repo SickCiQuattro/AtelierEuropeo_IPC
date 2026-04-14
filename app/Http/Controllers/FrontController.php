@@ -11,7 +11,7 @@ class FrontController extends Controller
         
         $dl = new DataLayer();
         $featuredProjects = $dl->getFeaturedProjects();
-        $randomTestimonials = $dl->getRandomTestimonials(3);
+        $randomTestimonials = $dl->getRandomTestimonials(9);
         return view('index')
             ->with('featuredProjects', $featuredProjects)
             ->with('randomTestimonials', $randomTestimonials);
