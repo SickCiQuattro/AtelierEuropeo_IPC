@@ -29,6 +29,9 @@
 
     <!-- Flag Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lipis/flag-icons@7.2.3/css/flag-icons.min.css">
+
+    <!-- CSS specifico per pagina -->
+    @yield('styles')
 </head>
 
 <body class="d-flex flex-column min-vh-100">
