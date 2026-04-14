@@ -55,7 +55,9 @@
    ========================================================= */
 
 /* Struttura base e comportamento */
-.btn-ae {
+.btn-ae,
+[class^="btn-ae-"],
+[class*=" btn-ae-"] {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -66,8 +68,20 @@
 }
 
 /* Effetto di click (Schiacciamento morbido) */
-.btn-ae:active {
+.btn-ae:active,
+[class^="btn-ae-"]:active,
+[class*=" btn-ae-"]:active {
     transform: scale(0.98) !important;
+}
+
+.btn-ae:disabled,
+[class^="btn-ae-"]:disabled,
+[class*=" btn-ae-"]:disabled {
+    background-color: var(--bs-secondary) !important;
+    border-color: var(--bs-secondary) !important;
+    color: #ffffff !important;
+    opacity: 0.65;
+    cursor: not-allowed;
 }
 
 /* --- Forme --- */
@@ -107,6 +121,10 @@
 .btn-ae-secondary:hover, .btn-ae-secondary:focus-visible { background-color: #475569; border-color: #475569; color: #ffffff; }
 .btn-ae-secondary:active { background-color: #334155 !important; border-color: #334155 !important; color: #ffffff !important; }
 
+/* Verde (Success) */
+.btn-ae-success { background-color: var(--bs-success); border-color: var(--bs-success); color: #ffffff; }
+.btn-ae-success:hover, .btn-ae-success:focus-visible { background-color: #059669; border-color: #059669; color: #ffffff; }
+.btn-ae-success:active { background-color: #047857 !important; border-color: #047857 !important; color: #ffffff !important; }
 
 /* =========================================
    Varianti Outline (Solo Bordo)
