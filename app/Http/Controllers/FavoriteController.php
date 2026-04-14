@@ -9,57 +9,68 @@ use Illuminate\Support\Facades\Auth;
 class FavoriteController extends Controller
 {
     /**
-     * Aggiungi o rimuovi un progetto dai preferiti
+     * Aggiungi o rimuovi un progetto dai preferiti (endpoint REST)
      */
-    public function toggle(Request $request)
+    public function toggle(Project $project, Request $request)
     {
         try {
-            $projectId = $request->input('project_id');
-            $user = Auth::user();
+            $user = $request->user();
             
             // Verifica che l'utente sia loggato e non sia admin
             if (!$user || $user->role === 'admin') {
                 return response()->json([
-                    'success' => false,
-                    'message' => 'Azione non consentita.'
+                    'status' => 'error',
+                    'message' => 'Azione non consentita.',
                 ], 403);
             }
-            
-            // Verifica che il progetto esista
-            $project = Project::find($projectId);
-            if (!$project) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Progetto non trovato.'
-                ], 404);
-            }
-            
-            // Controlla se il progetto è già nei preferiti
-            $isFavorite = $user->favoriteProjects()->where('project_id', $projectId)->exists();
-            
-            if ($isFavorite) {
-                // Rimuovi dai preferiti
-                $user->favoriteProjects()->detach($projectId);
-                $message = 'Progetto rimosso dai preferiti!';
-                $action = 'removed';
-            } else {
-                // Aggiungi ai preferiti
-                $user->favoriteProjects()->attach($projectId);
-                $message = 'Progetto aggiunto ai preferiti!';
-                $action = 'added';
-            }
+
+            $user->favorites()->toggle($project->id);
+            $isFavorited = $user->favorites()->where('project_id', $project->id)->exists();
             
             return response()->json([
-                'success' => true,
-                'message' => $message,
-                'action' => $action,
-                'is_favorite' => !$isFavorite
+                'status' => 'success',
+                'is_favorited' => $isFavorited,
             ]);
             
         } catch (\Exception $e) {
             return response()->json([
+                'status' => 'error',
+                'message' => 'Si è verificato un errore. Riprova più tardi.',
+            ], 500);
+        }
+    }
+
+    /**
+     * Endpoint legacy: mantiene compatibilita con le viste che inviano project_id nel body.
+     */
+    public function toggleLegacy(Request $request)
+    {
+        try {
+            $projectId = (int) $request->input('project_id');
+            $user = $request->user();
+
+            if (!$user || $user->role === 'admin') {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Azione non consentita.',
+                ], 403);
+            }
+
+            $project = Project::findOrFail($projectId);
+
+            $user->favorites()->toggle($project->id);
+            $isFavorited = $user->favorites()->where('project_id', $project->id)->exists();
+
+            return response()->json([
+                'success' => true,
+                'message' => $isFavorited ? 'Progetto aggiunto ai preferiti!' : 'Progetto rimosso dai preferiti!',
+                'action' => $isFavorited ? 'added' : 'removed',
+                'is_favorite' => $isFavorited,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
                 'success' => false,
-                'message' => 'Si è verificato un errore. Riprova più tardi.'
+                'message' => 'Si è verificato un errore. Riprova più tardi.',
             ], 500);
         }
     }
@@ -75,7 +86,7 @@ class FavoriteController extends Controller
             return redirect()->route('home')->with('error', 'Azione non consentita.');
         }
         
-        $favoriteProjects = $user->favoriteProjects()
+        $favoriteProjects = $user->favorites()
             ->with(['category', 'association'])
             ->where('status', 'published')
             ->orderBy('user_favorites.created_at', 'desc')
