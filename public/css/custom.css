@@ -49,6 +49,89 @@
     --prog-cf-accent: #6366f1;
 }
 
+
+/* =========================================================
+   Sistema Globale Pulsanti (AE Button System) - Fix Colori
+   ========================================================= */
+
+/* Struttura base e comportamento */
+.btn-ae {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    text-decoration: none;
+    border: 2px solid transparent; 
+    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, transform 0.1s ease !important;
+}
+
+/* Effetto di click (Schiacciamento morbido) */
+.btn-ae:active {
+    transform: scale(0.98) !important;
+}
+
+/* --- Forme --- */
+.btn-ae-square {
+    border-radius: 0.5rem; 
+}
+.btn-ae-pill {
+    border-radius: 50rem; 
+}
+
+/* =========================================
+   Varianti Solid (Piene)
+   ========================================= */
+
+/* Blu (Primary) */
+.btn-ae-primary { background-color: var(--bs-primary); border-color: var(--bs-primary); color: #ffffff; }
+.btn-ae-primary:hover, .btn-ae-primary:focus-visible { background-color: #052c65; border-color: #052c65; color: #ffffff; }
+.btn-ae-primary:active { background-color: #031c42 !important; border-color: #031c42 !important; color: #ffffff !important; }
+
+/* Giallo (Warning) */
+.btn-ae-warning { background-color: var(--bs-warning); border-color: var(--bs-warning); color: var(--bs-primary); }
+.btn-ae-warning:hover, .btn-ae-warning:focus-visible { background-color: #e5b200; border-color: #e5b200; color: var(--bs-primary); }
+.btn-ae-warning:active { background-color: #cc9e00 !important; border-color: #cc9e00 !important; color: var(--bs-primary) !important; }
+
+/* Bianco (Light) */
+.btn-ae-light { background-color: #ffffff; border-color: #ffffff; color: var(--bs-primary); }
+.btn-ae-light:hover, .btn-ae-light:focus-visible { background-color: #edf3ff; border-color: #edf3ff; color: var(--bs-primary); }
+.btn-ae-light:active { background-color: #dce6f9 !important; border-color: #dce6f9 !important; color: var(--bs-primary) !important; }
+
+/* Rosso (Danger) */
+.btn-ae-danger { background-color: var(--bs-danger); border-color: var(--bs-danger); color: #ffffff; }
+.btn-ae-danger:hover, .btn-ae-danger:focus-visible { background-color: #dc2626; border-color: #dc2626; color: #ffffff; }
+.btn-ae-danger:active { background-color: #b91c1c !important; border-color: #b91c1c !important; color: #ffffff !important; }
+
+/* Grigio (Secondary) */
+.btn-ae-secondary { background-color: var(--bs-secondary); border-color: var(--bs-secondary); color: #ffffff; }
+.btn-ae-secondary:hover, .btn-ae-secondary:focus-visible { background-color: #475569; border-color: #475569; color: #ffffff; }
+.btn-ae-secondary:active { background-color: #334155 !important; border-color: #334155 !important; color: #ffffff !important; }
+
+
+/* =========================================
+   Varianti Outline (Solo Bordo)
+   ========================================= */
+
+/* Outline Blu */
+.btn-ae-outline-primary { background-color: transparent; border-color: var(--bs-primary); color: var(--bs-primary); }
+.btn-ae-outline-primary:hover, .btn-ae-outline-primary:focus-visible { background-color: var(--bs-primary); color: #ffffff; }
+.btn-ae-outline-primary:active { background-color: #031c42 !important; border-color: #031c42 !important; color: #ffffff !important; }
+
+/* Outline Bianco (Reso più luminoso e meno grigio) */
+.btn-ae-outline-light { background-color: transparent; border-color: #ffffff; color: #ffffff; }
+.btn-ae-outline-light:hover, .btn-ae-outline-light:focus-visible { background-color: rgba(255, 255, 255, 0.15); border-color: #ffffff; color: #ffffff; }
+.btn-ae-outline-light:active { background-color: rgba(255, 255, 255, 0.25) !important; border-color: #ffffff !important; color: #ffffff !important; }
+
+/* Outline Rosso */
+.btn-ae-outline-danger { background-color: transparent; border-color: var(--bs-danger); color: var(--bs-danger); }
+.btn-ae-outline-danger:hover, .btn-ae-outline-danger:focus-visible { background-color: var(--bs-danger); color: #ffffff; }
+.btn-ae-outline-danger:active { background-color: #b91c1c !important; border-color: #b91c1c !important; color: #ffffff !important; }
+
+/* Outline Grigio */
+.btn-ae-outline-secondary { background-color: transparent; border-color: var(--bs-secondary); color: var(--bs-secondary); }
+.btn-ae-outline-secondary:hover, .btn-ae-outline-secondary:focus-visible { background-color: var(--bs-secondary); color: #ffffff; }
+.btn-ae-outline-secondary:active { background-color: #334155 !important; border-color: #334155 !important; color: #ffffff !important; }
+
 /* ---------------------------------------------------------
    Generic utility helpers
    --------------------------------------------------------- */
@@ -67,6 +150,7 @@
 
 /* ---------------------------------------------------------
    Program semantic utilities - CES
+    --------------------------------------------------------- */
    --------------------------------------------------------- */
 
 .bg-prog-ces {
@@ -521,4 +605,63 @@
     background-color: transparent;
     color: #fff;
     padding-inline: 0;
+}
+
+/* ---------------------------------------------------------
+   About page
+   --------------------------------------------------------- */
+
+.about-page .board-member-card,
+.about-page .card,
+.about-page .transparency-card {
+    border: 1px solid #f0f2f5;
+    border-radius: 1rem;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.about-page .board-member-card:hover,
+.about-page .card:hover,
+.about-page .transparency-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px rgba(0, 10, 30, 0.04) !important;
+    border-color: transparent;
+}
+
+.about-page .board-member-avatar-wrap {
+    width: 90px;
+    height: 90px;
+}
+
+.about-page .board-member-avatar {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 3px solid #fff;
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.12);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.about-page .board-member-card:hover .board-member-avatar,
+.about-page .board-member-card:focus-within .board-member-avatar {
+    transform: scale(1.04);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.18);
+}
+
+.about-page .bg-europe {
+    background-color: #0b1c3d !important;
+}
+
+.about-page .about-fade-in {
+    animation: simpleFadeIn 0.6s ease-out forwards;
+}
+
+@keyframes simpleFadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .about-page .about-fade-in { animation: none; }
 }

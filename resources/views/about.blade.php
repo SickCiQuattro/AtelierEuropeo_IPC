@@ -1,304 +1,227 @@
 @extends('layouts.master')
 
-@section('title', 'AE - Chi siamo')
+@section('title', 'AE - Chi Siamo')
 
 @section('active_chi-siamo', 'active')
 
-@section('breadcrumb')
-<div class="bg-light py-2">
-    <div class="container">
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb mb-0">
-                <li class="breadcrumb-item">
-                    <a href="{{ route('home') }}" class="text-decoration-none">Home</a>
-                </li>
-                <li class="breadcrumb-item active" aria-current="page">Chi siamo</li>
-            </ol>
-        </nav>
-    </div>
-</div>
-@endsection
-
 @section('body')
-    <div class="container py-5">
-        <!-- Header della pagina -->
+    <div class="container py-5 about-page about-fade-in">
+
         <div class="row mb-5">
             <div class="col-12 text-center">
-                <h1 class="section-title fw-bold text-center">Chi siamo</h1>
-            </div>
-        </div>
-
-        <!-- La nostra storia -->
-        <div class="row mb-5">
-            <div class="col-lg-6 mb-4">
-                <div class="h-100">
-                    <h3 class="fw-bold mb-3 fs-2 fs-lg-1">La nostra storia</h3>
-                    <p class="lead">
-                        Atelier Europeo nasce il <strong>9 maggio 2013</strong>, in occasione della
-                        <strong>Festa d'Europa</strong>, da un'idea condivisa e visionaria di cinque enti
-                        di secondo livello del territorio bresciano.
-                    </p>
-                    <p class="lead">
-                        I nostri soci fondatori rappresentano una rete capillare di circa <strong>3.000 realtà
-                            bresciane</strong> e almeno <strong>300.000 cittadini</strong>, includendo
-                        realtà di prestigio come il Forum Provinciale del Terzo Settore di Brescia,
-                        il CSV Brescia e il Patronato San Vincenzo.
-                    </p>
-                    <p class="lead">
-                        Questa data simbolica sottolinea fin dalla nascita il nostro profondo legame
-                        con i valori europei e l'impegno nella costruzione di un futuro comune.
-                    </p>
-                </div>
-            </div>
-            <div class="col-lg-6 mb-4">
-                <div class="w-100">
-                    <img src="{{ asset('img/hero-background.jpg') }}" alt="" class="img-fluid rounded-4 shadow-sm">
-                </div>
-            </div>
-        </div>
-
-        <!-- Missione e Valori -->
-        <div class="row mb-5">
-            <div class="col-12">
-                <h3 class="fw-bold mb-3 fs-2 fs-lg-1">Missione e Valori</h3>
-                <div class="row g-4">
-                    <div class="col-md-4">
-                        <div class="card border-0 shadow-sm h-100">
-                            <div class="card-body text-center p-4">
-                                <i class="bi bi-heart text-danger" style="font-size: 3rem;"></i>
-                                <h5 class="mt-3 mb-3">Finalità Sociali</h5>
-                                <p class="text-muted">
-                                    Siamo un'associazione <strong>senza scopo di lucro e apartitica</strong>
-                                    che persegue esclusivamente finalità di carattere sociale per il bene
-                                    della comunità.
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="card border-0 shadow-sm h-100">
-                            <div class="card-body text-center p-4">
-                                <i class="bi bi-people text-success" style="font-size: 3rem;"></i>
-                                <h5 class="mt-3 mb-3">Partecipazione Attiva</h5>
-                                <p class="text-muted">
-                                    Promuoviamo la partecipazione delle associazioni bresciane e lombarde
-                                    alle <strong>opportunità offerte dall'Unione Europea</strong>.
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="card border-0 shadow-sm h-100">
-                            <div class="card-body text-center p-4">
-                                <i class="bi bi-globe-europe-africa" style="font-size: 3rem; color: #1a2442;"></i>
-                                <h5 class="mt-3 mb-3">Cittadinanza Europea</h5>
-                                <p class="text-muted">
-                                    Diffondiamo e incentiviamo la partecipazione ai programmi UE per
-                                    favorire la creazione di una <strong>cittadinanza europea consapevole</strong>.
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Il nostro Consiglio Direttivo -->
-        <div class="row mb-5">
-            <div class="col-12">
-                <h3 class="fw-bold mb-3 fs-2 fs-lg-1">Il nostro Consiglio Direttivo</h3>
-                <div class="row g-4">
-                    <div class="col-md-6 col-lg-4">
-                        <div class="card border-0 shadow-sm text-center h-100">
-                            <div class="card-body p-4">
-                                <div class="bg-primary bg-opacity-10 rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center"
-                                    style="width: 80px; height: 80px;">
-                                    <i class="bi bi-person-badge text-primary fs-2"></i>
-                                </div>
-                                <h5 class="fw-bold">Giovanni Vezzoni</h5>
-                                <p class="text-primary fw-semibold mb-0">Presidente</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-6 col-lg-4">
-                        <div class="card border-0 shadow-sm text-center h-100">
-                            <div class="card-body p-4">
-                                <div class="bg-success bg-opacity-10 rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center"
-                                    style="width: 80px; height: 80px;">
-                                    <i class="bi bi-person text-success fs-2"></i>
-                                </div>
-                                <h5 class="fw-bold">Dante Mantovani</h5>
-                                <p class="text-success fw-semibold mb-0">Consigliere</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-6 col-lg-4">
-                        <div class="card border-0 shadow-sm text-center h-100">
-                            <div class="card-body p-4">
-                                <div class="bg-success bg-opacity-10 rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center"
-                                    style="width: 80px; height: 80px;">
-                                    <i class="bi bi-person text-success fs-2"></i>
-                                </div>
-                                <h5 class="fw-bold">Don Marco Perrucchini</h5>
-                                <p class="text-success fw-semibold mb-0">Consigliere</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-6 col-lg-4">
-                        <div class="card border-0 shadow-sm text-center h-100">
-                            <div class="card-body p-4">
-                                <div class="bg-success bg-opacity-10 rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center"
-                                    style="width: 80px; height: 80px;">
-                                    <i class="bi bi-person text-success fs-2"></i>
-                                </div>
-                                <h5 class="fw-bold">Renzo Fracassi</h5>
-                                <p class="text-success fw-semibold mb-0">Consigliere</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-6 col-lg-4">
-                        <div class="card border-0 shadow-sm text-center h-100">
-                            <div class="card-body p-4">
-                                <div class="bg-warning bg-opacity-10 rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center"
-                                    style="width: 80px; height: 80px;">
-                                    <i class="bi bi-calculator text-warning fs-2"></i>
-                                </div>
-                                <h5 class="fw-bold">Francesco Piovani</h5>
-                                <p class="text-warning fw-semibold mb-0">Revisore Unico</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-6 col-lg-4">
-                        <div class="card border-0 shadow-sm text-center h-100">
-                            <div class="card-body p-4">
-                                <div class="bg-info bg-opacity-10 rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center"
-                                    style="width: 80px; height: 80px;">
-                                    <i class="bi bi-pen text-info fs-2"></i>
-                                </div>
-                                <h5 class="fw-bold">Francesca Fiini</h5>
-                                <p class="text-info fw-semibold mb-0">Segretario</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Trasparenza -->
-        <div class="row mb-5">
-            <div class="col-lg-6 mb-4">
-                <h3 class="fw-bold mb-3 fs-2 fs-lg-1">
-                    <i class="bi bi-shield-check me-2"></i>Trasparenza
-                </h3>
-                <p class="text-muted mb-4">
-                    La trasparenza è uno dei nostri valori fondamentali. Per questo motivo,
-                    mettiamo a disposizione di tutti i cittadini i nostri documenti ufficiali,
-                    garantendo piena visibilità sulle nostre attività e sulla gestione delle risorse.
+                <h1 class="display-4 fw-bold text-dark mb-3">Chi Siamo</h1>
+                <p class="lead text-body-secondary col-md-8 mx-auto">
+                    Connettiamo il territorio bresciano alle opportunità europee dal 2013, promuovendo cittadinanza attiva e
+                    partecipazione.
                 </p>
-                <div class="list-group">
-                    <div class="list-group-item d-flex align-items-center">
-                        <i class="bi bi-file-earmark-text text-primary me-3 fs-5"></i>
-                        <div>
-                            <h6 class="mb-1">Atto Costitutivo e Statuto</h6>
-                            <small class="text-muted">Documenti fondativi dell'associazione</small>
+            </div>
+        </div>
+
+        <div class="row align-items-center mb-5 pb-4">
+            <div class="col-lg-6 mb-4 mb-lg-0 pe-lg-5">
+                <h3 class="fw-bold mb-4">La nostra storia</h3>
+                <p class="text-body-secondary mb-3">
+                    Atelier Europeo nasce il <strong>9 maggio 2013</strong>, in occasione della Festa d'Europa, da un'idea
+                    condivisa e visionaria di cinque enti di secondo livello del territorio bresciano.
+                </p>
+                <p class="text-body-secondary mb-3">
+                    I nostri soci fondatori rappresentano una rete capillare di circa <strong>3.000 realtà
+                        bresciane</strong> e almeno <strong>300.000 cittadini</strong>, includendo eccellenze come il Forum
+                    Provinciale del Terzo Settore di Brescia, il CSV Brescia e il Patronato San Vincenzo.
+                </p>
+                <p class="text-body-secondary mb-0">
+                    Questa data simbolica sottolinea fin dalla nascita il nostro profondo legame con i valori europei e
+                    l'impegno nella costruzione di un futuro comune.
+                </p>
+            </div>
+            <div class="col-lg-6">
+                <img src="{{ asset('img/hero-background.jpg') }}" alt="Foto di gruppo Atelier Europeo"
+                    class="img-fluid rounded-4" style="object-fit: cover; height: 100%; min-height: 400px;">
+            </div>
+        </div>
+
+        <div class="row mb-5 pb-4">
+            <div class="col-12 mb-4">
+                <h3 class="fw-bold">Missione e Valori</h3>
+            </div>
+            <div class="col-md-4 mb-4 mb-md-0">
+                <div class="card h-100 p-2">
+                    <div class="card-body">
+                        <div class="mb-4">
+                            <i class="bi bi-heart text-danger fs-1"></i>
                         </div>
+                        <h5 class="fw-bold mb-3">Finalità Sociali</h5>
+                        <p class="text-body-secondary mb-0">
+                            Siamo un'associazione senza scopo di lucro e apartitica che persegue esclusivamente finalità di
+                            carattere sociale per il bene della comunità.
+                        </p>
                     </div>
-                    <div class="list-group-item d-flex align-items-center">
-                        <i class="bi bi-graph-up text-success me-3 fs-5"></i>
-                        <div>
-                            <h6 class="mb-1">Bilancio di Missione 2018</h6>
-                            <small class="text-muted">Rendiconto delle attività e risultati</small>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4 mb-md-0">
+                <div class="card h-100 p-2">
+                    <div class="card-body">
+                        <div class="mb-4">
+                            <i class="bi bi-people text-success fs-1"></i>
                         </div>
+                        <h5 class="fw-bold mb-3">Partecipazione Attiva</h5>
+                        <p class="text-body-secondary mb-0">
+                            Promuoviamo la partecipazione delle associazioni bresciane e lombarde alle opportunità e ai
+                            bandi offerti dall'Unione Europea.
+                        </p>
                     </div>
-                    <div class="list-group-item d-flex align-items-center">
-                        <i class="bi bi-graph-up text-success me-3 fs-5"></i>
-                        <div>
-                            <h6 class="mb-1">Bilancio di Missione 2016</h6>
-                            <small class="text-muted">Rendiconto delle attività e risultati</small>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 p-2">
+                    <div class="card-body">
+                        <div class="mb-4">
+                            <i class="bi bi-globe-europe-africa text-primary fs-1"></i>
                         </div>
-                    </div>
-                    <div class="list-group-item d-flex align-items-center">
-                        <i class="bi bi-shield-lock text-info me-3 fs-5"></i>
-                        <div>
-                            <h6 class="mb-1">Privacy e Cookie Policy</h6>
-                            <small class="text-muted">Protezione dei dati personali</small>
-                        </div>
+                        <h5 class="fw-bold mb-3">Cittadinanza Europea</h5>
+                        <p class="text-body-secondary mb-0">
+                            Diffondiamo e incentiviamo la partecipazione ai programmi UE per favorire la creazione di una
+                            cittadinanza europea consapevole.
+                        </p>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Come aderire -->
-        <div class="row mb-5">
-            <div class="col-12">
-                <div class="bg-light p-5">
-                    <div class="row align-items-center">
-                        <div class="col-lg-8">
-                            <h3 class="fw-bold mb-3 fs-2 fs-lg-1">Come aderire</h3>
-                            <p class="text-muted mb-3">
-                                L'adesione ad Atelier Europeo è aperta a tutti gli <strong>enti pubblici e privati</strong>
-                                che condividono le nostre finalità e desiderano contribuire alla costruzione
-                                di una cittadinanza europea più forte e consapevole.
-                            </p>
-                            <div class="row g-3">
-                                <div class="col-md-6">
-                                    <div class="d-flex align-items-start">
-                                        <i class="bi bi-check-circle text-primary me-2 mt-1"></i>
-                                        <div>
-                                            <h6 class="mb-1">Procedura semplice</h6>
-                                            <small class="text-muted">La domanda va presentata al Consiglio
-                                                Direttivo</small>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="d-flex align-items-start">
-                                        <i class="bi bi-people text-primary me-2 mt-1"></i>
-                                        <div>
-                                            <h6 class="mb-1">Diverse tipologie</h6>
-                                            <small class="text-muted">Soci con governance (€20.000) o sostenitori (quote
-                                                inferiori)</small>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+        <div class="row mb-5 pb-4">
+            <div class="col-12 mb-4">
+                <h3 class="fw-bold">Il nostro Consiglio Direttivo</h3>
+            </div>
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="card text-center h-100 board-member-card py-4">
+                    <div class="card-body">
+                        <div class="board-member-avatar-wrap mx-auto mb-3">
+                            <img src="{{ asset('img/team/giovanni_vezzoni.svg') }}" alt="Foto profilo di Giovanni Vezzoni"
+                                class="board-member-avatar" loading="lazy">
                         </div>
-                        <div class="col-lg-4 text-center">
-                            <div class="bg-white p-4 rounded-3 shadow-sm">
-                                <i class="bi bi-handshake text-primary" style="font-size: 3rem;"></i>
-                                <h5 class="mt-3 text-primary">Unisciti a noi</h5>
-                                <p class="text-muted small mb-3">
-                                    Diventa parte della rete che promuove l'Europa sul territorio
-                                </p>
-                                <a href="{{ route('contact') }}" class="btn btn-primary">
-                                    <i class="bi bi-envelope me-2"></i>Contattaci
-                                </a>
-                            </div>
+                        <h5 class="fw-bold mb-1">Giovanni Vezzoni</h5>
+                        <span class="text-primary small text-uppercase fw-semibold tracking-wide">Presidente</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="card text-center h-100 board-member-card py-4">
+                    <div class="card-body">
+                        <div class="board-member-avatar-wrap mx-auto mb-3">
+                            <img src="{{ asset('img/team/dante_mantovani.svg') }}" alt="Foto profilo di Dante Mantovani"
+                                class="board-member-avatar" loading="lazy">
                         </div>
+                        <h5 class="fw-bold mb-1">Dante Mantovani</h5>
+                        <span class="text-body-secondary small text-uppercase fw-semibold tracking-wide">Consigliere</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="card text-center h-100 board-member-card py-4">
+                    <div class="card-body">
+                        <div class="board-member-avatar-wrap mx-auto mb-3">
+                            <img src="{{ asset('img/team/marco_perrucchini.svg') }}"
+                                alt="Foto profilo di Don Marco Perrucchini" class="board-member-avatar" loading="lazy">
+                        </div>
+                        <h5 class="fw-bold mb-1">Don Marco Perrucchini</h5>
+                        <span class="text-body-secondary small text-uppercase fw-semibold tracking-wide">Consigliere</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="card text-center h-100 board-member-card py-4">
+                    <div class="card-body">
+                        <div class="board-member-avatar-wrap mx-auto mb-3">
+                            <img src="{{ asset('img/team/renzo_fracassi.svg') }}" alt="Foto profilo di Renzo Fracassi"
+                                class="board-member-avatar" loading="lazy">
+                        </div>
+                        <h5 class="fw-bold mb-1">Renzo Fracassi</h5>
+                        <span class="text-body-secondary small text-uppercase fw-semibold tracking-wide">Consigliere</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="card text-center h-100 board-member-card py-4">
+                    <div class="card-body">
+                        <div class="board-member-avatar-wrap mx-auto mb-3">
+                            <img src="{{ asset('img/team/francesco_piovani.svg') }}" alt="Foto profilo di Francesco Piovani"
+                                class="board-member-avatar" loading="lazy">
+                        </div>
+                        <h5 class="fw-bold mb-1">Francesco Piovani</h5>
+                        <span class="text-body-secondary small text-uppercase fw-semibold tracking-wide">Revisore
+                            Unico</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="card text-center h-100 board-member-card py-4">
+                    <div class="card-body">
+                        <div class="board-member-avatar-wrap mx-auto mb-3">
+                            <img src="{{ asset('img/team/francesca_fiini.svg') }}" alt="Foto profilo di Francesca Fiini"
+                                class="board-member-avatar" loading="lazy">
+                        </div>
+                        <h5 class="fw-bold mb-1">Francesca Fiini</h5>
+                        <span class="text-body-secondary small text-uppercase fw-semibold tracking-wide">Segretaria</span>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Call to Action finale -->
-        <div class="row">
-            <div class="col-12 text-center">
-                <div class="bg-europe text-white p-5 rounded-4 text-center">
-                    <h3 class="fw-bold mb-3">Costruiamo insieme il futuro europeo</h3>
-                    <p class="lead mb-4">
-                        Dal 2013 lavoriamo per avvicinare il territorio alle opportunità europee.
-                        Scopri i nostri progetti e partecipa alla costruzione di una cittadinanza europea attiva.
+        <div class="row mb-5 align-items-stretch">
+
+            <div class="col-lg-6 mb-5 mb-lg-0 pe-lg-4 d-flex flex-column">
+                <h3 class="fw-bold mb-4">Documenti di Trasparenza</h3>
+                <p class="text-body-secondary mb-4">
+                    Garantiamo piena visibilità sulle nostre attività mettendo a disposizione di tutti i cittadini i nostri
+                    documenti ufficiali.
+                </p>
+                <div class="list-group list-group-flush mt-auto border-top">
+                    <a href="{{ asset('documents/atto-costitutivo-statuto.txt') }}" download
+                        class="list-group-item list-group-item-action d-flex align-items-center p-3 transparency-link border-0 border-bottom">
+                        <i class="bi bi-file-earmark-pdf text-body-tertiary me-3 fs-3"></i>
+                        <div>
+                            <h6 class="mb-1 fw-semibold text-dark">Atto Costitutivo e Statuto</h6>
+                            <small class="text-body-secondary">Fondazione dell'associazione</small>
+                        </div>
+                    </a>
+                    <a href="{{ asset('documents/bilancio-missione-2025.txt') }}" download
+                        class="list-group-item list-group-item-action d-flex align-items-center p-3 transparency-link border-0 border-bottom">
+                        <i class="bi bi-graph-up text-body-tertiary me-3 fs-3"></i>
+                        <div>
+                            <h6 class="mb-1 fw-semibold text-dark">Bilancio di Missione 2025</h6>
+                            <small class="text-body-secondary">Archivio rendiconti delle attività</small>
+                        </div>
+                    </a>
+                    <a href="{{ asset('documents/privacy-cookie-policy.txt') }}" download
+                        class="list-group-item list-group-item-action d-flex align-items-center p-3 transparency-link border-0 border-bottom">
+                        <i class="bi bi-shield-check text-body-tertiary me-3 fs-3"></i>
+                        <div>
+                            <h6 class="mb-1 fw-semibold text-dark">Privacy & Cookie Policy</h6>
+                            <small class="text-body-secondary">Protezione dei dati personali</small>
+                        </div>
+                    </a>
+                </div>
+            </div>
+
+            <div class="col-lg-6">
+                <div
+                    class="bg-europe p-4 p-md-5 rounded-4 h-100 d-flex flex-column justify-content-center text-center shadow-sm">
+                    <h3 class="fw-bold text-white mb-3">Costruiamo insieme il futuro europeo</h3>
+                    <p class="text-white-50 mb-4">
+                        L'adesione ad Atelier Europeo è aperta a tutti gli <strong>enti pubblici e privati</strong>. Scopri
+                        i nostri progetti o contattaci per diventare parte attiva della nostra rete.
                     </p>
-                    <div class="d-flex gap-3 justify-content-center flex-wrap">
-                        <a href="{{ route('project.index') }}" class="btn btn-light btn-lg">
-                            <i class="bi bi-folder-open me-2"></i>Scopri i Progetti
+                    <div class="d-flex gap-3 justify-content-center flex-column flex-sm-row mt-4">
+                        <a href="{{ route('project.index') }}" class="btn px-4 py-2 btn-ae btn-ae-pill btn-ae-light">
+                            Scopri i Progetti
                         </a>
-                        <a href="{{ route('contact') }}" class="btn btn-outline-light btn-lg">
-                            <i class="bi bi-telephone me-2"></i>Contattaci
+                        <a href="{{ route('contact') }}" class="btn px-4 py-2 btn-ae btn-ae-pill btn-ae-outline-light">
+                            Contattaci
                         </a>
                     </div>
                 </div>
             </div>
+
         </div>
     </div>
 @endsection
