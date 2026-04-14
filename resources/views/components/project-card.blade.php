@@ -50,7 +50,9 @@
             @endguest
 
             @auth
-                <button type="button" class="btn-favorite" data-project-id="{{ $project->id }}">
+                <button type="button" class="btn-favorite js-favorite-toggle"
+                    data-project-id="{{ $project->id }}" data-url="{{ route('project.favorite.toggle', $project->id) }}"
+                    aria-label="Toggle favorite">
                     <i class="bi bi-heart{{ auth()->user()->favorites->contains($project->id) ? '-fill' : '' }}"></i>
                 </button>
             @endauth
@@ -64,9 +66,12 @@
         {{-- Header --}}
         <div class="d-flex justify-content-between align-items-center">
             <span><i class="bi bi-geo-alt-fill me-2"></i>{{ $project->location }}</span>
-            <button type="button" class="{{ $badge }}" data-bs-toggle="modal"
-                data-bs-target="#infoModal-{{ $category->tag }}">{{ $category->tag }} <i
-                    class="bi bi-info-circle ms-1"></i></button>
+            <span class="d-inline-block position-relative z-3" tabindex="0" data-bs-toggle="tooltip"
+                data-bs-placement="top" title="Clicca per info sul programma {{ $category->name }}">
+                <button type="button" class="{{ $badge }} position-relative z-3" data-bs-toggle="modal"
+                    data-bs-target="#infoModal-{{ $category->tag }}">{{ $category->tag }} <i
+                        class="bi bi-info-circle ms-1"></i></button>
+            </span>
         </div>
         {{-- Titolo --}}
         <h4 class="project-card-title">{{ $project->title }}</h4>
@@ -101,8 +106,8 @@
                         Devi accedere al tuo account per poter salvare i progetti nei preferiti e ritrovarli in seguito.
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Annulla</button>
-                        <a href="{{ route('login') }}" class="btn btn-primary">Accedi</a>
+                        <button type="button" class="btn btn-ae-outline-secondary" data-bs-dismiss="modal">Annulla</button>
+                        <a href="{{ route('login') }}" class="btn btn-ae-primary">Accedi</a>
                     </div>
                 </div>
             </div>
