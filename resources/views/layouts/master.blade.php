@@ -10,7 +10,8 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <!-- CSS -->
-    {{-- <link rel="stylesheet" href="{{ url('/') }}/css/style.css"> --}}
+    {{--
+    <link rel="stylesheet" href="{{ url('/') }}/css/style.css"> --}}
     <link rel="stylesheet" href="{{ url('/') }}/css/project.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
@@ -65,12 +66,12 @@
                             aria-labelledby="guestUserDropdown">
                             <div class="d-grid gap-2" style="min-width: 8rem;">
                                 <a href="{{ route('login') }}"
-                                    class="btn btn-primary btn-access-login d-flex align-items-center justify-content-center gap-2">
+                                    class="btn btn-ae btn-ae-square btn-ae-primary d-flex align-items-center justify-content-center gap-2">
                                     <i class="bi bi-box-arrow-in-right"></i>
                                     <span>{{ __('master.auth.login') }}</span>
                                 </a>
                                 <a href="{{ route('register') }}"
-                                    class="btn btn-warning d-flex align-items-center justify-content-center gap-2">
+                                    class="btn btn-ae btn-ae-square btn-ae-warning d-flex align-items-center justify-content-center gap-2">
                                     <i class="bi bi-plus-square"></i>
                                     <span>{{ __('master.auth.register') }}</span>
                                 </a>
@@ -91,20 +92,20 @@
                                 aria-labelledby="adminUserDropdown">
                                 <div class="d-grid gap-2" style="min-width: 8rem;">
                                     <a href="{{ route('profile.edit') }}"
-                                        class="btn btn-primary btn-access-login d-flex align-items-center justify-content-center gap-2">
+                                        class="btn btn-ae btn-ae-square btn-ae-primary d-flex align-items-center justify-content-center gap-2">
                                         <i class="bi bi-person-fill-gear"></i>
                                         <span>{{ __('master.auth.profile') }}</span>
                                     </a>
 
                                     @if ($isAdminPreview)
                                         <a href="{{ route('admin.return') }}"
-                                            class="btn btn-secondary d-flex align-items-center justify-content-center gap-2">
+                                            class="btn btn-ae btn-ae-square btn-ae-secondary d-flex align-items-center justify-content-center gap-2">
                                             <i class="bi bi-arrow-counterclockwise"></i>
                                             <span>{{ __('master.auth.return_admin') }}</span>
                                         </a>
                                     @else
                                         <a href="{{ route('admin.view-user') }}"
-                                            class="btn btn-secondary d-flex align-items-center justify-content-center gap-2">
+                                            class="btn btn-ae btn-ae-square btn-ae-secondary d-flex align-items-center justify-content-center gap-2">
                                             <i class="bi bi-eye-fill"></i>
                                             <span>{{ __('master.auth.user_view') }}</span>
                                         </a>
@@ -112,7 +113,7 @@
                                     <form action="{{ route('logout') }}" method="POST">
                                         @csrf
                                         <button type="submit"
-                                            class="btn btn-outline-danger w-100 d-inline-flex align-items-center justify-content-center gap-2">
+                                            class="btn btn-ae btn-ae-square btn-ae-outline-danger w-100 d-inline-flex align-items-center justify-content-center gap-2">
                                             <i class="bi bi-box-arrow-right"></i>
                                             <span>{{ __('master.auth.logout') }}</span>
                                         </button>
@@ -131,7 +132,7 @@
                                 aria-labelledby="standardUserDropdown">
                                 <div class="d-grid gap-2" style="min-width: 8rem;">
                                     <a href="{{ route('profile.edit') }}"
-                                        class="btn btn-primary btn-access-login d-flex align-items-center justify-content-center gap-2">
+                                        class="btn btn-ae btn-ae-square btn-ae-primary d-flex align-items-center justify-content-center gap-2">
                                         <i class="bi bi-person-fill-gear"></i>
                                         <span>{{ __('master.auth.profile') }}</span>
                                     </a>
@@ -165,8 +166,8 @@
                 </button>
 
                 <!-- Hamburger -->
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
-                    data-bs-target="#mainNavbarLinks" aria-controls="mainNavbarLinks" aria-expanded="false"
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbarLinks"
+                    aria-controls="mainNavbarLinks" aria-expanded="false"
                     aria-label="{{ __('master.aria.toggle_navigation') }}">
                     <span class="navbar-toggler-icon"></span>
                 </button>
@@ -220,8 +221,7 @@
     </nav>
 
     <!-- Modale Lingua -->
-    <div class="modal fade" id="languageModal" tabindex="-1" aria-labelledby="languageModalLabel"
-        aria-hidden="true">
+    <div class="modal fade" id="languageModal" tabindex="-1" aria-labelledby="languageModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content language-modal-content">
                 <div class="modal-header border-0 pb-1">
@@ -291,8 +291,7 @@
                 <div class="col-md-5 col-lg-4">
                     <div class="d-flex align-items-center mb-3">
                         <a href="{{ $brandRoute }}" class="d-inline-flex align-items-center text-decoration-none">
-                            <img src="{{ asset('img/ae-icon.svg') }}" alt="Atelier Europeo" height="40"
-                                class="me-2">
+                            <img src="{{ asset('img/ae-icon.svg') }}" alt="Atelier Europeo" height="40" class="me-2">
                             <h5 class="mb-0 footer-brand-title">{{ __('master.brand') }}</h5>
                         </a>
                     </div>
@@ -450,9 +449,8 @@
                                     </li>
                                     <li class="d-flex align-items-center gap-2">
                                         <i class="bi bi-linkedin"></i>
-                                        <a class="footer-link"
-                                            href="https://www.linkedin.com/company/atelier-europeo/" target="_blank"
-                                            rel="noopener noreferrer">LinkedIn</a>
+                                        <a class="footer-link" href="https://www.linkedin.com/company/atelier-europeo/"
+                                            target="_blank" rel="noopener noreferrer">LinkedIn</a>
                                     </li>
                                 </ul>
                             </div>
@@ -477,7 +475,7 @@
     </footer>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const navbar = document.querySelector('.main-navbar');
             if (!navbar) return;
 
