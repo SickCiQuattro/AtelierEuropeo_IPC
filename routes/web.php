@@ -71,6 +71,11 @@ Route::get('/project/create', [ProjectController::class, 'create'])
 // Vista singolo progetto (pubblica)
 Route::get('/project/{project}', [ProjectController::class, 'show'])->name('project.show');
 
+// Toggle preferiti progetto (AJAX)
+Route::post('/projects/{project}/favorite', [FavoriteController::class, 'toggle'])
+    ->name('project.favorite.toggle')
+    ->middleware('auth');
+
 /*
 |--------------------------------------------------------------------------
 | Route Utenti Autenticati
@@ -116,7 +121,7 @@ Route::middleware('auth')->group(function () {
     */
     Route::prefix('favorites')->name('favorites.')->group(function () {
         Route::get('/', [FavoriteController::class, 'index'])->name('index');
-        Route::post('/toggle', [FavoriteController::class, 'toggle'])->name('toggle');
+        Route::post('/toggle', [FavoriteController::class, 'toggleLegacy'])->name('toggle');
     });
 });
 
