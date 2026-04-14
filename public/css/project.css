@@ -102,6 +102,15 @@
     transition: background-color 0.3s;
 }
 
+.btn-favorite .bi-heart {
+    color: #000000 !important;
+}
+
+.btn-favorite .bi-heart-fill {
+    color: #ffffff !important;
+    filter: drop-shadow(0px 2px 4px rgba(0, 0, 0, 0.5));
+}
+
 .badge-departure {
     display: flex;
     flex-direction: column;
