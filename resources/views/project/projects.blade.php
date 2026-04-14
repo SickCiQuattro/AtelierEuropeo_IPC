@@ -60,12 +60,12 @@
                             <input type="text" name="q" value="{{ request('q') }}" class="form-control"
                                 placeholder="Titolo, descrizione, paese..." aria-label="Ricerca progetti"
                                 aria-describedby="project-search-icon">
-                            <button type="submit" class="btn btn-outline-secondary">Cerca</button>
+                            <button type="submit" class="btn btn-ae-outline-secondary">Cerca</button>
                         </div>
                     </form>
 
                     <div class="d-flex justify-content-end mt-3">
-                        <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal"
+                        <button type="button" class="btn btn-ae-outline-secondary" data-bs-toggle="modal"
                             data-bs-target="#projectFiltersModal">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                                 class="bi bi-filter" viewBox="0 0 16 16">
@@ -191,7 +191,7 @@
                                 </span>
                             @endif
 
-                                <a href="{{ route('project.index') }}" class="btn btn-sm btn-outline-danger">Rimuovi tutti i
+                                <a href="{{ route('project.index') }}" class="btn btn-sm btn-ae-outline-danger">Rimuovi tutti i
                                     filtri</a>
                             </div>
                         </div>
@@ -315,8 +315,8 @@
                         </div>
 
                         <div class="modal-footer">
-                            <a href="{{ route('project.index') }}" class="btn btn-outline-secondary">Cancella filtri</a>
-                            <button type="submit" class="btn btn-success">Applica filtri</button>
+                            <a href="{{ route('project.index') }}" class="btn btn-ae-outline-secondary">Cancella filtri</a>
+                            <button type="submit" class="btn btn-ae-success">Applica filtri</button>
                         </div>
                     </form>
                 </div>
