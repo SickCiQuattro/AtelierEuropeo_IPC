@@ -55,12 +55,12 @@
                             <input type="text" name="q" value="{{ request('q') }}" class="form-control"
                                 placeholder="Titolo, descrizione, paese..." aria-label="Ricerca progetti archivio"
                                 aria-describedby="portfolio-search-icon">
-                            <button type="submit" class="btn btn-outline-secondary">Cerca</button>
+                            <button type="submit" class="btn btn-ae-outline-secondary">Cerca</button>
                         </div>
                     </form>
 
                     <div class="d-flex justify-content-end mt-3">
-                        <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal"
+                        <button type="button" class="btn btn-ae-outline-secondary" data-bs-toggle="modal"
                             data-bs-target="#portfolioFiltersModal">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                                 class="bi bi-filter" viewBox="0 0 16 16">
@@ -301,7 +301,7 @@
 
                         <div class="modal-footer">
                             <a href="{{ route('project.portfolio') }}" class="btn btn-outline-secondary">Cancella filtri</a>
-                            <button type="submit" class="btn btn-success">Applica filtri</button>
+                            <button type="submit" class="btn btn-ae-success">Applica filtri</button>
                         </div>
                     </form>
                 </div>
