@@ -63,6 +63,12 @@ class User extends Authenticatable
                     ->withTimestamps();
     }
 
+    public function favorites()
+    {
+        return $this->belongsToMany(Project::class, 'user_favorites', 'user_id', 'project_id')
+            ->withTimestamps();
+    }
+
     public function isAdmin()
     {
         return $this->role === 'admin'; 
