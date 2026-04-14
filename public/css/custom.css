@@ -3,6 +3,12 @@
    Loaded AFTER Bootstrap CDN in master.blade.php
    ========================================================= */
 
+body {
+    /* Compensa l'altezza iniziale della navbar. 
+       Se noti che i titoli sono troppo attaccati o staccati, regola questo valore (es. 90px o 110px) */
+    padding-top: 90px; 
+}
+
 :root {
     /* Brand / Bootstrap palette */
     --bs-primary: #001d3d;
@@ -343,7 +349,8 @@
    --------------------------------------------------------- */
 
 .main-navbar {
-    position: sticky;
+    position: fixed;
+    width: 100%;
     top: 0;
     z-index: 1040;
     background-color: var(--bs-primary) !important;

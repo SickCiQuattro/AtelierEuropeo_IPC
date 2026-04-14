@@ -549,7 +549,7 @@
                         }
                     } else {
                         icon.classList.remove('bi-heart-fill');
-                        icon.classList.add('bi-heart'); 
+                        icon.classList.add('bi-heart');
                         favoriteButton.setAttribute('aria-pressed', 'false');
 
                         if (toastElement && toastMessage) {
