@@ -698,3 +698,70 @@
 @media (prefers-reduced-motion: reduce) {
     .about-page .about-fade-in { animation: none; }
 }
+
+/* ---------------------------------------------------------
+   Admin dashboard
+   --------------------------------------------------------- */
+
+.admin-kpi-card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.admin-kpi-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 0.75rem 1.5rem rgba(0, 0, 0, 0.1) !important;
+}
+
+.admin-kpi-icon-active {
+    color: #052C65 !important;
+}
+
+.admin-kpi-icon-pending {
+    color: #F49E0C !important;
+}
+
+.admin-kpi-icon-expiring {
+    color: #FDC503 !important;
+}
+
+.admin-table-clean th,
+.admin-table-clean td {
+    border-left: 0 !important;
+    border-right: 0 !important;
+    vertical-align: middle;
+}
+
+.admin-table-clean thead th {
+    background-color: #f8f9fa;
+    color: #212529;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.admin-table-clean tbody tr.admin-clickable-row {
+    cursor: pointer;
+}
+
+.admin-table-clean tbody tr.admin-clickable-row:nth-child(odd) > * {
+    background-color: #ffffff;
+}
+
+.admin-table-clean tbody tr.admin-clickable-row:nth-child(even) > * {
+    background-color: #f8f9fa;
+}
+
+.admin-table-clean tbody tr.admin-clickable-row:hover > * {
+    background-color: #eaf0ff !important;
+}
+
+.admin-table-clean tbody tr.admin-empty-row > * {
+    background-color: transparent !important;
+}
+
+.admin-list-link {
+    color: #1B4DD8 !important;
+}
+
+.admin-list-link:hover {
+    color: #163fb1 !important;
+}

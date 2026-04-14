@@ -6,6 +6,8 @@ use App\Models\DataLayer;
 use App\Http\Requests\ProjectRequest;
 use App\Models\Category;
 use App\Models\Project;
+use App\Models\Application;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
@@ -18,7 +20,7 @@ class ProjectController extends Controller
      */
     public function index(Request $request)
     {
-        $status = $request->get('status', 'published');
+        $status = $request->input('status', 'published');
         $allowedStatuses = ['published', 'completed', 'draft', 'all'];
 
         if (!in_array($status, $allowedStatuses, true)) {
@@ -32,7 +34,7 @@ class ProjectController extends Controller
         }
 
         if ($request->filled('q')) {
-            $search = trim($request->q);
+            $search = trim($request->input('q'));
             $query->where(function ($q) use ($search) {
                 $q->where('title', 'like', "%{$search}%")
                     ->orWhere('sum_description', 'like', "%{$search}%")
@@ -78,7 +80,7 @@ class ProjectController extends Controller
             $query->whereDate('start_date', '<=', $request->date_to);
         }
 
-        $sort = $request->get('sort', 'relevance');
+        $sort = $request->input('sort', 'relevance');
 
         if ($sort === 'expiring_soon') {
             $query->orderBy('expire_date', 'asc');
@@ -436,7 +438,7 @@ class ProjectController extends Controller
             $query->whereDate('start_date', '<=', $request->date_to);
         }
 
-        $sort = $request->get('sort', 'relevance');
+        $sort = $request->input('sort', 'relevance');
 
         if ($sort === 'oldest') {
             $query->orderBy('end_date', 'asc');
@@ -496,10 +498,36 @@ class ProjectController extends Controller
      */
     public function dashboard()
     {
-        $dl = new DataLayer();
-        $projects = $dl->listProjects(); // Recupera tutti i progetti senza filtri
+        $activeProjectsCount = Project::where('status', 'published')->count();
+        $pendingApplicationsCount = Application::where('status', 'pending')->count();
+        $draftProjectsCount = Project::where('status', 'draft')->count();
 
-        return view('admin.dashboard')
-            ->with('projects', $projects);
+        $expiringProjectsBaseQuery = Project::query()
+            ->where('status', 'published')
+            ->whereNotNull('expire_date')
+            ->whereDate('expire_date', '>=', Carbon::today())
+            ->whereDate('expire_date', '<=', Carbon::today()->copy()->addDays(30))
+            ->orderBy('expire_date', 'asc');
+
+        $expiringProjectsCount = (clone $expiringProjectsBaseQuery)->count();
+
+        $expiringProjects = $expiringProjectsBaseQuery
+            ->take(3)
+            ->get();
+
+        $latestPendingApplications = Application::with(['user', 'project'])
+            ->where('status', 'pending')
+            ->latest()
+            ->take(5)
+            ->get();
+
+        return view('admin.dashboard', compact(
+            'activeProjectsCount',
+            'pendingApplicationsCount',
+            'expiringProjectsCount',
+            'draftProjectsCount',
+            'latestPendingApplications',
+            'expiringProjects'
+        ));
     }
 }
