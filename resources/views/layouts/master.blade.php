@@ -490,6 +490,105 @@
         });
     </script>
 
+    <script>
+        document.addEventListener('click', async function (event) {
+            const favoriteButton = event.target.closest('.js-favorite-toggle');
+            if (!favoriteButton) {
+                return;
+            }
+
+            event.preventDefault();
+            event.stopPropagation();
+
+            if (favoriteButton.disabled) {
+                return;
+            }
+
+            const url = favoriteButton.dataset.url;
+            const csrfTokenMeta = document.querySelector('meta[name="csrf-token"]');
+            const csrfToken = csrfTokenMeta ? csrfTokenMeta.getAttribute('content') : '';
+
+            if (!url || !csrfToken) {
+                return;
+            }
+
+            const icon = favoriteButton.querySelector('i');
+            favoriteButton.disabled = true;
+            favoriteButton.style.opacity = '0.65';
+
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': csrfToken,
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Accept': 'application/json',
+                    },
+                });
+
+                const data = await response.json();
+
+                if (!response.ok || data.status !== 'success') {
+                    throw new Error('Favorite toggle failed');
+                }
+
+                if (icon) {
+                    const toastElement = document.getElementById('favoriteToast');
+                    const toastMessage = document.getElementById('favoriteToastMessage');
+
+                    if (data.is_favorited) {
+                        icon.classList.remove('bi-heart');
+                        icon.classList.add('bi-heart-fill');
+                        favoriteButton.setAttribute('aria-pressed', 'true');
+
+                        if (toastElement && toastMessage) {
+                            toastMessage.textContent = 'Progetto aggiunto ai preferiti!';
+                            toastElement.classList.remove('text-bg-secondary');
+                            toastElement.classList.add('text-bg-success');
+                            bootstrap.Toast.getOrCreateInstance(toastElement).show();
+                        }
+                    } else {
+                        icon.classList.remove('bi-heart-fill');
+                        icon.classList.add('bi-heart'); 
+                        favoriteButton.setAttribute('aria-pressed', 'false');
+
+                        if (toastElement && toastMessage) {
+                            toastMessage.textContent = 'Progetto rimosso dai preferiti.';
+                            toastElement.classList.remove('text-bg-success');
+                            toastElement.classList.add('text-bg-secondary');
+                            bootstrap.Toast.getOrCreateInstance(toastElement).show();
+                        }
+                    }
+                }
+            } catch (error) {
+                console.error('Errore toggle preferiti:', error);
+            } finally {
+                favoriteButton.disabled = false;
+                favoriteButton.style.opacity = '';
+            }
+        });
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl);
+            });
+        });
+    </script>
+
+    <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 1080;">
+        <div id="favoriteToast" class="toast align-items-center text-bg-success border-0" role="alert"
+            aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body" id="favoriteToastMessage"></div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+                    aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+
     <x-category-info-modals />
 
     @yield('scripts')
