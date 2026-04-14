@@ -20,6 +20,11 @@
     position: relative;
 }
 
+.project-card:hover {
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    transition: box-shadow 0.3s;
+}
+
 .project-card-image {
     border-radius: 20px;
     width: 100%;
@@ -84,13 +89,17 @@
     position: absolute;
     top: 10px;
     right: 10px;
-    background-color: #F9FAFB;
-    opacity: 0.8;
+    background-color: #F9FAFBCC;
     border: none;
     border-radius: 100%;
     color: #000000;
     font-size: 24px;
-    z-index: 1;
+    z-index: 3;
+}
+
+.btn-favorite:hover {
+    background-color: #F9FAFB;
+    transition: background-color 0.3s;
 }
 
 .badge-departure {
@@ -100,6 +109,8 @@
     text-align: center;
     text-transform: capitalize;
     position: absolute;
+    width: 40px;
+    height: 70px;
     top: 10px;
     left: 10px;
     padding: 4px;
