@@ -58,39 +58,6 @@
                     </p>
                 </div>
 
-                <!-- Messaggi di sessione Laravel -->
-                @if (session('success'))
-                    <div class="alert alert-success alert-dismissible fade show" role="alert">
-                        <i class="bi bi-check-circle-fill me-2"></i>
-                        {{ session('success') }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                @endif
-
-                @if (session('error'))
-                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                        <i class="bi bi-exclamation-triangle-fill me-2"></i>
-                        {{ session('error') }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                @endif
-
-                @if (session('warning'))
-                    <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                        <i class="bi bi-exclamation-triangle-fill me-2"></i>
-                        {{ session('warning') }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                @endif
-
-                @if (session('info'))
-                    <div class="alert alert-info alert-dismissible fade show" role="alert">
-                        <i class="bi bi-info-circle-fill me-2"></i>
-                        {{ session('info') }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                @endif
-
                 <!-- Alert per messaggi di validazione -->
                 <div id="validation-alert" class="alert alert-danger d-none" role="alert">
                     <h6 class="alert-heading mb-2">
@@ -443,19 +410,19 @@
                             <div class="col-12">
                                 <div class="border-top border-primary border-opacity-25 pt-4">
                                     <div class="d-flex flex-column flex-sm-row gap-3 justify-content-between">
-                                        <a class="btn btn-outline-secondary d-flex align-items-center justify-content-center" href="{{ route('project.index') }}">
+                                        <a class="btn btn-ae btn-ae-outline-secondary d-flex align-items-center justify-content-center" href="{{ route('project.index') }}">
                                             <i class="bi bi-arrow-left me-2"></i>Annulla e Torna Indietro
                                         </a>
                                         
                                         <div class="d-flex gap-2">
                                             @if (isset($project))
-                                                <button type="submit" class="btn btn-primary d-flex align-items-center justify-content-center" id="submit-btn">
+                                                <button type="submit" class="btn btn-ae btn-ae-primary d-flex align-items-center justify-content-center" id="submit-btn">
                                                     <i class="bi bi-check-circle me-2"></i>
                                                     <span class="btn-text">Aggiorna Progetto</span>
                                                     <span class="spinner-border spinner-border-sm ms-2 d-none" role="status" aria-hidden="true"></span>
                                                 </button>
                                             @else
-                                                <button type="submit" class="btn btn-success d-flex align-items-center justify-content-center" id="submit-btn">
+                                                <button type="submit" class="btn btn-ae btn-ae-success d-flex align-items-center justify-content-center" id="submit-btn">
                                                     <i class="bi bi-rocket-takeoff me-2"></i>
                                                     <span class="btn-text">Lancia il Tuo Progetto</span>
                                                     <span class="spinner-border spinner-border-sm ms-2 d-none" role="status" aria-hidden="true"></span>

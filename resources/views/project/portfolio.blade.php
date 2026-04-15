@@ -5,14 +5,19 @@
 @section('active_portfolio', 'active')
 
 @section('body')
-    <main class="container py-4">
-        <div class="text-center mb-5">
-            <h1>Archivio Progetti</h1>
-            <p class="mb-0">Scopri i progetti che abbiamo concluso con successo e l'impatto che abbiamo generato in Europa.</p>
-        </div>
+    <main class="container py-5 projects-list-page">
 
-        <div class="row justify-content-center">
-            <div class="col-12 col-xl-10">
+        <div class="row g-0">
+            <div class="col-12">
+                <div class="row mb-5">
+                    <div class="col-12 text-center">
+                        <h1 class="display-4 fw-bold text-dark mb-3">Archivio Progetti</h1>
+                        <p class="lead text-body-secondary col-md-8 mx-auto">
+                            Scopri i progetti che abbiamo concluso con successo e l'impatto che abbiamo generato in Europa.
+                        </p>
+                    </div>
+                </div>
+
                 @php
                     $hasActiveFilters = request()->filled('q')
                         || in_array(request('sort'), ['latest', 'oldest'], true)
@@ -83,7 +88,8 @@
                                     <span class="badge bg-secondary rounded-pill">
                                         Ricerca: {{ request('q') }}
                                         <a href="{{ route('project.portfolio', $removeQParams) }}"
-                                            class="text-white text-decoration-none ms-1" aria-label="Rimuovi filtro ricerca">&times;</a>
+                                            class="text-white text-decoration-none ms-1"
+                                            aria-label="Rimuovi filtro ricerca">&times;</a>
                                     </span>
                                 @endif
 
@@ -94,7 +100,8 @@
                                     <span class="badge bg-secondary rounded-pill">
                                         Ordine: Più recenti
                                         <a href="{{ route('project.portfolio', $removeSortParams) }}"
-                                            class="text-white text-decoration-none ms-1" aria-label="Rimuovi ordinamento">&times;</a>
+                                            class="text-white text-decoration-none ms-1"
+                                            aria-label="Rimuovi ordinamento">&times;</a>
                                     </span>
                                 @elseif (request('sort') === 'oldest')
                                     @php
@@ -103,7 +110,8 @@
                                     <span class="badge bg-secondary rounded-pill">
                                         Ordine: Meno recenti
                                         <a href="{{ route('project.portfolio', $removeSortParams) }}"
-                                            class="text-white text-decoration-none ms-1" aria-label="Rimuovi ordinamento">&times;</a>
+                                            class="text-white text-decoration-none ms-1"
+                                            aria-label="Rimuovi ordinamento">&times;</a>
                                     </span>
                                 @endif
 
@@ -119,19 +127,22 @@
                                         <span class="badge bg-secondary rounded-pill">
                                             Durata: Breve
                                             <a href="{{ route('project.portfolio', $removeDurationParams) }}"
-                                                class="text-white text-decoration-none ms-1" aria-label="Rimuovi durata breve">&times;</a>
+                                                class="text-white text-decoration-none ms-1"
+                                                aria-label="Rimuovi durata breve">&times;</a>
                                         </span>
                                     @elseif ($duration === 'medium')
                                         <span class="badge bg-secondary rounded-pill">
                                             Durata: Media
                                             <a href="{{ route('project.portfolio', $removeDurationParams) }}"
-                                                class="text-white text-decoration-none ms-1" aria-label="Rimuovi durata media">&times;</a>
+                                                class="text-white text-decoration-none ms-1"
+                                                aria-label="Rimuovi durata media">&times;</a>
                                         </span>
                                     @elseif ($duration === 'long')
                                         <span class="badge bg-secondary rounded-pill">
                                             Durata: Lunga
                                             <a href="{{ route('project.portfolio', $removeDurationParams) }}"
-                                                class="text-white text-decoration-none ms-1" aria-label="Rimuovi durata lunga">&times;</a>
+                                                class="text-white text-decoration-none ms-1"
+                                                aria-label="Rimuovi durata lunga">&times;</a>
                                         </span>
                                     @elseif ($duration === 'very_long')
                                         <span class="badge bg-secondary rounded-pill">
@@ -186,7 +197,8 @@
                                     </span>
                                 @endif
 
-                                <a href="{{ route('project.portfolio') }}" class="btn btn-sm btn-outline-danger">Rimuovi tutti i filtri</a>
+                                <a href="{{ route('project.portfolio') }}"
+                                    class="btn btn-sm btn-ae btn-ae-outline-danger">Rimuovi tutti i filtri</a>
                             </div>
                         </div>
                     @endif
@@ -227,8 +239,10 @@
                                 <label for="sort" class="form-label fw-semibold">Ordina per</label>
                                 <select class="form-select" id="sort" name="sort">
                                     <option value="relevance" {{ request('sort', 'relevance') === 'relevance' ? 'selected' : '' }}>Rilevanza</option>
-                                    <option value="latest" {{ request('sort') === 'latest' ? 'selected' : '' }}>Più recenti</option>
-                                    <option value="oldest" {{ request('sort') === 'oldest' ? 'selected' : '' }}>Meno recenti</option>
+                                    <option value="latest" {{ request('sort') === 'latest' ? 'selected' : '' }}>Più recenti
+                                    </option>
+                                    <option value="oldest" {{ request('sort') === 'oldest' ? 'selected' : '' }}>Meno recenti
+                                    </option>
                                 </select>
                             </div>
 
@@ -239,28 +253,32 @@
                                         <div class="form-check">
                                             <input class="form-check-input" type="checkbox" name="duration[]" value="short"
                                                 id="duration-short" {{ in_array('short', (array) request('duration', []), true) ? 'checked' : '' }}>
-                                            <label class="form-check-label" for="duration-short">Breve (&lt; 15 giorni)</label>
+                                            <label class="form-check-label" for="duration-short">Breve (&lt; 15
+                                                giorni)</label>
                                         </div>
                                     </div>
                                     <div class="col-12 col-md-6">
                                         <div class="form-check">
                                             <input class="form-check-input" type="checkbox" name="duration[]" value="medium"
                                                 id="duration-medium" {{ in_array('medium', (array) request('duration', []), true) ? 'checked' : '' }}>
-                                            <label class="form-check-label" for="duration-medium">Media (15 - 60 giorni)</label>
+                                            <label class="form-check-label" for="duration-medium">Media (15 - 60
+                                                giorni)</label>
                                         </div>
                                     </div>
                                     <div class="col-12 col-md-6">
                                         <div class="form-check">
                                             <input class="form-check-input" type="checkbox" name="duration[]" value="long"
                                                 id="duration-long" {{ in_array('long', (array) request('duration', []), true) ? 'checked' : '' }}>
-                                            <label class="form-check-label" for="duration-long">Lunga (60 - 180 giorni)</label>
+                                            <label class="form-check-label" for="duration-long">Lunga (60 - 180
+                                                giorni)</label>
                                         </div>
                                     </div>
                                     <div class="col-12 col-md-6">
                                         <div class="form-check">
                                             <input class="form-check-input" type="checkbox" name="duration[]"
                                                 value="very_long" id="duration-very-long" {{ in_array('very_long', (array) request('duration', []), true) ? 'checked' : '' }}>
-                                            <label class="form-check-label" for="duration-very-long">Molto lunga (&gt; 180 giorni)</label>
+                                            <label class="form-check-label" for="duration-very-long">Molto lunga (&gt; 180
+                                                giorni)</label>
                                         </div>
                                     </div>
                                 </div>
@@ -300,35 +318,13 @@
                         </div>
 
                         <div class="modal-footer">
-                            <a href="{{ route('project.portfolio') }}" class="btn btn-outline-secondary">Cancella filtri</a>
-                            <button type="submit" class="btn btn-ae-success">Applica filtri</button>
+                            <a href="{{ route('project.portfolio') }}" class="btn btn-ae btn-ae-outline-secondary">Cancella
+                                filtri</a>
+                            <button type="submit" class="btn btn-ae btn-ae-success">Applica filtri</button>
                         </div>
                     </form>
                 </div>
             </div>
         </div>
     </main>
-@endsection
-
-@section('scripts')
-    <style>
-        .search-filter-wrapper {
-            top: 56px;
-            /* Adattare ai pixel esatti dell'altezza della Navbar su mobile */
-            z-index: 1020;
-        }
-
-        @media (min-width: 992px) {
-            .search-filter-wrapper {
-                position: static !important;
-                background-color: transparent !important;
-                box-shadow: none !important;
-                border: none !important;
-                padding-top: 0 !important;
-                padding-bottom: 0 !important;
-                padding-left: 0 !important;
-                padding-right: 0 !important;
-            }
-        }
-    </style>
 @endsection

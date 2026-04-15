@@ -5,15 +5,16 @@
 @section('active_progetti', 'active')
 
 @section('body')
-    <main class="container py-4">
-        <div class="text-center mb-5">
-            <h1>Progetti Disponibili</h1>
-            <p class="mb-0">Scopri i nostri progetti di volontariato, scambi giovanili e corsi di formazione in tutta
-                Europa.</p>
-        </div>
+    <main class="container py-5 projects-list-page">
+        <div class="row g-0">
+            <div class="col-12">
+                <div class="text-center mb-5">
+                    <h1 class="display-4 fw-bold text-dark mb-3">Progetti Disponibili</h1>
+                    <p class="lead text-body-secondary col-md-8 mx-auto">Scopri i nostri progetti di volontariato, scambi
+                        giovanili
+                        e corsi di formazione in tutta Europa.</p>
+                </div>
 
-        <div class="row justify-content-center">
-            <div class="col-12 col-xl-10">
                 @php
                     $hasActiveFilters = request()->filled('q')
                         || in_array(request('sort'), ['expiring_soon', 'latest'], true)
@@ -60,12 +61,12 @@
                             <input type="text" name="q" value="{{ request('q') }}" class="form-control"
                                 placeholder="Titolo, descrizione, paese..." aria-label="Ricerca progetti"
                                 aria-describedby="project-search-icon">
-                            <button type="submit" class="btn btn-ae-outline-secondary">Cerca</button>
+                            <button type="submit" class="btn btn-ae btn-ae-outline-secondary">Cerca</button>
                         </div>
                     </form>
 
                     <div class="d-flex justify-content-end mt-3">
-                        <button type="button" class="btn btn-ae-outline-secondary" data-bs-toggle="modal"
+                        <button type="button" class="btn btn-ae btn-ae-outline-secondary" data-bs-toggle="modal"
                             data-bs-target="#projectFiltersModal">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                                 class="bi bi-filter" viewBox="0 0 16 16">
@@ -81,137 +82,144 @@
                             <div class="d-flex flex-wrap align-items-center gap-2">
                                 <span class="fw-semibold">Filtri Attivi:</span>
 
-                            @if (request()->filled('q'))
-                                @php
-                                    $removeQParams = request()->except('q', 'page');
-                                @endphp
-                                <span class="badge bg-secondary rounded-pill">
-                                    Ricerca: {{ request('q') }}
-                                    <a href="{{ route('project.index', $removeQParams) }}"
-                                        class="text-white text-decoration-none ms-1" aria-label="Rimuovi filtro ricerca">&times;</a>
-                                </span>
-                            @endif
-
-                            @if (request('sort') === 'expiring_soon')
-                                @php
-                                    $removeSortParams = request()->except('sort', 'page');
-                                @endphp
-                                <span class="badge bg-secondary rounded-pill">
-                                    Ordine: In scadenza
-                                    <a href="{{ route('project.index', $removeSortParams) }}"
-                                        class="text-white text-decoration-none ms-1" aria-label="Rimuovi ordinamento">&times;</a>
-                                </span>
-                            @elseif (request('sort') === 'latest')
-                                @php
-                                    $removeSortParams = request()->except('sort', 'page');
-                                @endphp
-                                <span class="badge bg-secondary rounded-pill">
-                                    Ordine: Più recenti
-                                    <a href="{{ route('project.index', $removeSortParams) }}"
-                                        class="text-white text-decoration-none ms-1" aria-label="Rimuovi ordinamento">&times;</a>
-                                </span>
-                            @endif
-
-                            @foreach ((array) request('duration', []) as $duration)
-                                @php
-                                    $newDurations = array_values(array_filter((array) request('duration', []), fn($d) => $d !== $duration));
-                                    $removeDurationParams = request()->except('duration', 'page');
-                                    if (!empty($newDurations)) {
-                                        $removeDurationParams['duration'] = $newDurations;
-                                    }
-                                @endphp
-                                @if ($duration === 'short')
+                                @if (request()->filled('q'))
+                                    @php
+                                        $removeQParams = request()->except('q', 'page');
+                                    @endphp
                                     <span class="badge bg-secondary rounded-pill">
-                                        Durata: Breve
-                                        <a href="{{ route('project.index', $removeDurationParams) }}"
-                                            class="text-white text-decoration-none ms-1" aria-label="Rimuovi durata breve">&times;</a>
-                                    </span>
-                                @elseif ($duration === 'medium')
-                                    <span class="badge bg-secondary rounded-pill">
-                                        Durata: Media
-                                        <a href="{{ route('project.index', $removeDurationParams) }}"
-                                            class="text-white text-decoration-none ms-1" aria-label="Rimuovi durata media">&times;</a>
-                                    </span>
-                                @elseif ($duration === 'long')
-                                    <span class="badge bg-secondary rounded-pill">
-                                        Durata: Lunga
-                                        <a href="{{ route('project.index', $removeDurationParams) }}"
-                                            class="text-white text-decoration-none ms-1" aria-label="Rimuovi durata lunga">&times;</a>
-                                    </span>
-                                @elseif ($duration === 'very_long')
-                                    <span class="badge bg-secondary rounded-pill">
-                                        Durata: Molto lunga
-                                        <a href="{{ route('project.index', $removeDurationParams) }}"
+                                        Ricerca: {{ request('q') }}
+                                        <a href="{{ route('project.index', $removeQParams) }}"
                                             class="text-white text-decoration-none ms-1"
-                                            aria-label="Rimuovi durata molto lunga">&times;</a>
+                                            aria-label="Rimuovi filtro ricerca">&times;</a>
                                     </span>
                                 @endif
-                            @endforeach
 
-                            @foreach ((array) request('category', []) as $categoryId)
-                                @php
-                                    $activeCategory = $categories->firstWhere('id', (int) $categoryId);
-                                    $newCategories = array_values(array_filter((array) request('category', []), fn($id) => (string) $id !== (string) $categoryId));
-                                    $removeCategoryParams = request()->except('category', 'page');
-                                    if (!empty($newCategories)) {
-                                        $removeCategoryParams['category'] = $newCategories;
-                                    }
-                                @endphp
-                                @if ($activeCategory)
+                                @if (request('sort') === 'expiring_soon')
+                                    @php
+                                        $removeSortParams = request()->except('sort', 'page');
+                                    @endphp
                                     <span class="badge bg-secondary rounded-pill">
-                                        Categoria: {{ $activeCategory->name }}
-                                        <a href="{{ route('project.index', $removeCategoryParams) }}"
+                                        Ordine: In scadenza
+                                        <a href="{{ route('project.index', $removeSortParams) }}"
                                             class="text-white text-decoration-none ms-1"
-                                            aria-label="Rimuovi categoria {{ $activeCategory->name }}">&times;</a>
+                                            aria-label="Rimuovi ordinamento">&times;</a>
+                                    </span>
+                                @elseif (request('sort') === 'latest')
+                                    @php
+                                        $removeSortParams = request()->except('sort', 'page');
+                                    @endphp
+                                    <span class="badge bg-secondary rounded-pill">
+                                        Ordine: Più recenti
+                                        <a href="{{ route('project.index', $removeSortParams) }}"
+                                            class="text-white text-decoration-none ms-1"
+                                            aria-label="Rimuovi ordinamento">&times;</a>
                                     </span>
                                 @endif
-                            @endforeach
 
-                            @if (request()->filled('date_from'))
-                                @php
-                                    $removeDateFromParams = request()->except('date_from', 'page');
-                                @endphp
-                                <span class="badge bg-secondary rounded-pill">
-                                    Da: {{ request('date_from') }}
-                                    <a href="{{ route('project.index', $removeDateFromParams) }}"
-                                        class="text-white text-decoration-none ms-1"
-                                        aria-label="Rimuovi data inizio periodo">&times;</a>
-                                </span>
-                            @endif
+                                @foreach ((array) request('duration', []) as $duration)
+                                    @php
+                                        $newDurations = array_values(array_filter((array) request('duration', []), fn($d) => $d !== $duration));
+                                        $removeDurationParams = request()->except('duration', 'page');
+                                        if (!empty($newDurations)) {
+                                            $removeDurationParams['duration'] = $newDurations;
+                                        }
+                                    @endphp
+                                    @if ($duration === 'short')
+                                        <span class="badge bg-secondary rounded-pill">
+                                            Durata: Breve
+                                            <a href="{{ route('project.index', $removeDurationParams) }}"
+                                                class="text-white text-decoration-none ms-1"
+                                                aria-label="Rimuovi durata breve">&times;</a>
+                                        </span>
+                                    @elseif ($duration === 'medium')
+                                        <span class="badge bg-secondary rounded-pill">
+                                            Durata: Media
+                                            <a href="{{ route('project.index', $removeDurationParams) }}"
+                                                class="text-white text-decoration-none ms-1"
+                                                aria-label="Rimuovi durata media">&times;</a>
+                                        </span>
+                                    @elseif ($duration === 'long')
+                                        <span class="badge bg-secondary rounded-pill">
+                                            Durata: Lunga
+                                            <a href="{{ route('project.index', $removeDurationParams) }}"
+                                                class="text-white text-decoration-none ms-1"
+                                                aria-label="Rimuovi durata lunga">&times;</a>
+                                        </span>
+                                    @elseif ($duration === 'very_long')
+                                        <span class="badge bg-secondary rounded-pill">
+                                            Durata: Molto lunga
+                                            <a href="{{ route('project.index', $removeDurationParams) }}"
+                                                class="text-white text-decoration-none ms-1"
+                                                aria-label="Rimuovi durata molto lunga">&times;</a>
+                                        </span>
+                                    @endif
+                                @endforeach
 
-                            @if (request()->filled('date_to'))
-                                @php
-                                    $removeDateToParams = request()->except('date_to', 'page');
-                                @endphp
-                                <span class="badge bg-secondary rounded-pill">
-                                    A: {{ request('date_to') }}
-                                    <a href="{{ route('project.index', $removeDateToParams) }}"
-                                        class="text-white text-decoration-none ms-1"
-                                        aria-label="Rimuovi data fine periodo">&times;</a>
-                                </span>
-                            @endif
+                                @foreach ((array) request('category', []) as $categoryId)
+                                    @php
+                                        $activeCategory = $categories->firstWhere('id', (int) $categoryId);
+                                        $newCategories = array_values(array_filter((array) request('category', []), fn($id) => (string) $id !== (string) $categoryId));
+                                        $removeCategoryParams = request()->except('category', 'page');
+                                        if (!empty($newCategories)) {
+                                            $removeCategoryParams['category'] = $newCategories;
+                                        }
+                                    @endphp
+                                    @if ($activeCategory)
+                                        <span class="badge bg-secondary rounded-pill">
+                                            Categoria: {{ $activeCategory->name }}
+                                            <a href="{{ route('project.index', $removeCategoryParams) }}"
+                                                class="text-white text-decoration-none ms-1"
+                                                aria-label="Rimuovi categoria {{ $activeCategory->name }}">&times;</a>
+                                        </span>
+                                    @endif
+                                @endforeach
 
-                                <a href="{{ route('project.index') }}" class="btn btn-sm btn-ae-outline-danger">Rimuovi tutti i
+                                @if (request()->filled('date_from'))
+                                    @php
+                                        $removeDateFromParams = request()->except('date_from', 'page');
+                                    @endphp
+                                    <span class="badge bg-secondary rounded-pill">
+                                        Da: {{ request('date_from') }}
+                                        <a href="{{ route('project.index', $removeDateFromParams) }}"
+                                            class="text-white text-decoration-none ms-1"
+                                            aria-label="Rimuovi data inizio periodo">&times;</a>
+                                    </span>
+                                @endif
+
+                                @if (request()->filled('date_to'))
+                                    @php
+                                        $removeDateToParams = request()->except('date_to', 'page');
+                                    @endphp
+                                    <span class="badge bg-secondary rounded-pill">
+                                        A: {{ request('date_to') }}
+                                        <a href="{{ route('project.index', $removeDateToParams) }}"
+                                            class="text-white text-decoration-none ms-1"
+                                            aria-label="Rimuovi data fine periodo">&times;</a>
+                                    </span>
+                                @endif
+
+                                <a href="{{ route('project.index') }}" class="btn btn-ae btn-sm btn-ae-outline-danger">Rimuovi
+                                    tutti i
                                     filtri</a>
                             </div>
                         </div>
                     @endif
                 </div>
-        @if ($projects->isEmpty())
-            <div class="my-4">
-                <div class="text-center mb-0" role="status">
-                    Nessun progetto trovato con i criteri selezionati.
-                </div>
-            </div>
-        @else
-            <div class="my-4">
-                <x-project-grid :projects="$projects" />
-            </div>
+                @if ($projects->isEmpty())
+                    <div class="my-4">
+                        <div class="text-center mb-0" role="status">
+                            Nessun progetto trovato con i criteri selezionati.
+                        </div>
+                    </div>
+                @else
+                    <div class="my-4">
+                        <x-project-grid :projects="$projects" />
+                    </div>
 
-            <div class="d-flex justify-content-center mt-5 mb-5">
-                {{ $projects->links() }}
-            </div>
-        @endif
+                    <div class="d-flex justify-content-center mt-5 mb-5">
+                        {{ $projects->links() }}
+                    </div>
+                @endif
             </div>
         </div>
 
@@ -315,35 +323,13 @@
                         </div>
 
                         <div class="modal-footer">
-                            <a href="{{ route('project.index') }}" class="btn btn-ae-outline-secondary">Cancella filtri</a>
-                            <button type="submit" class="btn btn-ae-success">Applica filtri</button>
+                            <a href="{{ route('project.index') }}" class="btn btn-ae btn-ae-outline-secondary">Cancella
+                                filtri</a>
+                            <button type="submit" class="btn btn-ae btn-ae-success">Applica filtri</button>
                         </div>
                     </form>
                 </div>
             </div>
         </div>
     </main>
-@endsection
-
-@section('scripts')
-    <style>
-        .search-filter-wrapper {
-            top: 56px;
-            /* Adattare ai pixel esatti dell'altezza della Navbar su mobile */
-            z-index: 1020;
-        }
-
-        @media (min-width: 992px) {
-            .search-filter-wrapper {
-                position: static !important;
-                background-color: transparent !important;
-                box-shadow: none !important;
-                border: none !important;
-                padding-top: 0 !important;
-                padding-bottom: 0 !important;
-                padding-left: 0 !important;
-                padding-right: 0 !important;
-            }
-        }
-    </style>
 @endsection

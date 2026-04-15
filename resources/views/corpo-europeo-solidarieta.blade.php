@@ -258,10 +258,10 @@
                         un'Europa più solidale e inclusiva.
                     </p>
                     <div class="d-flex gap-2 justify-content-center flex-wrap">
-                        <a href="{{ route('contact') }}" class="btn btn-light">
+                        <a href="{{ route('contact') }}" class="btn btn-ae btn-ae-light">
                             <i class="bi bi-envelope me-2"></i>Contattaci per informazioni
                         </a>
-                        <a href="{{ route('about') }}" class="btn btn-outline-light">
+                        <a href="{{ route('about') }}" class="btn btn-ae btn-ae-outline-light">
                             <i class="bi bi-info-circle me-2"></i>Scopri Atelier Europeo
                         </a>
                     </div>

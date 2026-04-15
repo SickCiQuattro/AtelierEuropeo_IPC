@@ -5,39 +5,22 @@
 @section('active_preferiti', 'active')
 
 @section('breadcrumb')
-<div class="bg-light py-2">
-    <div class="container">
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb mb-0">
-                <li class="breadcrumb-item">
-                    <a href="{{ route('home') }}" class="text-decoration-none">Home</a>
-                </li>
-                <li class="breadcrumb-item active" aria-current="page">I Miei Preferiti</li>
-            </ol>
-        </nav>
+    <div class="bg-light py-2">
+        <div class="container">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item">
+                        <a href="{{ route('home') }}" class="text-decoration-none">Home</a>
+                    </li>
+                    <li class="breadcrumb-item active" aria-current="page">I Miei Preferiti</li>
+                </ol>
+            </nav>
+        </div>
     </div>
-</div>
 @endsection
 
 @section('body')
     <div class="container px-2 px-md-4 pb-5">
-        <!-- Messaggi di sessione -->
-        @if (session('success'))
-            <div class="alert alert-success alert-dismissible fade show mt-3" role="alert">
-                <i class="bi bi-check-circle-fill me-2"></i>
-                <strong>Perfetto!</strong> {{ session('success') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        @endif
-
-        @if (session('error'))
-            <div class="alert alert-danger alert-dismissible fade show mt-3" role="alert">
-                <i class="bi bi-exclamation-triangle-fill me-2"></i>
-                <strong>Attenzione!</strong> {{ session('error') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        @endif
-
         <h1 class="section-title fw-bold text-center">I miei preferiti</h1>
         <h1 class="section-subtitle text-center pb-5">Non perdere mai di vista i progetti di tuo interesse</h1>
 
@@ -54,7 +37,7 @@
                             Nessun progetto preferito
                         @endif
                     </h3>
-                    <a href="{{ route('project.index') }}" class="btn btn-outline-primary btn-sm">
+                    <a href="{{ route('project.index') }}" class="btn btn-ae btn-ae-outline-primary btn-sm">
                         <i class="bi bi-search me-1"></i>Scopri progetti
                     </a>
                 </div>
@@ -89,75 +72,52 @@
                     Non hai ancora salvato nessun progetto nei tuoi preferiti.<br>
                     Esplora i progetti disponibili e salva quelli che ti interessano di più!
                 </p>
-                <a href="{{ route('project.index') }}" class="btn btn-primary btn-lg">
+                <a href="{{ route('project.index') }}" class="btn btn-ae btn-ae-primary btn-lg">
                     <i class="bi bi-search me-2"></i>Scopri i Progetti
                 </a>
             </div>
         @endif
     </div>
 
-    <!-- Toast per notifiche -->
-    <div class="toast-container position-fixed bottom-0 end-0 p-3">
-        <div id="favoriteToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
-            <div class="toast-header">
-                <i class="bi bi-heart-fill text-danger me-2"></i>
-                <strong class="me-auto">Preferiti</strong>
-                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
-            </div>
-            <div class="toast-body" id="toastMessage">
-                <!-- Il messaggio verrà inserito qui dinamicamente -->
-            </div>
-        </div>
-    </div>
 @endsection
 
 @section('scripts')
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('Script caricato per favorites/index.blade.php');
-
+        document.addEventListener('DOMContentLoaded', function () {
             // Gestione pulsanti preferiti
-            document.querySelectorAll('.favorite-btn').forEach(function(button) {
-                console.log('Trovato pulsante preferiti:', button);
-                button.addEventListener('click', function(e) {
+            document.querySelectorAll('.favorite-btn').forEach(function (button) {
+                button.addEventListener('click', function (e) {
                     e.preventDefault();
                     e.stopPropagation();
-                    console.log('Click sul pulsante preferiti');
                     const projectId = this.dataset.projectId;
-                    console.log('Project ID:', projectId);
                     toggleFavorite(projectId, this);
                 });
             });
         });
 
         function toggleFavorite(projectId, button) {
-            console.log('toggleFavorite chiamata con projectId:', projectId);
-
             // Disabilita il pulsante durante la richiesta
             button.disabled = true;
 
             const csrfToken = document.querySelector('meta[name="csrf-token"]');
-            console.log('CSRF Token trovato:', csrfToken ? csrfToken.getAttribute('content') : 'NESSUN TOKEN');
 
             fetch('/favorites/toggle', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': csrfToken ? csrfToken.getAttribute('content') : ''
-                    },
-                    body: JSON.stringify({
-                        project_id: projectId
-                    })
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken ? csrfToken.getAttribute('content') : ''
+                },
+                body: JSON.stringify({
+                    project_id: projectId
                 })
-                .then(response => {
-                    console.log('Risposta ricevuta:', response);
-                    return response.json();
-                })
+            })
+                .then(response => response.json())
                 .then(data => {
-                    console.log('Dati ricevuti:', data);
                     if (data.success) {
                         // Mostra toast
-                        showToast(data.message);
+                        if (window.showFavoriteToast) {
+                            window.showFavoriteToast(data.message, 'success');
+                        }
 
                         if (data.action === 'removed') {
                             // Rimuovi la card del progetto con animazione
@@ -176,52 +136,26 @@
                             // Aggiorna l'interfaccia per il caso di aggiunta (dovrebbe essere raro in questa pagina)
                             const icon = button.querySelector('i');
                             if (icon) {
-                                icon.className =
-                                    'bi bi-heart-fill text-white d-flex justify-content-center align-items-center';
+                                icon.className = 'bi bi-heart-fill';
                                 button.dataset.isFavorite = 'true';
                             }
                         }
                     } else {
-                        showToast(data.message, 'error');
+                        if (window.showFavoriteToast) {
+                            window.showFavoriteToast(data.message, 'danger');
+                        }
                     }
                 })
                 .catch(error => {
                     console.error('Errore:', error);
-                    showToast('Si è verificato un errore. Riprova più tardi.', 'error');
+                    if (window.showFavoriteToast) {
+                        window.showFavoriteToast('Si e verificato un errore. Riprova piu tardi.', 'danger');
+                    }
                 })
                 .finally(() => {
                     // Riabilita il pulsante
                     button.disabled = false;
                 });
-        }
-
-        function showToast(message, type = 'success') {
-            console.log('Mostra toast:', message, type);
-            const toast = document.getElementById('favoriteToast');
-            if (!toast) {
-                console.error('Toast element non trovato');
-                return;
-            }
-
-            const toastMessage = document.getElementById('toastMessage');
-            const toastHeader = toast.querySelector('.toast-header');
-
-            // Aggiorna il messaggio
-            toastMessage.textContent = message;
-
-            // Aggiorna l'icona e il colore in base al tipo
-            const icon = toastHeader.querySelector('i');
-            if (type === 'error') {
-                icon.className = 'bi bi-exclamation-triangle-fill text-danger me-2';
-                toastHeader.className = 'toast-header bg-danger text-white';
-            } else {
-                icon.className = 'bi bi-heart-fill text-danger me-2';
-                toastHeader.className = 'toast-header';
-            }
-
-            // Mostra il toast
-            const bsToast = new bootstrap.Toast(toast);
-            bsToast.show();
         }
 
         function updateProjectCounter() {

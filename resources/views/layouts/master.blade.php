@@ -41,16 +41,35 @@
         $showAdminNav = $isAdmin && !$isAdminPreview;
         $brandRoute = $showAdminNav ? route('admin.dashboard') : route('home');
         $isWideLocale = in_array(app()->getLocale(), ['fr', 'es'], true);
+        $adminPanelLabelParts = preg_split('/\s+/', trim(__('master.admin_panel')), 2);
+        $userPreviewLabelParts = preg_split('/\s+/', trim(__('master.auth.user_view')), 2);
     @endphp
 
     <nav class="navbar navbar-expand-lg navbar-dark main-navbar {{ $isWideLocale ? 'main-navbar--wide-locale' : '' }}">
         <div class="container d-flex flex-wrap align-items-center main-navbar-inner">
             <!-- Logo (Sinistra) -->
-            <a class="navbar-brand d-flex align-items-center me-lg-4" href="{{ $brandRoute }}">
+            <a class="navbar-brand d-flex align-items-center me-lg-4 main-navbar-brand" href="{{ $brandRoute }}">
                 <img src="{{ asset('img/ae-icon.svg') }}" alt="Atelier Europeo" class="navbar-logo">
 
                 @if ($showAdminNav)
-                    <span class="ms-2 small text-warning fw-bold">{{ __('master.admin_panel') }}</span>
+                    <span class="ms-2 text-warning fw-bold main-navbar-admin-label">
+                        <span
+                            class="main-navbar-admin-label-line">{{ $adminPanelLabelParts[0] ?? __('master.admin_panel') }}</span>
+                        @if (!empty($adminPanelLabelParts[1]))
+                            <span class="main-navbar-admin-label-line">{{ $adminPanelLabelParts[1] }}</span>
+                        @endif
+                    </span>
+                @endif
+
+                @if ($isAdminPreview)
+                    <span class="ms-2 text-warning fw-bold main-navbar-admin-label main-navbar-preview-label">
+                        <span class="main-navbar-admin-label-line">
+                            {{ $userPreviewLabelParts[0] ?? __('master.auth.user_view') }}
+                        </span>
+                        @if (!empty($userPreviewLabelParts[1]))
+                            <span class="main-navbar-admin-label-line">{{ $userPreviewLabelParts[1] }}</span>
+                        @endif
+                    </span>
                 @endif
             </a>
 
@@ -65,9 +84,9 @@
                             <i class="bi bi-person-fill fs-5"></i>
                             <i class="bi bi-caret-down-fill ms-1 small"></i>
                         </button>
-                        <div class="dropdown-menu dropdown-menu-end p-3 shadow border-0 navbar-access-dropdown"
+                        <div class="dropdown-menu dropdown-menu-end p-3 shadow border-0 navbar-access-dropdown navbar-user-dropdown-menu"
                             aria-labelledby="guestUserDropdown">
-                            <div class="d-grid gap-2" style="min-width: 8rem;">
+                            <div class="d-grid gap-2 navbar-user-menu-grid">
                                 <a href="{{ route('login') }}"
                                     class="btn btn-ae btn-ae-square btn-ae-primary d-flex align-items-center justify-content-center gap-2">
                                     <i class="bi bi-box-arrow-in-right"></i>
@@ -87,13 +106,13 @@
                     @if ($isAdmin)
                         <!-- Variante 3: ADMIN -->
                         <div class="dropdown">
-                            <button class="btn btn-outline-warning btn-sm dropdown-toggle fw-semibold" type="button"
+                            <button class="btn btn-ae btn-ae-outline-warning btn-sm dropdown-toggle fw-semibold" type="button"
                                 id="adminUserDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                                 {{ __('master.auth.admin') }}
                             </button>
-                            <div class="dropdown-menu dropdown-menu-end p-3 shadow border-0"
+                            <div class="dropdown-menu dropdown-menu-end p-3 shadow border-0 navbar-user-dropdown-menu"
                                 aria-labelledby="adminUserDropdown">
-                                <div class="d-grid gap-2" style="min-width: 8rem;">
+                                <div class="d-grid gap-2 navbar-user-menu-grid">
                                     <a href="{{ route('profile.edit') }}"
                                         class="btn btn-ae btn-ae-square btn-ae-primary d-flex align-items-center justify-content-center gap-2">
                                         <i class="bi bi-person-fill-gear"></i>
@@ -102,14 +121,13 @@
 
                                     @if ($isAdminPreview)
                                         <a href="{{ route('admin.return') }}"
-                                            class="btn btn-ae btn-ae-square btn-ae-secondary d-flex align-items-center justify-content-center gap-2">
+                                            class="btn btn-ae btn-ae-square btn-ae-secondary d-flex align-items-center justify-content-center gap-2 admin-view-toggle-btn">
                                             <i class="bi bi-arrow-counterclockwise"></i>
                                             <span>{{ __('master.auth.return_admin') }}</span>
                                         </a>
                                     @else
                                         <a href="{{ route('admin.view-user') }}"
-                                            class="btn btn-ae btn-ae-square btn-ae-secondary d-flex align-items-center justify-content-center gap-2">
-                                            <i class="bi bi-eye-fill"></i>
+                                            class="btn btn-ae btn-ae-square btn-ae-secondary d-flex align-items-center justify-content-center gap-2 admin-view-toggle-btn">
                                             <span>{{ __('master.auth.user_view') }}</span>
                                         </a>
                                     @endif
@@ -127,13 +145,13 @@
                     @else
                         <!-- Variante 2: USER -->
                         <div class="dropdown">
-                            <button class="btn btn-outline-warning btn-sm dropdown-toggle fw-semibold" type="button"
+                            <button class="btn btn-ae btn-ae-outline-warning btn-sm dropdown-toggle fw-semibold" type="button"
                                 id="standardUserDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                                 {{ auth()->user()->name ?? __('master.auth.user_fallback') }}
                             </button>
-                            <div class="dropdown-menu dropdown-menu-end p-3 shadow border-0"
+                            <div class="dropdown-menu dropdown-menu-end p-3 shadow border-0 navbar-user-dropdown-menu"
                                 aria-labelledby="standardUserDropdown">
-                                <div class="d-grid gap-2" style="min-width: 8rem;">
+                                <div class="d-grid gap-2 navbar-user-menu-grid">
                                     <a href="{{ route('profile.edit') }}"
                                         class="btn btn-ae btn-ae-square btn-ae-primary d-flex align-items-center justify-content-center gap-2">
                                         <i class="bi bi-person-fill-gear"></i>
@@ -142,7 +160,7 @@
                                     <form action="{{ route('logout') }}" method="POST">
                                         @csrf
                                         <button type="submit"
-                                            class="btn btn-outline-danger w-100 d-inline-flex align-items-center justify-content-center gap-2">
+                                            class="btn btn-ae btn-ae-outline-danger w-100 d-inline-flex align-items-center justify-content-center gap-2">
                                             <i class="bi bi-box-arrow-right"></i>
                                             <span>{{ __('master.auth.logout') }}</span>
                                         </button>
@@ -494,6 +512,42 @@
     </script>
 
     <script>
+        window.showFavoriteToast = function (message, variant = 'success') {
+            const toastElement = document.getElementById('favoriteToast');
+            const toastMessage = document.getElementById('favoriteToastMessage');
+
+            if (!toastElement || !toastMessage || !window.bootstrap || !window.bootstrap.Toast) {
+                return;
+            }
+
+            const closeButton = toastElement.querySelector('.btn-close');
+            const normalizedVariant = variant === 'error' ? 'danger' : variant;
+            const isLightVariant = normalizedVariant === 'warning';
+
+            toastMessage.textContent = message;
+
+            toastElement.classList.remove(
+                'text-bg-success',
+                'text-bg-secondary',
+                'text-bg-danger',
+                'text-bg-warning',
+                'text-bg-info',
+                'text-dark'
+            );
+
+            if (isLightVariant) {
+                toastElement.classList.add('text-bg-warning', 'text-dark');
+            } else {
+                toastElement.classList.add(`text-bg-${normalizedVariant}`);
+            }
+
+            if (closeButton) {
+                closeButton.classList.toggle('btn-close-white', !isLightVariant);
+            }
+
+            bootstrap.Toast.getOrCreateInstance(toastElement).show();
+        };
+
         document.addEventListener('click', async function (event) {
             const favoriteButton = event.target.closest('.js-favorite-toggle');
             if (!favoriteButton) {
@@ -536,35 +590,21 @@
                 }
 
                 if (icon) {
-                    const toastElement = document.getElementById('favoriteToast');
-                    const toastMessage = document.getElementById('favoriteToastMessage');
-
                     if (data.is_favorited) {
                         icon.classList.remove('bi-heart');
                         icon.classList.add('bi-heart-fill');
                         favoriteButton.setAttribute('aria-pressed', 'true');
-
-                        if (toastElement && toastMessage) {
-                            toastMessage.textContent = 'Progetto aggiunto ai preferiti!';
-                            toastElement.classList.remove('text-bg-secondary');
-                            toastElement.classList.add('text-bg-success');
-                            bootstrap.Toast.getOrCreateInstance(toastElement).show();
-                        }
+                        window.showFavoriteToast('Progetto aggiunto ai preferiti!', 'success');
                     } else {
                         icon.classList.remove('bi-heart-fill');
                         icon.classList.add('bi-heart');
                         favoriteButton.setAttribute('aria-pressed', 'false');
-
-                        if (toastElement && toastMessage) {
-                            toastMessage.textContent = 'Progetto rimosso dai preferiti.';
-                            toastElement.classList.remove('text-bg-success');
-                            toastElement.classList.add('text-bg-secondary');
-                            bootstrap.Toast.getOrCreateInstance(toastElement).show();
-                        }
+                        window.showFavoriteToast('Progetto rimosso dai preferiti.', 'secondary');
                     }
                 }
             } catch (error) {
                 console.error('Errore toggle preferiti:', error);
+                window.showFavoriteToast('Si e verificato un errore. Riprova tra poco.', 'danger');
             } finally {
                 favoriteButton.disabled = false;
                 favoriteButton.style.opacity = '';
@@ -581,16 +621,7 @@
         });
     </script>
 
-    <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 1080;">
-        <div id="favoriteToast" class="toast align-items-center text-bg-success border-0" role="alert"
-            aria-live="assertive" aria-atomic="true">
-            <div class="d-flex">
-                <div class="toast-body" id="favoriteToastMessage"></div>
-                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
-                    aria-label="Close"></button>
-            </div>
-        </div>
-    </div>
+    <x-toast-messages />
 
     <x-category-info-modals />
 

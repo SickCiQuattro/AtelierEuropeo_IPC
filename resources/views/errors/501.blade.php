@@ -37,10 +37,10 @@
                 </p>
                 
                 <div class="d-flex flex-column flex-sm-row gap-3 justify-content-center">
-                    <a href="{{ url()->previous() }}" class="btn btn-warning btn-lg">
+                    <a href="{{ url()->previous() }}" class="btn btn-ae btn-ae-warning btn-lg">
                         Torna Indietro
                     </a>
-                    <a href="{{ route('home') }}" class="btn btn-outline-primary btn-lg">
+                    <a href="{{ route('home') }}" class="btn btn-ae btn-ae-outline-primary btn-lg">
                         Vai alla Home
                     </a>
                 </div>

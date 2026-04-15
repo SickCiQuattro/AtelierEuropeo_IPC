@@ -68,14 +68,14 @@
                     <div class="d-flex flex-column flex-sm-row gap-3 justify-content-center">
                         @if(isset($project))
                         <a href="{{ route('project.show', $project->id) }}" 
-                           class="btn btn-primary btn-lg rounded-pill px-4">
+                           class="btn btn-ae btn-ae-primary btn-lg rounded-pill px-4">
                             <i class="bi bi-eye me-2"></i>
                             Visualizza Progetto
                         </a>
                         @endif
                         
                         <a href="{{ route('project.index') }}" 
-                           class="btn btn-outline-secondary btn-lg rounded-pill px-4">
+                           class="btn btn-ae btn-ae-outline-secondary btn-lg rounded-pill px-4">
                             <i class="bi bi-arrow-left me-2"></i>
                             Torna ai Progetti
                         </a>

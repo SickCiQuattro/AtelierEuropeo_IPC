@@ -290,10 +290,10 @@
                     senza alcun costo!
                 </p>
                 <div class="d-flex gap-2 justify-content-center flex-wrap">
-                    <a href="{{ route('contact') }}" class="btn btn-light">
+                    <a href="{{ route('contact') }}" class="btn btn-ae btn-ae-light">
                         <i class="bi bi-envelope me-2"></i>Manifestiamo il tuo interesse
                     </a>
-                    <a href="{{ route('corpo-europeo') }}" class="btn btn-outline-light">
+                    <a href="{{ route('corpo-europeo') }}" class="btn btn-ae btn-ae-outline-light">
                         <i class="bi bi-arrow-right me-2"></i>Scopri altre opportunità
                     </a>
                 </div>

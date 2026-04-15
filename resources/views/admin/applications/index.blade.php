@@ -66,23 +66,6 @@
         </div>
     </div>
 
-    <!-- Alert per messaggi -->
-    @if(session('success'))
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            <i class="bi bi-check-circle me-2"></i>
-            {{ session('success') }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-    @endif
-
-    @if(session('error'))
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            <i class="bi bi-exclamation-triangle me-2"></i>
-            {{ session('error') }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-    @endif
-
     <!-- Statistiche -->
     <div class="row mb-4">
         <div class="col-md-3">
@@ -265,7 +248,7 @@
                                             <td>
                                                 <div class="btn-group" role="group">
                                                     <a href="{{ route('admin.applications.show', $application) }}" 
-                                                       class="btn btn-outline-primary btn-sm" 
+                                                       class="btn btn-ae btn-ae-outline-primary btn-sm" 
                                                        title="Visualizza dettagli">
                                                         <i class="bi bi-eye"></i>
                                                     </a>
@@ -275,7 +258,7 @@
                                                             $limitReached = $stats['approved'] >= $project->requested_people;
                                                         @endphp
                                                         <button type="button" 
-                                                                class="btn btn-outline-success btn-sm{{ $limitReached ? ' disabled' : '' }}" 
+                                                                class="btn btn-ae btn-ae-outline-success btn-sm{{ $limitReached ? ' disabled' : '' }}" 
                                                                 @if(!$limitReached)
                                                                     data-bs-toggle="modal" 
                                                                     data-bs-target="#approveModal{{ $application->id }}"
@@ -285,7 +268,7 @@
                                                             <i class="bi bi-check-lg"></i>
                                                         </button>
                                                         <button type="button" 
-                                                                class="btn btn-outline-danger btn-sm" 
+                                                                class="btn btn-ae btn-ae-outline-danger btn-sm" 
                                                                 data-bs-toggle="modal" 
                                                                 data-bs-target="#rejectModal{{ $application->id }}"
                                                                 title="Rifiuta">
@@ -293,7 +276,7 @@
                                                         </button>
                                                     @else
                                                         <button type="button" 
-                                                                class="btn btn-outline-secondary btn-sm" 
+                                                                class="btn btn-ae btn-ae-outline-secondary btn-sm" 
                                                                 data-bs-toggle="modal" 
                                                                 data-bs-target="#updateModal{{ $application->id }}"
                                                                 title="Modifica stato">
@@ -374,8 +357,8 @@
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annulla</button>
-                            <button type="submit" class="btn btn-success">
+                            <button type="button" class="btn btn-ae btn-ae-secondary" data-bs-dismiss="modal">Annulla</button>
+                            <button type="submit" class="btn btn-ae btn-ae-success">
                                 <i class="bi bi-check-lg me-1"></i> Approva
                             </button>
                         </div>
@@ -412,8 +395,8 @@
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annulla</button>
-                            <button type="submit" class="btn btn-danger">
+                            <button type="button" class="btn btn-ae btn-ae-secondary" data-bs-dismiss="modal">Annulla</button>
+                            <button type="submit" class="btn btn-ae btn-ae-danger">
                                 <i class="bi bi-x-lg me-1"></i> Rifiuta
                             </button>
                         </div>
@@ -465,8 +448,8 @@
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annulla</button>
-                            <button type="submit" class="btn btn-primary">
+                            <button type="button" class="btn btn-ae btn-ae-secondary" data-bs-dismiss="modal">Annulla</button>
+                            <button type="submit" class="btn btn-ae btn-ae-primary">
                                 <i class="bi bi-check-lg me-1"></i> Aggiorna
                             </button>
                         </div>

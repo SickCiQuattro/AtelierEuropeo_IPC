@@ -8,7 +8,7 @@
     ];
 
     $category = $project->category;
-    $badge = $categoryBadges[$category->tag];
+    $badge = $categoryBadges[$category->tag] ?? 'badge-prog-ces';
 
     $approvedCount = $project->application->where('status', 'approved')->count();
 
@@ -16,13 +16,10 @@
     if (!empty($project->start_date) && !empty($project->end_date)) {
         $startDate = \Carbon\Carbon::parse($project->start_date);
         $endDate = \Carbon\Carbon::parse($project->end_date);
-
         $durationDays = $startDate->diffInDays($endDate);
 
         if ($durationDays > 60) {
-            // Se supera i 60 giorni, mostra in mesi e giorni
             $months = floor($durationDays / 30);
-
             $durationText = $months . ' ' . ($months == 1 ? 'Mese' : 'Mesi');
         } else {
             $durationText = $durationDays . ' ' . ($durationDays == 1 ? 'Giorno' : 'Giorni');
@@ -30,42 +27,48 @@
     }
 @endphp
 
-<div class="project-card">
+<div class="project-card d-flex flex-column h-100">
     <a href="{{ route('project.show', ['project' => $project->id]) }}" class="stretched-link"></a>
-    @if ($project->status == 'published')
-        <div class="badge-departure">
-            <span style="rotate: 45deg; font-size: 12px;"><i class="bi bi-airplane-fill"></i></span>
-            <b>{{ \Carbon\Carbon::parse($project->start_date)->translatedFormat('M') }}</b>
-            <b>{{ $project->start_date->format('j') }}</b>
-        </div>
-    @endif
-    <div>
+
+    <div class="project-card-media">
         <img src="{{ $project->image_url }}" alt="{{ $project->title }}" class="project-card-image">
+
+        @if ($project->status == 'published')
+            <div class="badge-departure shadow-sm">
+                <div class="badge-departure-top">
+                    <i class="bi bi-airplane-fill"></i>
+                    <span
+                        class="badge-departure-month">{{ \Carbon\Carbon::parse($project->start_date)->translatedFormat('M') }}</span>
+                </div>
+                <div class="badge-departure-day">{{ $project->start_date->format('j') }}</div>
+            </div>
+        @endif
+
         @if ($showFavoriteIcon)
             @guest
-                <button type="button" class="btn-favorite" data-project-id="{{ $project->id }}" data-bs-toggle="modal"
+                <button type="button" class="btn-favorite z-3" data-project-id="{{ $project->id }}" data-bs-toggle="modal"
                     data-bs-target="#loginRequiredModal">
                     <i class="bi bi-heart"></i>
                 </button>
             @endguest
 
             @auth
-                <button type="button" class="btn-favorite js-favorite-toggle"
-                    data-project-id="{{ $project->id }}" data-url="{{ route('project.favorite.toggle', $project->id) }}"
-                    aria-label="Toggle favorite">
+                <button type="button" class="btn-favorite js-favorite-toggle z-3" data-project-id="{{ $project->id }}"
+                    data-url="{{ route('project.favorite.toggle', $project->id) }}" aria-label="Salva nei preferiti"
+                    aria-pressed="{{ auth()->user()->favorites->contains($project->id) ? 'true' : 'false' }}">
                     <i class="bi bi-heart{{ auth()->user()->favorites->contains($project->id) ? '-fill' : '' }}"></i>
                 </button>
             @endauth
         @endif
+
+        <span class="badge-duration shadow-sm"><i class="bi bi-calendar2-week-fill"></i> {{ $durationText }}</span>
     </div>
 
-    <span class="badge-duration"><i class="bi bi-calendar2-week-fill"></i> <b>{{ $durationText }}</b></span>
-
-
-    <div class="project-card-body">
-        {{-- Header --}}
-        <div class="d-flex justify-content-between align-items-center">
-            <span><i class="bi bi-geo-alt-fill me-2"></i>{{ $project->location }}</span>
+    <div class="project-card-body d-flex flex-column flex-grow-1">
+        {{-- Header Location & Badge --}}
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <span class="text-body-secondary small fw-semibold"><i
+                    class="bi bi-geo-alt-fill me-1"></i>{{ $project->location }}</span>
             <span class="d-inline-block position-relative z-3" tabindex="0" data-bs-toggle="tooltip"
                 data-bs-placement="top" title="Clicca per info sul programma {{ $category->name }}">
                 <button type="button" class="{{ $badge }} position-relative z-3" data-bs-toggle="modal"
@@ -73,22 +76,34 @@
                         class="bi bi-info-circle ms-1"></i></button>
             </span>
         </div>
-        {{-- Titolo --}}
-        <h4 class="project-card-title">{{ $project->title }}</h4>
-        {{-- Breve Descrizione --}}
-        <p class="project-card-description">{{ $project->sum_description }}</p>
-        {{-- Footer --}}
-        @if ($project->status == 'published')
-            <div class="d-flex justify-content-between align-items-center">
-                <x-participants-progress :current="$approvedCount" :max="$project->requested_people" />
-                <span><i clas s="bi bi-calendar2-event-fill me-2"></i>Scadenza:
-                    {{ $project->expire_date->format('d/m/Y') }}</span>
-            </div>
-        @else
-            <span class="text-center"><i class="bi bi-calendar-check-fill me-2"></i>Terminato il:
-                {{ $project->end_date->format('d/m/Y') }}</span>
-        @endif
 
+        {{-- Titolo --}}
+        <h4 class="project-card-title mb-2">{{ $project->title }}</h4>
+
+        {{-- Breve Descrizione (Troncata a 3 righe se supera il limite) --}}
+        <p class="project-card-description mb-4">{{ $project->sum_description }}</p>
+
+        {{-- Footer (Ancorato in basso. Layout flessibile per non far accavallare gli elementi) --}}
+        <div class="project-card-footer mt-auto pt-3" style="border-top: 1px solid #dee2e6;">
+            @if ($project->status == 'published')
+                <div class="d-flex justify-content-between align-items-center gap-2">
+
+                    <div class="position-relative z-3">
+                        <x-participants-progress :current="$approvedCount" :max="$project->requested_people" />
+                    </div>
+
+                    <span class="project-card-deadline small text-body-secondary fw-semibold text-end">
+                        <i class="bi bi-calendar2-event-fill me-1"></i>Scad. {{ $project->expire_date->format('d/m/Y') }}
+                    </span>
+                </div>
+            @else
+                <div class="text-center position-relative z-3">
+                    <span class="project-status-ended">
+                        <i class="bi bi-calendar3"></i> Terminato il {{ $project->end_date->format('d/m/Y') }}
+                    </span>
+                </div>
+            @endif
+        </div>
     </div>
 </div>
 
@@ -106,8 +121,9 @@
                         Devi accedere al tuo account per poter salvare i progetti nei preferiti e ritrovarli in seguito.
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-ae-outline-secondary" data-bs-dismiss="modal">Annulla</button>
-                        <a href="{{ route('login') }}" class="btn btn-ae-primary">Accedi</a>
+                        <button type="button" class="btn btn-ae btn-ae-square btn-ae-outline-secondary"
+                            data-bs-dismiss="modal">Annulla</button>
+                        <a href="{{ route('login') }}" class="btn btn-ae btn-ae-square btn-ae-primary">Accedi</a>
                     </div>
                 </div>
             </div>

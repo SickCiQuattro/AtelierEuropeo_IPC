@@ -13,7 +13,7 @@
                     <a href="#" class="btn btn-ae btn-ae-square btn-ae-outline-secondary px-4 py-2">
                         <i class="bi bi-download me-2"></i>Scarica Report Mensile
                     </a>
-                    <a href="{{ route('project.create') }}" class="btn btn-success btn-ae btn-ae-square px-4 py-2">
+                    <a href="{{ route('project.create') }}" class="btn btn-ae btn-ae-success btn-ae-square px-4 py-2">
                         <i class="bi bi-plus-lg me-2"></i>Crea Nuovo Progetto
                     </a>
                 </div>
@@ -54,7 +54,7 @@
             <div class="col-md-6 col-lg-3">
                 <div
                     class="card border-0 shadow-sm rounded-4 h-100 p-3 d-flex flex-row align-items-center gap-3 admin-kpi-card">
-                    <i class="bi bi-pencil-square text-secondary fs-1"></i>
+                    <i class="bi bi-vector-pen text-secondary fs-1"></i>
                     <div>
                         <div class="fs-2 fw-bold lh-1 text-dark mb-1">{{ $draftProjectsCount }}</div>
                         <div class="small text-body-secondary">Progetti in Bozza</div>

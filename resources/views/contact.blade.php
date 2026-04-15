@@ -7,9 +7,12 @@
 @section('body')
     <div class="container py-5">
         <div class="row mb-5 text-center fade-in">
-            <h1 class="display-4 fw-bold text-dark mb-3">Contatti</h1>
-            <p class="lead text-body-secondary col-md-8 mx-auto">Siamo qui per rispondere alle tue domande e supportarti nei
-                progetti di mobilità europea.</p>
+            <div class="col-12">
+                <h1 class="display-4 fw-bold text-dark mb-3">Contatti</h1>
+                <p class="lead text-body-secondary col-md-8 mx-auto">Siamo qui per rispondere alle tue domande e supportarti
+                    nei
+                    progetti di mobilità europea.</p>
+            </div>
         </div>
 
         <div class="row g-4">

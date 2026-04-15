@@ -109,7 +109,7 @@
                             <form method="post" action="{{ route('project.destroy', ['id' => $project->id]) }}" class="mt-auto">
                                 @method('DELETE')
                                 @csrf
-                                <button type="submit" class="btn btn-danger btn-lg w-100">
+                                <button type="submit" class="btn btn-ae btn-ae-danger btn-lg w-100">
                                     <i class="bi bi-trash3 me-2"></i>
                                     Elimina Progetto
                                 </button>
@@ -135,7 +135,7 @@
                                 Il progetto <strong>rimarrà invariato</strong> e non verrà eliminato dal database.
                             </p>
                             <div class="mt-auto">
-                                <a href="{{ route('project.index') }}" class="btn btn-secondary btn-lg w-100">
+                                <a href="{{ route('project.index') }}" class="btn btn-ae btn-ae-secondary btn-lg w-100">
                                     <i class="bi bi-arrow-left me-2"></i>
                                     Torna ai Progetti
                                 </a>

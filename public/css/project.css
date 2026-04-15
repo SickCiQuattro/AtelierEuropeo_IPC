@@ -1,57 +1,194 @@
-:root{
-        /* Project Card */
-        --project-card-bg: #ffffff;
-        --project-card-border: #DEE2E6;
+:root {
+    --project-card-bg: #ffffff;
+    --project-card-border: #DEE2E6;
 }
 
 /* ---------------------------------------------------------
-   Project Card
+   Project Card - Contenitore Principale
    --------------------------------------------------------- */
-
 .project-card {
-    width: 360px;
-    height: 420px;
-    border-radius: 20px;
-    border-color: var(--project-card-border);
-    border-style: solid;
-    border-width: 2px;
+    width: 100%;
+    max-width: 380px; 
+    min-height: 440px; 
+    border-radius: 1.25rem;
+    border: 1px solid var(--project-card-border);
     background-color: var(--project-card-bg);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
     position: relative;
+    /* overflow: hidden è vitale per non far rompere gli angoli all'immagine */
+    overflow: hidden; 
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
 }
 
-.project-card:hover {
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-    transition: box-shadow 0.3s;
+.project-card:hover,
+.project-card:focus-within {
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12);
+    transform: translateY(-4px);
+}
+
+/* ---------------------------------------------------------
+   Immagine e Area Superiore
+   --------------------------------------------------------- */
+.project-card-media {
+    position: relative;
+    height: 220px;
+    flex-shrink: 0;
 }
 
 .project-card-image {
-    border-radius: 20px;
     width: 100%;
-    height: 200px;
-    position: relative;
+    height: 100%;
     object-fit: cover;
+    display: block;
 }
 
+/* ---------------------------------------------------------
+   Corpo e Testi
+   --------------------------------------------------------- */
 .project-card-body {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    padding: 10px;
-    position: relative;
+    padding: 1.25rem;
 }
+
 .project-card-title {
     text-align: center !important;
-    padding: 0%;
-    margin: 0%;
+    font-size: 1.35rem;
+    font-weight: 700;
 }
 
 .project-card-description {
     text-align: center !important;
-    padding: 0%;
-    margin: 0%;
+    font-size: 0.95rem;
+    color: var(--bs-secondary);
+    /* Taglia il testo alla terza riga con i puntini di sospensione */
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
 }
 
+/* ---------------------------------------------------------
+   Badge Partenza (Aereo + Data) e Durata
+   --------------------------------------------------------- */
+.badge-departure {
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    border-bottom-right-radius: 1rem; 
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 0.4rem 0.75rem;
+    min-width: 3.8rem; 
+    color: var(--bs-primary);
+    z-index: 2;
+}
+
+.badge-departure-top {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: 0.75rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    line-height: 1;
+}
+
+.badge-departure-day {
+    font-size: 1.65rem;
+    font-weight: 800;
+    line-height: 1;
+    margin-top: 0.15rem;
+}
+
+.badge-duration {
+    position: absolute;
+    bottom: 0;
+    left: 1.25rem;
+    transform: translateY(50%); /* Posizionato a cavallo tra foto e corpo */
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    padding: 0.25rem 0.75rem;
+    border-radius: 0.5rem;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--bs-primary);
+    z-index: 2;
+}
+
+/* ---------------------------------------------------------
+   Bottone Cuore (Preferiti)
+   --------------------------------------------------------- */
+.btn-favorite {
+    position: absolute;
+    top: 0.75rem;
+    right: 0.75rem;
+    width: 2.35rem;
+    height: 2.35rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(2, 6, 23, 0.45);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 100%;
+    color: #ffffff;
+    font-size: 1.15rem;
+    line-height: 1;
+    box-shadow: 0 10px 24px rgba(15, 23, 42, 0.28);
+    z-index: 3;
+    transition: transform 0.18s ease, background-color 0.18s ease, border-color 0.18s ease;
+}
+
+.btn-favorite:hover {
+    background: rgba(2, 6, 23, 0.62);
+    border-color: rgba(255, 255, 255, 0.55);
+    transform: translateY(-1px) scale(1.03);
+}
+
+.btn-favorite:focus-visible {
+    outline: 2px solid #fdc500;
+    outline-offset: 2px;
+}
+
+.btn-favorite .bi-heart {
+    color: #ffffff !important;
+}
+
+.btn-favorite .bi-heart-fill {
+    color: #ffff !important;
+    filter: drop-shadow(0px 2px 4px rgba(15, 23, 42, 0.6));
+}
+
+/* ---------------------------------------------------------
+   Footer Card (Scadenza e Stato)
+   --------------------------------------------------------- */
+.project-card-deadline {
+    white-space: nowrap;
+}
+
+.project-status-ended {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.35rem;
+    padding: 0.4rem 0.85rem;
+    border-radius: 999px;
+    background-color: #f1f5f9;
+    color: #64748b;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+/* ---------------------------------------------------------
+   Progress Bar Originale (Componente)
+   --------------------------------------------------------- */
 .project-progress-bar {
     width: 120px;
     height: 8px;
@@ -63,82 +200,25 @@
 .project-progress-fill {
     height: 100%;
     border-radius: 4px;
+    transition: width 0.3s ease;
 }
 
 .progress-fill-success {
-    background-color: #10B981;
+    background-color: #10B981; /* Verde */
 }
 
 .progress-fill-warning {
-    background-color: #F59E0B;
+    background-color: #F59E0B; /* Giallo/Arancio */
 }
 
 .progress-fill-danger {
-    background-color: #EF4444;
+    background-color: #EF4444; /* Rosso */
 }
 
 .progress-fill-full {
-    background-color: #9CA3AF;
+    background-color: #9CA3AF; /* Grigio se pieno */
 }
 
 .text-full {
     color: #9CA3AF;
 }
-
-.btn-favorite {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background-color: #F9FAFBCC;
-    border: none;
-    border-radius: 100%;
-    color: #000000;
-    font-size: 24px;
-    z-index: 3;
-}
-
-.btn-favorite:hover {
-    background-color: #F9FAFB;
-    transition: background-color 0.3s;
-}
-
-.btn-favorite .bi-heart {
-    color: #000000 !important;
-}
-
-.btn-favorite .bi-heart-fill {
-    color: #ffffff !important;
-    filter: drop-shadow(0px 2px 4px rgba(0, 0, 0, 0.5));
-}
-
-.badge-departure {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    text-transform: capitalize;
-    position: absolute;
-    width: 40px;
-    height: 70px;
-    top: 10px;
-    left: 10px;
-    padding: 4px;
-    background-color: #F9FAFBCC;
-    border: none;
-    border-radius:6px;
-    z-index: 1;
-}
-
-.badge-duration {
-    top: 170px;
-    left: 10px;
-    padding: 0px 4px;
-    position: absolute;
-    background-color: #F9FAFBCC;
-    border-radius: 6px;
-    z-index: 1;
-}
-
-
-
-

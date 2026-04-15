@@ -447,10 +447,10 @@
                     costruendo una carriera di impatto sociale.
                 </p>
                 <div class="d-flex gap-2 justify-content-center flex-wrap">
-                    <a href="{{ route('contact') }}" class="btn btn-dark">
+                    <a href="{{ route('contact') }}" class="btn btn-ae btn-ae-dark">
                         <i class="bi bi-briefcase me-2"></i>Candidati ora
                     </a>
-                    <a href="{{ route('about') }}" class="btn btn-outline-dark">
+                    <a href="{{ route('about') }}" class="btn btn-ae btn-ae-outline-dark">
                         <i class="bi bi-info-circle me-2"></i>Scopri Atelier Europeo
                     </a>
                 </div>

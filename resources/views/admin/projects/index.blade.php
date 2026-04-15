@@ -66,27 +66,11 @@
                 <h1 class="display-6 fw-bold text-dark mb-0">Tutti i Progetti</h1>
             </div>
             <div class="col-lg-auto">
-                <a href="{{ route('project.create') }}" class="btn btn-success btn-ae btn-ae-square px-4 py-2">
+                <a href="{{ route('project.create') }}" class="btn btn-ae btn-ae-success btn-ae-square px-4 py-2">
                     <i class="bi bi-plus-lg me-2"></i>Crea Nuovo Progetto
                 </a>
             </div>
         </div>
-
-        @if (session('success'))
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                <i class="bi bi-check-circle-fill me-2"></i>
-                {{ session('success') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        @endif
-
-        @if ($errors->any())
-            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                <i class="bi bi-exclamation-triangle-fill me-2"></i>
-                {{ $errors->first() }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        @endif
 
         <div class="row mb-4">
             <div class="col-12">

@@ -128,7 +128,7 @@
                                     </p>
                                 @endif
                                 
-                                <button type="submit" class="btn btn-warning btn-lg w-100">
+                                <button type="submit" class="btn btn-ae btn-ae-warning btn-lg w-100">
                                     <i class="bi bi-check-circle me-2"></i>
                                     Completa Progetto
                                 </button>
@@ -154,7 +154,7 @@
                                 Il progetto <strong>rimarrà modificabile</strong> e potrai continuare ad aggiornarlo.
                             </p>
                             <div class="mt-auto">
-                                <a href="{{ route('project.edit', ['id' => $project->id]) }}" class="btn btn-secondary btn-lg w-100">
+                                <a href="{{ route('project.edit', ['id' => $project->id]) }}" class="btn btn-ae btn-ae-secondary btn-lg w-100">
                                     <i class="bi bi-arrow-left me-2"></i>
                                     Torna alla Modifica
                                 </a>

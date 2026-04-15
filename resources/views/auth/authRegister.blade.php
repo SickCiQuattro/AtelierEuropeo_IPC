@@ -4,25 +4,25 @@
 
 @section('body')
     <script>
-        $(document).ready(function() {
+        $(document).ready(function () {
             // Validazione in tempo reale per la password
-            $('#password').on('input', function() {
+            $('#password').on('input', function () {
                 validatePasswordRequirements($(this).val());
             });
 
             function validatePasswordRequirements(password) {
                 // Controllo lunghezza minima
                 updateRequirement('#req-length', password.length >= 8);
-                
+
                 // Controllo lettera maiuscola
                 updateRequirement('#req-uppercase', /[A-Z]/.test(password));
-                
+
                 // Controllo lettera minuscola
                 updateRequirement('#req-lowercase', /[a-z]/.test(password));
-                
+
                 // Controllo numero
                 updateRequirement('#req-number', /\d/.test(password));
-                
+
                 // Controllo simbolo
                 updateRequirement('#req-symbol', /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~`]/.test(password));
             }
@@ -30,7 +30,7 @@
             function updateRequirement(selector, isValid) {
                 const element = $(selector);
                 const icon = element.find('i');
-                
+
                 if (isValid) {
                     element.removeClass('text-danger').addClass('text-success');
                     icon.removeClass('bi-x-circle').addClass('bi-check-circle-fill');
@@ -40,12 +40,12 @@
                 }
             }
 
-            $("#register-form").submit(function(event) {
+            $("#register-form").submit(function (event) {
                 var name = $("input[name='name']").val();
                 var email = $("#register-form input[name='email']").val();
                 var password = $("#register-form input[name='password']").val();
                 var confirmPassword = $("input[name='password_confirmation']").val();
-                
+
                 // Nuova regex più completa per i requisiti aggiornati
                 var passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~`]).{8,}$/;
                 var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -93,7 +93,7 @@
                 if (hasErrors) {
                     event.preventDefault();
                     console.log("Validazione fallita - invio bloccato");
-                    $(".invalid-input").filter(function() {
+                    $(".invalid-input").filter(function () {
                         return $(this).text() !== "";
                     }).first().prev().focus();
                     return;
@@ -107,7 +107,7 @@
                     data: {
                         email: email.trim()
                     },
-                    success: function(data) {
+                    success: function (data) {
                         if (data.found) {
                             $("#invalid-email").text("Questa email è già registrata.");
                             $("#email").focus();
@@ -115,7 +115,7 @@
                             $("#register-form")[0].submit();
                         }
                     },
-                    error: function() {
+                    error: function () {
                         // Se AJAX fallisce, invia comunque il form (fallback lato server)
                         $("#register-form")[0].submit();
                     }
@@ -133,22 +133,6 @@
                             <h1 class="section-title mb-2" style="font-size: 3rem;">Unisciti a noi!</h1>
                             <p class="section-subtitle mb-0">Crea il tuo account e inizia a esplorare l'Europa</p>
                         </div>
-
-                        @if ($errors->any())
-                            <div class="alert alert-danger border-0 rounded-3 mb-4">
-                                <div class="d-flex align-items-center">
-                                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
-                                    <div>
-                                        <strong>Attenzione!</strong>
-                                        <ul class="mb-0 mt-1">
-                                            @foreach ($errors->all() as $error)
-                                                <li>{{ $error }}</li>
-                                            @endforeach
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div>
-                        @endif
 
                         <form id="register-form" method="POST" action="{{ route('register') }}">
                             @csrf
@@ -176,7 +160,7 @@
 
                             <div class="mb-3">
                                 <label for="password" class="form-label fw-bold">Password</label>
-                                
+
                                 <!-- Info requisiti password -->
                                 <div class="alert alert-info small mb-3 border-0 bg-info bg-opacity-10">
                                     <div class="d-flex align-items-start">
@@ -203,7 +187,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                
+
                                 <input type="password" name="password" id="password"
                                     class="form-control form-control-lg border-0 shadow-sm rounded-3 @error('password') is-invalid @enderror"
                                     placeholder="Crea una password sicura">
@@ -221,7 +205,7 @@
                                 <span class="invalid-input text-danger" id="invalid-password-confirmation"></span>
                             </div>
 
-                            <button type="submit" class="btn btn-primary btn-lg btn-rounded w-100 py-3 mb-3">
+                            <button type="submit" class="btn btn-ae btn-ae-primary btn-lg btn-ae-pill w-100 py-3 mb-3">
                                 <i class="bi bi-person-plus-fill me-2"></i>Registrati
                             </button>
                         </form>
@@ -242,15 +226,15 @@
             transition: all 0.3s ease;
             font-size: 0.875rem;
         }
-        
+
         .requirement-item.text-success {
             font-weight: 500;
         }
-        
+
         .password-requirements {
             line-height: 1.4;
         }
-        
+
         .form-control:focus {
             box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
             border-color: #86b7fe;

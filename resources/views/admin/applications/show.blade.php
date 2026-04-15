@@ -39,23 +39,6 @@
             </div>
         </div>
 
-        <!-- Alert per messaggi -->
-        @if(session('success'))
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                <i class="bi bi-check-circle me-2"></i>
-                {{ session('success') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-        @endif
-
-        @if(session('error'))
-            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                <i class="bi bi-exclamation-triangle me-2"></i>
-                {{ session('error') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-        @endif
-
         <div class="row">
             <!-- Informazioni Candidato -->
             <div class="col-md-8">
@@ -142,7 +125,7 @@
                                     <i class="bi bi-file-earmark-pdf text-danger me-2 fs-4"></i>
                                     <div>
                                         <a href="{{ asset('storage/' . $application->document_path) }}" target="_blank"
-                                            class="btn btn-outline-primary btn-sm">
+                                            class="btn btn-ae btn-ae-outline-primary btn-sm">
                                             <i class="bi bi-download me-1"></i>
                                             Visualizza/Scarica CV
                                         </a>
@@ -186,7 +169,7 @@
 
                         <div class="mt-3">
                             <a href="{{ route('project.show', $application->project) }}"
-                                class="btn btn-outline-secondary btn-sm">
+                                class="btn btn-ae btn-ae-outline-secondary btn-sm">
                                 <i class="bi bi-eye me-1"></i>
                                 Visualizza Progetto
                             </a>
@@ -233,12 +216,12 @@
                     <div class="card-body">
                         @if($application->status === 'pending')
                             <div class="d-grid gap-2">
-                                <button type="button" class="btn btn-success" data-bs-toggle="modal"
+                                <button type="button" class="btn btn-ae btn-ae-success" data-bs-toggle="modal"
                                     data-bs-target="#approveModal">
                                     <i class="bi bi-check-lg me-2"></i>
                                     Approva Candidatura
                                 </button>
-                                <button type="button" class="btn btn-danger" data-bs-toggle="modal"
+                                <button type="button" class="btn btn-ae btn-ae-danger" data-bs-toggle="modal"
                                     data-bs-target="#rejectModal">
                                     <i class="bi bi-x-lg me-2"></i>
                                     Rifiuta Candidatura
@@ -246,7 +229,7 @@
                             </div>
                         @else
                             <div class="d-grid gap-2">
-                                <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                                <button type="button" class="btn btn-ae btn-ae-primary" data-bs-toggle="modal"
                                     data-bs-target="#updateModal">
                                     <i class="bi bi-pencil me-2"></i>
                                     Modifica Stato
@@ -258,7 +241,7 @@
 
                         <div class="d-grid gap-2">
                             <a href="{{ route('admin.applications.index', $application->project) }}"
-                                class="btn btn-outline-secondary">
+                                class="btn btn-ae btn-ae-outline-secondary">
                                 <i class="bi bi-arrow-left me-2"></i>
                                 Torna alle Candidature
                             </a>
@@ -293,8 +276,8 @@
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annulla</button>
-                            <button type="submit" class="btn btn-success">
+                            <button type="button" class="btn btn-ae btn-ae-secondary" data-bs-dismiss="modal">Annulla</button>
+                            <button type="submit" class="btn btn-ae btn-ae-success">
                                 <i class="bi bi-check-lg me-1"></i> Approva
                             </button>
                         </div>
@@ -329,8 +312,8 @@
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annulla</button>
-                            <button type="submit" class="btn btn-danger">
+                            <button type="button" class="btn btn-ae btn-ae-secondary" data-bs-dismiss="modal">Annulla</button>
+                            <button type="submit" class="btn btn-ae btn-ae-danger">
                                 <i class="bi bi-x-lg me-1"></i> Rifiuta
                             </button>
                         </div>
@@ -375,8 +358,8 @@
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annulla</button>
-                            <button type="submit" class="btn btn-primary">
+                            <button type="button" class="btn btn-ae btn-ae-secondary" data-bs-dismiss="modal">Annulla</button>
+                            <button type="submit" class="btn btn-ae btn-ae-primary">
                                 <i class="bi bi-check-lg me-1"></i> Aggiorna
                             </button>
                         </div>

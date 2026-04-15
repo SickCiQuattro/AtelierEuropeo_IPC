@@ -41,10 +41,10 @@
                 </p>
                 
                 <div class="d-flex flex-column flex-sm-row gap-3 justify-content-center">
-                    <a href="{{ route('home') }}" class="btn btn-warning btn-lg">
+                    <a href="{{ route('home') }}" class="btn btn-ae btn-ae-warning btn-lg">
                         Torna alla Home
                     </a>
-                    <a href="{{ route('project.index') }}" class="btn btn-outline-primary btn-lg">
+                    <a href="{{ route('project.index') }}" class="btn btn-ae btn-ae-outline-primary btn-lg">
                         Esplora i Progetti
                     </a>
                 </div>

@@ -4,8 +4,8 @@
 
 @section('body')
     <script>
-        $(document).ready(function() {
-            $("#login-form").submit(function(event) {
+        $(document).ready(function () {
+            $("#login-form").submit(function (event) {
                 // Ottenere i valori dei campi email e password
                 var email = $("#email").val();
                 var password = $("#password").val();
@@ -39,7 +39,7 @@
             });
 
             // Rimuovi errori quando l'utente inizia a digitare
-            $("#email, #password").on('input', function() {
+            $("#email, #password").on('input', function () {
                 var fieldName = $(this).attr('name');
                 $("#invalid-" + fieldName).text("");
             });
@@ -55,16 +55,6 @@
                             <h1 class="section-title mb-2" style="font-size: 3rem;">Bentornato!</h1>
                             <p class="section-subtitle mb-0">Accedi al tuo account per continuare</p>
                         </div>
-
-                        @if ($errors->any())
-                            <div class="alert alert-danger rounded-3">
-                                <ul class="mb-0">
-                                    @foreach ($errors->all() as $error)
-                                        <li>{{ $error }}</li>
-                                    @endforeach
-                                </ul>
-                            </div>
-                        @endif
 
                         <form id="login-form" method="POST" action="{{ route('login') }}">
                             @csrf
@@ -90,7 +80,7 @@
                                 @enderror
                             </div>
 
-                            <button type="submit" class="btn btn-primary btn-lg btn-rounded w-100 py-3 mb-3">
+                            <button type="submit" class="btn btn-ae btn-ae-primary btn-lg btn-ae-pill w-100 py-3 mb-3">
                                 <i class="bi bi-box-arrow-in-right me-2"></i>Accedi
                             </button>
                         </form>
