@@ -161,7 +161,7 @@
                                             <div class="d-flex justify-content-center gap-4 py-3">
                                                 @foreach ($chunk as $testimonial)
                                                     <div class="testimonial-card">
-                                                        <div class="quote">""</div>
+                                                        <div class="quote"><i class="bi bi-quote"></i></div>
                                                         <p class="author">{{ $testimonial->author->name }}</p>
                                                         <p class="project">{{ $testimonial->project->title }}</p>
                                                         <p class="text">{{ $testimonial->content }}</p>
