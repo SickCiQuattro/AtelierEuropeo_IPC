@@ -12,8 +12,8 @@
             </div>
         </div>
         <div class="col">
-            <h1 class="mb-2 fw-bold">{{ $user->name }}</h1>
-            <p class="text-muted mb-0">
+            <h1 class="section-title text-dark mb-2 fw-bold">{{ $user->name }}</h1>
+            <p class="main-text mb-0">
                 <i class="bi bi-envelope me-2"></i>{{ $user->email }}
             </p>
         </div>
@@ -26,7 +26,7 @@
             <div class="col-12">
                 <div class="row g-4 mb-4">
                     <div class="col-md-6">
-                        <div class="card border-0 shadow-sm rounded-4 h-100 position-relative">
+                        <div class="card border-0 shadow-sm rounded-4 h-100 position-relative profile-action-card">
                             <div class="card-body p-4">
                                 <i class="bi bi-file-earmark-text text-primary" style="font-size: 2rem;"></i>
                                 <h5 class="mt-3 mb-2 fw-bold text-primary">Le Mie Candidature</h5>
@@ -36,7 +36,7 @@
                         </div>
                     </div>
                     <div class="col-md-6">
-                        <div class="card border-0 shadow-sm rounded-4 h-100 position-relative">
+                        <div class="card border-0 shadow-sm rounded-4 h-100 position-relative profile-action-card">
                             <div class="card-body p-4">
                                 <i class="bi bi-heart text-primary" style="font-size: 2rem;"></i>
                                 <h5 class="mt-3 mb-2 fw-bold text-primary">Progetti Preferiti</h5>
