@@ -43,6 +43,16 @@
                 var fieldName = $(this).attr('name');
                 $("#invalid-" + fieldName).text("");
             });
+
+            // Toggle visibilita password
+            $("#togglePassword").on('click', function () {
+                var passwordField = $("#password");
+                var icon = $(this).find("i");
+                var isPasswordType = passwordField.attr('type') === 'password';
+
+                passwordField.attr('type', isPasswordType ? 'text' : 'password');
+                icon.toggleClass('bi-eye bi-eye-slash');
+            });
         });
     </script>
 
@@ -52,8 +62,8 @@
                 <div class="card border-0 shadow-sm rounded-4">
                     <div class="card-body p-4 p-md-5">
                         <div class="text-center mb-4">
-                            <h1 class="section-title mb-2" style="font-size: 3rem;">Bentornato!</h1>
-                            <p class="section-subtitle mb-0">Accedi al tuo account per continuare</p>
+                            <h1 class="section-title mb-2" style="font-size: 3rem;">Accedi</h1>
+                            <p class="section-subtitle mb-0">Inserisci le tue credenziali per accedere al tuo profilo</p>
                         </div>
 
                         <form id="login-form" method="POST" action="{{ route('login') }}">
@@ -70,13 +80,22 @@
                             </div>
 
                             <div class="mb-4">
-                                <label for="password" class="form-label fw-bold">Password</label>
-                                <input type="password" name="password" id="password"
-                                    class="form-control form-control-lg border-0 shadow-sm rounded-3 @error('password') is-invalid @enderror"
-                                    placeholder="Inserisci la tua password">
+                                <div class="d-flex justify-content-between align-items-center mb-1">
+                                    <label for="password" class="form-label fw-bold mb-0">Password</label>
+                                    <a href="{{ route('password.request') }}" class="text-decoration-none small">Password dimenticata?</a>
+                                </div>
+                                <div class="input-group shadow-sm rounded-3 bg-white">
+                                    <input type="password" name="password" id="password"
+                                        class="form-control form-control-lg border-0 bg-transparent @error('password') is-invalid @enderror"
+                                        placeholder="Inserisci la tua password">
+                                    <button class="btn border-0 bg-transparent" type="button" id="togglePassword"
+                                        aria-label="Mostra o nascondi password">
+                                        <i class="bi bi-eye text-muted"></i>
+                                    </button>
+                                </div>
                                 <span class="invalid-input text-danger" id="invalid-password"></span>
                                 @error('password')
-                                    <div class="invalid-feedback">{{ $message }}</div>
+                                    <div class="invalid-feedback d-block">{{ $message }}</div>
                                 @enderror
                             </div>
 
