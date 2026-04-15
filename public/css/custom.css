@@ -656,15 +656,6 @@ body {
 .about-page .transparency-card {
     border: 1px solid #f0f2f5;
     border-radius: 1rem;
-    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-}
-
-.about-page .board-member-card:hover,
-.about-page .card:hover,
-.about-page .transparency-card:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 10px 30px rgba(0, 10, 30, 0.04) !important;
-    border-color: transparent;
 }
 
 .about-page .board-member-avatar-wrap {
@@ -680,13 +671,6 @@ body {
     border-radius: 50%;
     border: 3px solid #fff;
     box-shadow: 0 8px 18px rgba(0, 0, 0, 0.12);
-    transition: transform 0.25s ease, box-shadow 0.25s ease;
-}
-
-.about-page .board-member-card:hover .board-member-avatar,
-.about-page .board-member-card:focus-within .board-member-avatar {
-    transform: scale(1.04);
-    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.18);
 }
 
 .about-page .bg-europe {
@@ -709,15 +693,6 @@ body {
 /* ---------------------------------------------------------
    Admin dashboard
    --------------------------------------------------------- */
-
-.admin-kpi-card {
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.admin-kpi-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 0.75rem 1.5rem rgba(0, 0, 0, 0.1) !important;
-}
 
 .admin-kpi-icon-active {
     color: #052C65 !important;

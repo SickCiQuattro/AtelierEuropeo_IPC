@@ -159,11 +159,11 @@
                                     x-model="selectAll" @change="toggleAll($event)" aria-label="Seleziona tutti i progetti">
                             </th>
                             <th scope="col">Nome Progetto</th>
-                            <th scope="col">Categoria</th>
+                            <th scope="col" class="text-center">Categoria</th>
                             <th scope="col">Paese</th>
-                            <th scope="col">Candidature</th>
+                            <th scope="col" class="text-center">Candidature</th>
                             <th scope="col">Scadenza</th>
-                            <th scope="col">Stato</th>
+                            <th scope="col" class="text-center">Stato</th>
                             <th scope="col" class="text-end pe-3"></th>
                         </tr>
                     </thead>
@@ -211,18 +211,20 @@
                                         aria-label="Seleziona progetto">
                                 </td>
                                 <td class="fw-semibold">{{ $projectTitle }}</td>
-                                <td>
+                                <td class="text-center">
                                     <span class="d-inline-flex align-items-center gap-1 {{ $categoryConfig['class'] }} fw-semibold">
                                         <i class="bi bi-{{ $categoryConfig['icon'] }}"></i>
                                         {{ $categoryConfig['label'] }}
                                     </span>
                                 </td>
                                 <td>{{ $projectLocation }}</td>
-                                <td>
-                                    <x-participants-progress :current="$applicationsCount" :max="$requestedPeople" />
+                                <td class="text-center">
+                                    <div class="d-flex justify-content-center">
+                                        <x-participants-progress :current="$applicationsCount" :max="$requestedPeople" />
+                                    </div>
                                 </td>
                                 <td>{{ $deadlineText }}</td>
-                                <td>
+                                <td class="text-center">
                                     <span class="rounded-pill px-3 py-1 text-white d-inline-flex align-items-center gap-1"
                                         style="background-color: {{ $statusConfig['color'] }};">
                                         <i class="bi bi-{{ $statusConfig['icon'] }}"></i>
