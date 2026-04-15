@@ -88,12 +88,12 @@
                             aria-labelledby="guestUserDropdown">
                             <div class="d-grid gap-2 navbar-user-menu-grid">
                                 <a href="{{ route('login') }}"
-                                    class="btn btn-ae btn-ae-square btn-ae-primary d-flex align-items-center justify-content-center gap-2">
+                                    class="btn  btn-ae-primary d-flex align-items-center justify-content-center gap-2">
                                     <i class="bi bi-box-arrow-in-right"></i>
                                     <span>{{ __('master.auth.login') }}</span>
                                 </a>
                                 <a href="{{ route('register') }}"
-                                    class="btn btn-ae btn-ae-square btn-ae-warning d-flex align-items-center justify-content-center gap-2">
+                                    class="btn  btn-ae-warning d-flex align-items-center justify-content-center gap-2">
                                     <i class="bi bi-plus-square"></i>
                                     <span>{{ __('master.auth.register') }}</span>
                                 </a>
@@ -106,7 +106,7 @@
                     @if ($isAdmin)
                         <!-- Variante 3: ADMIN -->
                         <div class="dropdown">
-                            <button class="btn btn-ae btn-ae-outline-warning btn-sm dropdown-toggle fw-semibold" type="button"
+                            <button class="btn btn-ae-outline-warning btn-sm dropdown-toggle fw-semibold" type="button"
                                 id="adminUserDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                                 {{ __('master.auth.admin') }}
                             </button>
@@ -114,27 +114,27 @@
                                 aria-labelledby="adminUserDropdown">
                                 <div class="d-grid gap-2 navbar-user-menu-grid">
                                     <a href="{{ route('profile.edit') }}"
-                                        class="btn btn-ae btn-ae-square btn-ae-primary d-flex align-items-center justify-content-center gap-2">
+                                        class="btn  btn-ae-primary d-flex align-items-center justify-content-center gap-2">
                                         <i class="bi bi-person-fill-gear"></i>
                                         <span>{{ __('master.auth.profile') }}</span>
                                     </a>
 
                                     @if ($isAdminPreview)
                                         <a href="{{ route('admin.return') }}"
-                                            class="btn btn-ae btn-ae-square btn-ae-secondary d-flex align-items-center justify-content-center gap-2 admin-view-toggle-btn">
+                                            class="btn  btn-ae-secondary d-flex align-items-center justify-content-center gap-2 admin-view-toggle-btn">
                                             <i class="bi bi-arrow-counterclockwise"></i>
                                             <span>{{ __('master.auth.return_admin') }}</span>
                                         </a>
                                     @else
                                         <a href="{{ route('admin.view-user') }}"
-                                            class="btn btn-ae btn-ae-square btn-ae-secondary d-flex align-items-center justify-content-center gap-2 admin-view-toggle-btn">
+                                            class="btn  btn-ae-secondary d-flex align-items-center justify-content-center gap-2 admin-view-toggle-btn">
                                             <span>{{ __('master.auth.user_view') }}</span>
                                         </a>
                                     @endif
                                     <form action="{{ route('logout') }}" method="POST">
                                         @csrf
                                         <button type="submit"
-                                            class="btn btn-ae btn-ae-square btn-ae-outline-danger w-100 d-inline-flex align-items-center justify-content-center gap-2">
+                                            class="btn  btn-ae-outline-danger w-100 d-inline-flex align-items-center justify-content-center gap-2">
                                             <i class="bi bi-box-arrow-right"></i>
                                             <span>{{ __('master.auth.logout') }}</span>
                                         </button>
@@ -145,22 +145,35 @@
                     @else
                         <!-- Variante 2: USER -->
                         <div class="dropdown">
-                            <button class="btn btn-ae btn-ae-outline-warning btn-sm dropdown-toggle fw-semibold" type="button"
+                            <button class="btn btn-ae-outline-warning btn-sm dropdown-toggle fw-semibold" type="button"
                                 id="standardUserDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                                 {{ auth()->user()->name ?? __('master.auth.user_fallback') }}
                             </button>
                             <div class="dropdown-menu dropdown-menu-end p-3 shadow border-0 navbar-user-dropdown-menu"
                                 aria-labelledby="standardUserDropdown">
                                 <div class="d-grid gap-2 navbar-user-menu-grid">
+                                    @if (auth()->user()->role !== 'admin')
+                                        <a href="{{ route('applications.index') }}"
+                                            class="btn btn-ae-secondary d-flex align-items-center justify-content-center gap-2">
+                                            <i class="bi bi-file-earmark-text"></i>
+                                            <span>Le Mie Candidature</span>
+                                        </a>
+                                        <a href="{{ route('favorites.index') }}"
+                                            class="btn btn-ae-secondary d-flex align-items-center justify-content-center gap-2">
+                                            <i class="bi bi-heart"></i>
+                                            <span>Progetti Preferiti</span>
+                                        </a>
+                                        <hr class="dropdown-divider my-1">
+                                    @endif
                                     <a href="{{ route('profile.edit') }}"
-                                        class="btn btn-ae btn-ae-square btn-ae-primary d-flex align-items-center justify-content-center gap-2">
+                                        class="btn btn-ae-primary d-flex align-items-center justify-content-center gap-2">
                                         <i class="bi bi-person-fill-gear"></i>
                                         <span>{{ __('master.auth.profile') }}</span>
                                     </a>
                                     <form action="{{ route('logout') }}" method="POST">
                                         @csrf
                                         <button type="submit"
-                                            class="btn btn-ae btn-ae-outline-danger w-100 d-inline-flex align-items-center justify-content-center gap-2">
+                                            class="btn btn-ae-outline-danger w-100 d-inline-flex align-items-center justify-content-center gap-2">
                                             <i class="bi bi-box-arrow-right"></i>
                                             <span>{{ __('master.auth.logout') }}</span>
                                         </button>
