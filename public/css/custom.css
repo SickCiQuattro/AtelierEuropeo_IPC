@@ -723,6 +723,15 @@ p {
         white-space: nowrap;
     }
 
+    .main-navbar .navbar-user-menu-grid {
+        min-width: 14.5rem;
+    }
+
+    .main-navbar .navbar-user-menu-grid .btn,
+    .main-navbar .navbar-user-menu-grid .btn span {
+        white-space: nowrap;
+    }
+
     .main-navbar.main-navbar--wide-locale .navbar-nav {
         gap: 0.125rem !important;
     }
@@ -906,6 +915,31 @@ p {
     --bs-accordion-btn-focus-box-shadow: none;
     --bs-accordion-btn-icon: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='white' stroke-linecap='round' stroke-linejoin='round'%3e%3cpath d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
     --bs-accordion-btn-active-icon: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='white' stroke-linecap='round' stroke-linejoin='round'%3e%3cpath d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+}
+
+/* ---------------------------------------------------------
+   Profilo utente: quick action cards
+   --------------------------------------------------------- */
+
+.profile-action-card {
+    transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
+    border: 1px solid transparent;
+}
+
+.profile-action-card:hover,
+.profile-action-card:focus-within {
+    transform: translateY(-4px);
+    box-shadow: 0 0.75rem 1.5rem rgba(0, 29, 61, 0.14) !important;
+    border-color: rgba(13, 110, 253, 0.35);
+}
+
+.profile-action-card .bi {
+    transition: transform 180ms ease;
+}
+
+.profile-action-card:hover .bi,
+.profile-action-card:focus-within .bi {
+    transform: scale(1.06);
 }
 
 .footer-main .footer-accordion .accordion-item {
