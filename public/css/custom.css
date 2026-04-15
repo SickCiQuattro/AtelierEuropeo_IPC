@@ -772,3 +772,89 @@ body {
 .admin-list-link:hover {
     color: #163fb1 !important;
 }
+
+.admin-project-action-view {
+    background-color: transparent;
+    border-color: #00509D !important;
+    color: #00509D !important;
+}
+
+.admin-project-action-view:hover,
+.admin-project-action-view:focus-visible {
+    background-color: #00509D !important;
+    border-color: #00509D !important;
+    color: #ffffff !important;
+}
+
+.admin-project-action-view:active {
+    background-color: #003f7a !important;
+    border-color: #003f7a !important;
+    color: #ffffff !important;
+}
+
+.admin-project-action-edit {
+    background-color: transparent;
+    border-color: #1A8754 !important;
+    color: #1A8754 !important;
+}
+
+.admin-project-action-edit:hover,
+.admin-project-action-edit:focus-visible {
+    background-color: #1A8754 !important;
+    border-color: #1A8754 !important;
+    color: #ffffff !important;
+}
+
+.admin-project-action-edit:active {
+    background-color: #156f45 !important;
+    border-color: #156f45 !important;
+    color: #ffffff !important;
+}
+
+.admin-project-action-divider {
+    min-height: 1.5rem;
+    opacity: 0.6;
+}
+
+/* ---------------------------------------------------------
+   Admin projects bulk actions
+   --------------------------------------------------------- */
+
+#projects-select-all.form-check-input,
+.project-row-checkbox.form-check-input {
+    cursor: pointer;
+    accent-color: #001D3D;
+}
+
+#projects-select-all.form-check-input:checked,
+#projects-select-all.form-check-input:indeterminate,
+.project-row-checkbox.form-check-input:checked,
+.project-row-checkbox.form-check-input:indeterminate {
+    background-color: #001D3D !important;
+    border-color: #001D3D !important;
+}
+
+#projects-select-all.form-check-input:focus,
+.project-row-checkbox.form-check-input:focus {
+    border-color: #001D3D !important;
+    box-shadow: 0 0 0 0.25rem rgba(0, 29, 61, 0.2) !important;
+}
+
+.admin-bulk-status-select {
+    min-width: 140px;
+}
+
+.admin-bulk-modal-header {
+    position: relative;
+    padding-right: 3.5rem;
+    align-items: flex-start;
+}
+
+.admin-bulk-modal-close {
+    position: absolute;
+    top: 0.75rem;
+    right: 0.75rem;
+    width: 2rem;
+    height: 2rem;
+    padding: 0;
+}

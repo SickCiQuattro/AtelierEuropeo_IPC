@@ -11,7 +11,7 @@
                     <a href="{{ route('home') }}" class="text-decoration-none">Home</a>
                 </li>
                 <li class="breadcrumb-item">
-                    <a href="{{ route('project.index') }}" class="text-decoration-none">Progetti Disponibili</a>
+                    <a href="{{ route('admin.projects.index') }}" class="text-decoration-none">Progetti Disponibili</a>
                 </li>
                 <li class="breadcrumb-item">
                     <a href="{{ route('project.show', $project) }}" class="text-decoration-none">{{ $project->title }}</a>

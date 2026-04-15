@@ -12,6 +12,7 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->alias([
+            'admin' => App\Http\Middleware\isAdminMiddleware::class,
             'isAdmin' => App\Http\Middleware\isAdminMiddleware::class,
             'isRegisteredUser' => App\Http\Middleware\isRegisteredUserMiddleware::class,
             'checkProjectAccess' => App\Http\Middleware\CheckProjectStatusAccess::class,

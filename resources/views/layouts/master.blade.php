@@ -188,8 +188,8 @@
                                 href="{{ route('admin.dashboard') }}">{{ __('master.nav.dashboard') }}</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link {{ request()->routeIs('project.*') ? 'is-active' : '' }}"
-                                href="{{ route('project.index') }}">{{ __('master.nav.projects') }}</a>
+                            <a class="nav-link {{ request()->routeIs('admin.projects.*', 'project.*') ? 'is-active' : '' }}"
+                                href="{{ route('admin.projects.index') }}">{{ __('master.nav.projects') }}</a>
                         </li>
                         <li class="nav-item">
                             {{-- TODO: inserire route dedicata alla lista candidature admin (globale) --}}

@@ -161,7 +161,7 @@
                         </table>
                     </div>
                     <div class="text-center mt-auto pt-3 border-top">
-                        <a href="{{ route('project.index') }}"
+                        <a href="{{ route('admin.projects.index') }}"
                             class="admin-list-link fw-semibold text-decoration-none d-inline-flex align-items-center gap-1">Vedi
                             tutti i progetti <i class="bi bi-arrow-right"></i></a>
                     </div>

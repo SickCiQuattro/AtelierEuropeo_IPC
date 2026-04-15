@@ -8,6 +8,16 @@
     @php
         $projectsCollection = $projects ?? collect();
         $availableCountriesCollection = $availableCountries ?? collect();
+        $categoryMap = [
+            'CES' => ['icon' => 'heart-fill', 'label' => 'CES', 'class' => 'text-prog-ces'],
+            'SG' => ['icon' => 'people-fill', 'label' => 'SG', 'class' => 'text-prog-sg'],
+            'CF' => ['icon' => 'mortarboard-fill', 'label' => 'CF', 'class' => 'text-prog-cf'],
+        ];
+        $statusMap = [
+            'completed' => ['label' => 'Completato', 'icon' => 'check-circle', 'color' => '#5b5bd6'],
+            'draft' => ['label' => 'Bozza', 'icon' => 'pencil-square', 'color' => '#6c757d'],
+            'published' => ['label' => 'Pubblicato', 'icon' => 'broadcast', 'color' => '#198754'],
+        ];
     @endphp
 
     <div class="container py-5" x-data="{
@@ -170,40 +180,17 @@
                                     : '08/04/2026';
 
                                 $categoryTag = strtoupper((string) data_get($project, 'category.tag', data_get($project, 'category_tag', 'CES')));
-                                $categoryMap = [
-                                    'CES' => ['icon' => 'heart-fill', 'label' => 'CES', 'class' => 'text-success', 'bg_class' => 'bg-success'],
-                                    'SG' => ['icon' => 'people-fill', 'label' => 'SG', 'class' => 'text-danger', 'bg_class' => 'bg-danger'],
-                                    'CF' => ['icon' => 'mortarboard-fill', 'label' => 'CF', 'class' => 'text-primary', 'bg_class' => 'bg-primary'],
-                                ];
                                 $categoryConfig = $categoryMap[$categoryTag] ?? [
                                     'icon' => 'tag-fill',
                                     'label' => $categoryTag ?: 'N/D',
                                     'class' => 'text-secondary',
-                                    'bg_class' => 'bg-secondary',
                                 ];
 
                                 $applicationsCount = data_get($project, 'approved_applications_count', data_get($project, 'applications_count', 0));
                                 $requestedPeople = data_get($project, 'requested_people', 6);
-                                $progressPercent = $requestedPeople > 0
-                                    ? min(100, (int) round(($applicationsCount / $requestedPeople) * 100))
-                                    : 0;
-                                if ($progressPercent >= 100) {
-                                    $progressColorClass = 'progress-fill-full';
-                                } elseif ($progressPercent >= 80) {
-                                    $progressColorClass = 'progress-fill-danger';
-                                } elseif ($progressPercent >= 50) {
-                                    $progressColorClass = 'progress-fill-warning';
-                                } else {
-                                    $progressColorClass = 'progress-fill-success';
-                                }
 
                                 $status = strtolower((string) data_get($project, 'status', 'published'));
                                 $isCompleted = $status === 'completed';
-                                $statusMap = [
-                                    'completed' => ['label' => 'Completato', 'icon' => 'check-circle-fill', 'color' => '#5b5bd6'],
-                                    'draft' => ['label' => 'Bozza', 'icon' => 'pencil-fill', 'color' => '#6c757d'],
-                                    'published' => ['label' => 'Pubblicato', 'icon' => 'wifi', 'color' => '#198754'],
-                                ];
                                 $statusConfig = $statusMap[$status] ?? $statusMap['draft'];
 
                                 $showUrl = ($projectId && \Illuminate\Support\Facades\Route::has('project.show'))
@@ -232,15 +219,7 @@
                                 </td>
                                 <td>{{ $projectLocation }}</td>
                                 <td>
-                                    <div class="d-flex align-items-center justify-content-center gap-1 mb-1">
-                                        <span class="small fw-bold text-dark">{{ $applicationsCount }}/{{ $requestedPeople }}</span>
-                                        <i class="bi bi-person-check-fill text-body-secondary" style="font-size: 0.8rem;"></i>
-                                    </div>
-                                    <div class="progress rounded-pill bg-light" style="height: 4px;">
-                                        <div class="progress-bar {{ $progressColorClass }} rounded-pill" role="progressbar"
-                                            style="width: {{ $progressPercent }}%" aria-valuenow="{{ $progressPercent }}"
-                                            aria-valuemin="0" aria-valuemax="100"></div>
-                                    </div>
+                                    <x-participants-progress :current="$applicationsCount" :max="$requestedPeople" />
                                 </td>
                                 <td>{{ $deadlineText }}</td>
                                 <td>
@@ -251,9 +230,9 @@
                                     </span>
                                 </td>
                                 <td class="text-end pe-3">
-                                    <div class="d-inline-flex gap-1">
+                                    <div class="d-inline-flex align-items-center gap-1">
                                         <a href="{{ $showUrl }}"
-                                            class="btn btn-sm btn-ae btn-ae-square btn-ae-outline-secondary"
+                                            class="btn btn-sm btn-ae btn-ae-square admin-project-action-view"
                                             aria-label="Visualizza progetto">
                                             <i class="bi bi-eye"></i>
                                         </a>
@@ -266,11 +245,12 @@
                                             </button>
                                         @else
                                             <a href="{{ $editUrl }}"
-                                                class="btn btn-sm btn-ae btn-ae-square btn-ae-outline-primary"
+                                                class="btn btn-sm btn-ae btn-ae-square admin-project-action-edit"
                                                 aria-label="Modifica progetto">
                                                 <i class="bi bi-pencil"></i>
                                             </a>
                                         @endif
+                                        <span class="vr admin-project-action-divider mx-1" aria-hidden="true"></span>
                                         <a href="{{ $deleteUrl }}"
                                             class="btn btn-sm btn-ae btn-ae-square btn-ae-outline-danger"
                                             aria-label="Elimina progetto">
@@ -307,12 +287,12 @@
                 <span class="small fw-semibold"><span x-text="selectedCount"></span> progetti selezionati</span>
                 <div class="vr"></div>
 
-                <button type="button" class="btn btn-sm btn-ae btn-ae-square admin-bulk-status-btn"
+                <button type="button" class="btn btn-sm btn-ae btn-ae-square btn-ae-primary"
                     data-bs-toggle="modal" data-bs-target="#bulkStatusModal">
                     Cambia Stato
                 </button>
 
-                <button type="button" class="btn btn-sm btn-ae btn-ae-square admin-bulk-delete-trigger-btn"
+                <button type="button" class="btn btn-sm btn-ae btn-ae-square btn-ae-danger"
                     data-bs-toggle="modal" data-bs-target="#bulkDeleteModal">
                     Elimina
                 </button>
@@ -322,7 +302,7 @@
         <div class="modal fade" id="bulkStatusModal" tabindex="-1" aria-labelledby="bulkStatusModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content rounded-4 border-0 shadow">
-                    <div class="modal-header border-0 pb-0">
+                    <div class="modal-header border-0 pb-0 admin-bulk-modal-header">
                         <h5 class="modal-title fw-bold" id="bulkStatusModalLabel">Cambia stato progetti</h5>
                         <button type="button"
                             class="btn btn-sm btn-ae btn-ae-square btn-ae-outline-secondary admin-bulk-modal-close"
@@ -355,7 +335,7 @@
                         <div class="modal-footer border-0 pt-0">
                             <button type="button" class="btn btn-ae btn-ae-square btn-ae-outline-secondary"
                                 data-bs-dismiss="modal">Annulla</button>
-                            <button type="submit" class="btn btn-ae btn-ae-square admin-bulk-status-btn">Conferma</button>
+                            <button type="submit" class="btn btn-ae btn-ae-square btn-ae-primary">Conferma</button>
                         </div>
                     </form>
                 </div>
@@ -365,7 +345,7 @@
         <div class="modal fade" id="bulkDeleteModal" tabindex="-1" aria-labelledby="bulkDeleteModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content rounded-4 border-0 shadow">
-                    <div class="modal-header border-0 pb-0">
+                    <div class="modal-header border-0 pb-0 admin-bulk-modal-header">
                         <h5 class="modal-title fw-bold" id="bulkDeleteModalLabel">Elimina progetti</h5>
                         <button type="button"
                             class="btn btn-sm btn-ae btn-ae-square btn-ae-outline-secondary admin-bulk-modal-close"
@@ -393,7 +373,7 @@
                         <div class="modal-footer border-0 pt-0">
                             <button type="button" class="btn btn-ae btn-ae-square btn-ae-outline-secondary"
                                 data-bs-dismiss="modal">Annulla</button>
-                            <button type="submit" class="btn btn-ae btn-ae-square admin-bulk-delete-confirm-btn">Conferma elimina</button>
+                            <button type="submit" class="btn btn-ae btn-ae-square btn-ae-danger">Conferma elimina</button>
                         </div>
                     </form>
                 </div>

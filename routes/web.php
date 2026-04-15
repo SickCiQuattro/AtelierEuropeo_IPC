@@ -6,6 +6,7 @@ use App\Http\Controllers\FrontController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\ApplicationController;
 use App\Http\Controllers\AdminApplicationController;
+use App\Http\Controllers\Admin\AdminProjectController;
 use App\Http\Controllers\FavoriteController;
 use Illuminate\Support\Facades\Route;
 
@@ -59,13 +60,18 @@ Route::get('/portfolio', [ProjectController::class, 'portfolio'])->name('project
 
 // Lista progetti (con middleware di controllo accessi)
 
-Route::get('/project', [ProjectController::class, 'index'])
+Route::get('/progetti', [ProjectController::class, 'index'])
     ->middleware('checkProjectAccess')
     ->name('project.index');
 
+// Redirect legacy path /project -> /progetti
+Route::get('/project', function () {
+    return redirect()->route('project.index', request()->query());
+})->middleware('checkProjectAccess');
+
 // Route creazione progetto solo admin (deve essere prima della route wildcard {project})
 Route::get('/project/create', [ProjectController::class, 'create'])
-    ->middleware(['auth', 'isAdmin'])
+    ->middleware(['auth', 'admin'])
     ->name('project.create');
 
 // Vista singolo progetto (pubblica)
@@ -131,26 +137,8 @@ Route::middleware('auth')->group(function () {
 |--------------------------------------------------------------------------
 */
 
-Route::middleware(['auth', 'isAdmin'])->group(function () {
+Route::middleware(['auth', 'admin'])->group(function () {
 
-    // Toggle vista admin/vista utente per account amministratore
-    Route::get('/admin/view-user', function () {
-        session(['admin_user_view' => true]);
-        return redirect()->route('home');
-    })->name('admin.view-user');
-
-    Route::get('/admin/return', function () {
-        session()->forget('admin_user_view');
-        return redirect()->route('admin.dashboard');
-    })->name('admin.return');
-    
-    /*
-    |--------------------------------------------------------------------------
-    | Route Dashboard Admin
-    |--------------------------------------------------------------------------
-    */
-    Route::get('/admin/dashboard', [ProjectController::class, 'dashboard'])->name('admin.dashboard');
-    
     /*
     |--------------------------------------------------------------------------
     | Route Gestione Progetti (Admin)
@@ -162,12 +150,12 @@ Route::middleware(['auth', 'isAdmin'])->group(function () {
         Route::get('/{id}/edit', [ProjectController::class, 'edit'])->name('edit');
         Route::put('/{id}', [ProjectController::class, 'update'])->name('update');
         Route::delete('/{id}', [ProjectController::class, 'destroy'])->name('destroy');
-        
+
         // Gestione stato progetti
         Route::get('/{id}/destroy/confirm', [ProjectController::class, 'confirmDestroy'])->name('destroy.confirm');
         Route::get('/{id}/complete/confirm', [ProjectController::class, 'confirmCompletion'])->name('confirm.completion');
         Route::put('/{id}/complete', [ProjectController::class, 'complete'])->name('complete');
-        
+
         // Route validazione AJAX
         Route::post('/validate', [ProjectController::class, 'validateAjax'])->name('validate');
         Route::post('/check-title', [ProjectController::class, 'checkTitleUnique'])->name('checkTitle');
@@ -175,16 +163,34 @@ Route::middleware(['auth', 'isAdmin'])->group(function () {
 
     /*
     |--------------------------------------------------------------------------
-    | Route Gestione Candidature (Admin)
+    | Route Admin Panel
     |--------------------------------------------------------------------------
     */
-    Route::prefix('admin')->name('admin.')->group(function () {
-        
+    Route::prefix('admin')->middleware(['auth', 'admin'])->name('admin.')->group(function () {
+        // Toggle vista admin/vista utente per account amministratore
+        Route::get('/view-user', function () {
+            session(['admin_user_view' => true]);
+            return redirect()->route('home');
+        })->name('view-user');
+
+        Route::get('/return', function () {
+            session()->forget('admin_user_view');
+            return redirect()->route('admin.dashboard');
+        })->name('return');
+
+        // Dashboard admin
+        Route::get('/dashboard', [ProjectController::class, 'dashboard'])->name('dashboard');
+
+        // Lista progetti admin dedicata
+        Route::get('/projects', [AdminProjectController::class, 'index'])->name('projects.index');
+        Route::post('/projects/bulk-status', [AdminProjectController::class, 'bulkUpdateStatus'])->name('projects.bulk-status');
+        Route::delete('/projects/bulk-delete', [AdminProjectController::class, 'bulkDestroy'])->name('projects.bulk-delete');
+
         // Gestione candidature progetti
         Route::prefix('project/{projectId}')->group(function () {
             Route::get('/applications', [AdminApplicationController::class, 'index'])->name('applications.index');
         });
-        
+
         // Gestione candidature individuali
         Route::prefix('applications/{application}')->name('applications.')->group(function () {
             Route::get('/', [AdminApplicationController::class, 'show'])->name('show');
