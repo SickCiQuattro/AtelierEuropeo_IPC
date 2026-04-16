@@ -6,9 +6,9 @@
 
 @section('body')
     <main class="container py-4 mb-5 projects-list-page">
-        <div class="mb-4 border-bottom pb-3">
-            <h1 class="section-title"><i class="bi bi-heart-fill me-2"></i>I Miei Preferiti</h1>
-            <p class="main-text mb-0">Gestisci i progetti che hai salvato per consultarli o candidarti in un secondo momento.</p>
+        <div class="text-center mb-5">
+            <h1 class="display-4 fw-bold text-dark mb-3">I Miei Preferiti</h1>
+            <p class="lead text-body-secondary col-md-8 mx-auto">Gestisci i progetti che hai salvato per consultarli o candidarti in un secondo momento.</p>
         </div>
 
         @php
