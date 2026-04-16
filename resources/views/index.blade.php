@@ -61,7 +61,7 @@
                     <h2 class="section-title text-dark">Scopri. Partecipa.</h2>
                     <p class="section-subtitle">Vivi nuove esperienze ed entra nel cuore dell'Europa.</p>
                 </div>
-                <div class="d-flex flex-wrap justify-content-center gap-4">
+                <div class="program-cards-grid">
 
                     <div class="card card-home program-card text-center h-100">
                         <div class="card-body d-flex flex-column align-items-center">
