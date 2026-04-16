@@ -311,7 +311,6 @@ p {
 
 /* ---------------------------------------------------------
    Program semantic utilities - CES
-    --------------------------------------------------------- */
    --------------------------------------------------------- */
 
 .bg-prog-ces {
@@ -1288,7 +1287,7 @@ p {
 
 .home-page .program-card .card-body {
     width: 100%;
-    padding: 1.3rem 1.15rem 0.95rem;
+    padding: 2rem 1rem 091rem;
 }
 
 .home-page .program-card-icon {

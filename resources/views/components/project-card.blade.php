@@ -25,6 +25,10 @@
             $durationText = $durationDays . ' ' . ($durationDays == 1 ? 'Giorno' : 'Giorni');
         }
     }
+
+    $isAdminUserPreview = auth()->check()
+        && auth()->user()->role === 'admin'
+        && session('admin_user_view', false);
 @endphp
 
 <div class="project-card d-flex flex-column h-100">
@@ -44,7 +48,7 @@
             </div>
         @endif
 
-        @if ($showFavoriteIcon)
+        @if ($showFavoriteIcon && !$isAdminUserPreview)
             @guest
                 <button type="button" class="btn-favorite z-3" data-project-id="{{ $project->id }}" data-bs-toggle="modal"
                     data-bs-target="#loginRequiredModal">
