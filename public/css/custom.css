@@ -1482,3 +1482,64 @@ p {
         padding-right: 0 !important;
     }
 }
+
+/* =========================================================
+   Breadcrumb Moderna (AE Breadcrumb)
+   ========================================================= */
+.ae-breadcrumb-nav {
+    /* Personalizza il separatore con un chevron SVG e il colore della secondary */
+    --bs-breadcrumb-divider: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%2364748b' viewBox='0 0 16 16'%3E%3Cpath fill-rule='evenodd' d='M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z'/%3E%3C/svg%3E");
+    margin-bottom: 1.5rem;
+}
+
+.ae-breadcrumb {
+    display: inline-flex;
+    align-items: center;
+    background-color: #ffffff; /* Sfondo bianco puro */
+    border: 1px solid #f0f2f5; /* Bordo leggerissimo come le card */
+    padding: 0.45rem 1.25rem;
+    border-radius: 50rem; /* Forma a pillola */
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.04); /* Ombra in stile con il resto del sito */
+    margin-bottom: 0;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.ae-breadcrumb .breadcrumb-item {
+    display: flex;
+    align-items: center;
+}
+
+/* Correzione per l'allineamento verticale del separatore */
+.ae-breadcrumb .breadcrumb-item + .breadcrumb-item::before {
+    margin-top: 1px; 
+    padding-right: 0.5rem;
+}
+
+.ae-breadcrumb a {
+    color: var(--bs-secondary);
+    text-decoration: none;
+    transition: color 0.2s ease, transform 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.35rem; /* Spazio tra eventuale icona e testo */
+}
+
+.ae-breadcrumb a:hover,
+.ae-breadcrumb a:focus-visible {
+    color: var(--bs-primary);
+    /* Leggerissimo feedback tattile al passaggio del mouse */
+    transform: translateY(-1px);
+}
+
+/* Stato della pagina corrente */
+.ae-breadcrumb .breadcrumb-item.active {
+    color: var(--bs-primary);
+    font-weight: 700;
+}
+
+.ae-breadcrumb .home-icon {
+    font-size: 1rem;
+    line-height: 1;
+    margin-top: -2px; /* Bilanciamento ottico dell'icona */
+}

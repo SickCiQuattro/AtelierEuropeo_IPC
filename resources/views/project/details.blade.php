@@ -1,335 +1,238 @@
 @extends('layouts.master')
 
-@section('title', 'AE - Project Details')
+@section('title', 'AE - Dettaglio Progetto')
 
 @section('active_progetti', 'active')
 
-@section('breadcrumb')
-    <div class="bg-light py-2">
-        <div class="container">
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb mb-0">
-                    <li class="breadcrumb-item">
-                        <a href="{{ route('home') }}" class="text-decoration-none">Home</a>
-                    </li>
-                    <li class="breadcrumb-item">
-                        <a href="{{ route('project.index') }}" class="text-decoration-none">Progetti Disponibili</a>
-                    </li>
-                    <li class="breadcrumb-item active" aria-current="page">{{ $project->title }}</li>
-                </ol>
-            </nav>
-        </div>
-    </div>
-@endsection
-
 @section('body')
-    <div class="container px-2 px-md-4 pb-5">
-        <div class="hero-section d-flex align-items-center justify-content-center mt-4 px-2"
-            style="background-image: url('{{ $project->image_url }}'); min-height: 220px;">
-            <div class="hero-overlay"></div>
-            <div class="container position-relative text-center text-white py-4 py-md-5">
-                <h1 class="section-title">{{ $project->title }}</h1>
-            </div>
-        </div>
-        <div class="row py-2 py-md-3 mb-3 g-2 align-items-center">
-            <div class="col-8 col-md-6">
-                <h3 class="fw-bold mb-0 fs-4 fs-md-3">Informazioni essenziali</h3>
-            </div>
-            <div class="col-4 col-md-6 text-end">
-                @if (auth()->check())
-                    @if (auth()->user()->role === 'admin')
-                        {{-- Admin: pulsante per modificare il progetto --}}
-                        @if($project->status === 'completed')
-                            <span
-                                class="btn btn-ae btn-ae-outline-secondary btn-ae-pill d-inline-flex align-items-center px-3 py-2 me-2"
-                                disabled>
-                                <i class="bi bi-check-circle me-2"></i> Completato
-                            </span>
-                        @else
-                            <a href="{{ route('project.edit', ['id' => $project->id]) }}"
-                                class="btn btn-ae btn-ae-outline-primary btn-ae-pill d-inline-flex align-items-center px-3 py-2 me-2">
-                                <i class="bi bi-pen me-2"></i> Modifica
-                            </a>
-                        @endif
-                        {{-- Admin: pulsante per gestire candidature --}}
-                        <a href="{{ route('admin.applications.index', $project->id) }}"
-                            class="btn btn-ae btn-ae-outline-info btn-ae-pill d-inline-flex align-items-center px-3 py-2">
-                            <i class="bi bi-person-lines-fill me-2"></i> Candidature
-                        </a>
-                    @else
-                        {{-- Utente registrato: pulsante salva nei preferiti --}}
-                        @php
-                            $isFavorite = auth()->user()->favoriteProjects()->where('project_id', $project->id)->exists();
-                        @endphp
-                        <button type="button"
-                            class="btn btn-ae btn-ae-outline-primary btn-ae-pill d-inline-flex align-items-center px-3 py-2 favorite-btn"
-                            data-project-id="{{ $project->id }}" data-is-favorite="{{ $isFavorite ? 'true' : 'false' }}">
-                            <i class="bi bi-heart{{ $isFavorite ? '-fill' : '' }} me-2 fs-4"></i>
-                            <span class="btn-text">{{ $isFavorite ? 'Rimuovi' : 'Salva' }}</span>
-                        </button>
-                    @endif
-                @else
-                    {{-- Utente non loggato: mostra modal per autenticazione --}}
-                    <button type="button"
-                        class="btn btn-ae btn-ae-outline-primary btn-ae-pill d-inline-flex align-items-center px-3 py-2"
-                        data-bs-toggle="modal" data-bs-target="#authModalDetail">
-                        <i class="bi bi-heart me-2"></i> Salva
-                    </button>
+    @php
+        $isAuthenticated = auth()->check();
+        $isAdmin = $isAuthenticated && auth()->user()->role === 'admin';
+        $isCompleted = $project->status === 'completed';
+        $openDeleteModal = request()->boolean('openDeleteModal');
 
-                    {{-- Modal per l'autenticazione --}}
-                    <div class="modal fade" id="authModalDetail" tabindex="-1" aria-labelledby="authModalDetailLabel">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="authModalDetailLabel">Accedi per salvare nei preferiti</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                </div>
-                                <div class="modal-body text-start">
-                                    <p>Per salvare questo progetto nei tuoi preferiti, devi prima accedere al tuo account.</p>
-                                    <p>Se non hai un account, puoi registrarti gratuitamente.</p>
-                                </div>
-                                <div class="modal-footer">
-                                    <a href="{{ route('login') }}" class="btn btn-ae btn-ae-primary">Accedi</a>
-                                    <a href="{{ route('register') }}" class="btn btn-ae btn-ae-secondary">Registrati</a>
-                                    <button type="button" class="btn btn-ae btn-ae-danger"
-                                        data-bs-dismiss="modal">Chiudi</button>
-                                </div>
-                            </div>
-                        </div>
+        $formatHumanDate = function ($value) {
+            if (empty($value))
+                return 'N/D';
+            return \Carbon\Carbon::parse($value)->format('d/m/Y');
+        };
+
+        $previousUrl = url()->previous();
+        $currentUrl = url()->current();
+        $previousPath = parse_url($previousUrl, PHP_URL_PATH) ?? '';
+        $defaultBackUrl = ($isAdmin && \Illuminate\Support\Facades\Route::has('admin.projects.index'))
+            ? route('admin.projects.index')
+            : route('project.index');
+        $isUnsafeBackTarget = $previousUrl === $currentUrl
+            || str_contains($previousPath, '/project/create')
+            || (str_contains($previousPath, '/project/') && str_contains($previousPath, '/edit'));
+        $backUrl = $isUnsafeBackTarget ? $defaultBackUrl : $previousUrl;
+
+        $categoryBadges = [
+            'CES' => 'badge-prog-ces',
+            'SG' => 'badge-prog-sg',
+            'CF' => 'badge-prog-cf',
+        ];
+        $tag = $project->category->tag ?? 'CES';
+        $categoryBadgeClass = $categoryBadges[$tag] ?? 'badge-prog-ces';
+
+        // Configurazione stato progetto
+        $statusConfig = match ($project->status) {
+            'published' => ['label' => 'Pubblicato', 'icon' => 'bi-broadcast', 'color' => 'text-success'],
+            'completed' => ['label' => 'Completato', 'icon' => 'bi-check-circle-fill', 'color' => 'text-dark'],
+            default => ['label' => 'Bozza', 'icon' => 'bi-pencil-square', 'color' => 'text-secondary'],
+        };
+    @endphp
+
+    <main class="container px-2 px-md-4 pb-5 pt-4 project-detail-page">
+
+        <div class="mb-4">
+            <a href="{{ $backUrl }}"
+                class="btn btn-ae btn-ae-light border shadow-sm rounded-pill px-3 py-2 text-secondary fw-semibold transition-hover">
+                <i class="bi bi-arrow-left me-2"></i>Torna indietro
+            </a>
+        </div>
+
+        <article class="card border-0 shadow-sm overflow-hidden mb-5" style="border-radius: 1.25rem;">
+            <div class="row g-0 align-items-stretch">
+
+                <div class="col-lg-6 p-4 p-md-5 d-flex flex-column justify-content-center bg-white">
+                    <div class="mb-3">
+                        <span class="{{ $categoryBadgeClass }} shadow-sm" style="font-size: 0.9rem; padding: 0.4rem 1rem;">
+                            {{ $tag }}
+                        </span>
                     </div>
-                @endif
-            </div>
-        </div>
-        <ul class="list-unstyled mb-4">
-            <li class="mb-2 d-flex align-items-center flex-wrap"><i class="bi bi-person-fill me-2"></i> <span>{{
-        $project->requested_people }} persona/e</span></li>
-            <li class="mb-2 d-flex align-items-center flex-wrap"><i class="bi bi-geo-alt-fill me-2"></i> <span>{{
-        $project->location }}</span></li>
-            <li class="mb-2 d-flex align-items-center flex-wrap"><i class="bi bi-calendar-event-fill me-2"></i> <span>Da
-                    {{ $project->start_date }} a {{ $project->end_date }}</span></li>
-            <li class="mb-2 text-danger d-flex align-items-center flex-wrap"><i class="bi bi-calendar2-x-fill me-2"></i>
-                <span>Scadenza:
-                    {{ $project->expire_date }}</span></li>
-            @if (auth()->check() && auth()->user()->role === 'admin')
-                {{-- Informazione status solo per admin --}}
-                <li class="mb-2 d-flex align-items-center flex-wrap">
-                    <i class="bi bi-info-circle-fill me-2"></i>
-                    <span>Status:
-                        @php
-                            $statusColors = [
-                                'draft' => 'text-secondary',
-                                'published' => 'text-success',
-                                'completed' => 'text-danger',
-                            ];
-                            $statusLabels = [
-                                'draft' => 'Bozza',
-                                'published' => 'Pubblicato',
-                                'completed' => 'Completato',
-                            ];
-                            $statusColor = $statusColors[$project->status] ?? 'text-dark';
-                            $statusLabel = $statusLabels[$project->status] ?? $project->status;
-                        @endphp
-                        <span class="{{ $statusColor }} fw-bold">{{ $statusLabel }}</span>
-                    </span>
-                </li>
-            @endif
-        </ul>
-        <h3 class="fw-bold py-3 fs-4 fs-md-3">Chi è l'associazione {{ $project->association->name }}</h3>
-        <p class="lead">{{ $project->association->description}}</p>
-        <h3 class="fw-bold py-3 fs-4 fs-md-3">Il viaggio in pillole</h3>
-        <p class="lead">{{ $project->full_description }}</p>
-        <h3 class="fw-bold py-3 fs-4 fs-md-3">Requisiti di partecipazione</h3>
-        <p class="lead">{{ $project->requirements }}</p>
-        <h3 class="fw-bold py-3 fs-4 fs-md-3">Condizioni economiche e di viaggio</h3>
-        <p class="lead">{{ $project->travel_conditions }}</p>
+                    <h1 class="display-6 fw-bold mb-3 text-primary">{{ $project->title }}</h1>
+                    <p class="lead text-secondary mb-0"
+                        style="display: -webkit-box; -webkit-line-clamp: 4; line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden;">
+                        {{ $project->sum_description }}
+                    </p>
+                </div>
 
-        {{-- Sezione testimonianze per progetti completati --}}
-        @if($project->status === 'completed')
-            <h3 class="fw-bold py-3 fs-4 fs-md-3">
-                <i class="bi bi-chat-quote me-2"></i>Testimonianze
-            </h3>
-            @if($project->testimonial && $project->testimonial->count() > 0)
-                <div class="row g-4 mb-4">
-                    @foreach($project->testimonial as $testimonial)
-                        <div class="col-12 col-md-6">
-                            <div class="card border-0 shadow-sm h-100">
-                                <div class="card-body">
-                                    <div class="d-flex align-items-center mb-3">
-                                        <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center me-3"
-                                            style="width: 50px; height: 50px;">
-                                            <i class="bi bi-person text-white fs-4"></i>
-                                        </div>
-                                        <div>
-                                            <h6 class="mb-0 fw-bold">{{ $testimonial->author->name }}</h6>
-                                            <small class="text-muted">Partecipante</small>
-                                        </div>
-                                    </div>
-                                    <p class="card-text">{{ $testimonial->content }}</p>
-                                    <div class="text-end">
-                                        <i class="bi bi-quote text-primary fs-3"></i>
-                                    </div>
-                                </div>
-                            </div>
+                <div class="col-lg-6 position-relative">
+                    <img src="{{ $project->image_url }}" alt="{{ $project->title }}" class="w-100 h-100 object-fit-cover"
+                        style="min-height: 320px;">
+
+                    @if($isAdmin)
+                        <div class="position-absolute shadow-sm"
+                            style="top: 1.25rem; left: 1.25rem; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); border-radius: 1rem; padding: 0.5rem 1rem; z-index: 2;">
+                            <span class="fw-bold {{ $statusConfig['color'] }} d-flex align-items-center gap-2">
+                                <i class="bi {{ $statusConfig['icon'] }}"></i> {{ $statusConfig['label'] }}
+                            </span>
                         </div>
-                    @endforeach
+                    @endif
+
+                    @if (!$isAdmin)
+                        @guest
+                            <button type="button" class="btn-favorite shadow-sm" data-bs-toggle="modal"
+                                data-bs-target="#loginRequiredModal" style="top: 1.25rem; right: 1.25rem;">
+                                <i class="bi bi-heart"></i>
+                            </button>
+                        @endguest
+                        @auth
+                            @php $isFavorite = auth()->user()->favorites->contains($project->id); @endphp
+                            <button type="button" class="btn-favorite js-favorite-toggle shadow-sm"
+                                data-project-id="{{ $project->id }}" aria-pressed="{{ $isFavorite ? 'true' : 'false' }}"
+                                style="top: 1.25rem; right: 1.25rem;">
+                                <i class="bi bi-heart{{ $isFavorite ? '-fill' : '' }}"></i>
+                            </button>
+                        @endauth
+                    @endif
                 </div>
-            @else
-                <div class="alert alert-info">
-                    <i class="bi bi-info-circle me-2"></i>
-                    Non sono ancora disponibili testimonianze per questo progetto completato.
-                </div>
-            @endif
+            </div>
+        </article>
+
+        @if ($isAdmin)
+            <section class="bg-white border shadow-sm p-3 mb-5 d-flex flex-wrap justify-content-end gap-2"
+                style="border-radius: 1.25rem;">
+                @if (!$isCompleted)
+                    <a href="{{ route('project.edit', ['id' => $project->id]) }}" class="btn btn-ae btn-ae-outline-primary">
+                        <i class="bi bi-pen-fill me-2"></i>Modifica
+                    </a>
+                @endif
+                <a href="{{ route('admin.applications.index', $project->id) }}" class="btn btn-ae btn-ae-primary">
+                    <i class="bi bi-people-fill me-2"></i>Gestisci Candidature
+                </a>
+                <button type="button" class="btn btn-ae btn-ae-outline-danger" data-bs-toggle="modal"
+                    data-bs-target="#deleteProjectModal">
+                    <i class="bi bi-trash-fill me-2"></i>Elimina
+                </button>
+            </section>
         @endif
 
-        <div class="container text-center">
-            @if($project->status === 'completed')
-                {{-- Sezione per progetti completati --}}
-                <h1 class="fw-bold py-3 fs-3 fs-md-2">Progetto Completato</h1>
-                <p class="lead mb-4">Questo progetto è stato completato con successo. Scopri altri progetti disponibili o
-                    lasciati ispirare dalle testimonianze!</p>
-                <div class="d-flex flex-column flex-sm-row gap-3 justify-content-center">
-                    <a href="{{ route('project.index') }}" class="btn btn-ae btn-ae-primary btn-lg btn-ae-pill px-4 py-2">
-                        <i class="bi bi-search me-2"></i> Scopri Altri Progetti
-                    </a>
-                    <a href="{{ route('project.portfolio') }}"
-                        class="btn btn-ae btn-ae-outline-primary btn-lg btn-ae-pill px-4 py-2">
-                        <i class="bi bi-collection me-2"></i> Vedi Portfolio
-                    </a>
+        <section class="mb-5">
+            <div class="row g-4">
+                <div class="col-6 col-md-3">
+                    <div class="bg-white border p-4 text-center h-100 shadow-sm transition-hover"
+                        style="border-radius: 1.25rem;">
+                        <i class="bi bi-people-fill fs-2 mb-2 d-block text-primary"></i>
+                        <span class="d-block fw-bold fs-5">{{ $project->requested_people }}</span>
+                        <span class="small text-secondary fw-semibold">Richiesti</span>
+                    </div>
                 </div>
-            @elseif (auth()->check() && auth()->user()->role === 'admin')
-                {{-- Sezione per amministratori --}}
-                <h1 class="fw-bold py-3 fs-3 fs-md-2">Gestisci questo progetto</h1>
-                <p class="lead mb-4">Visualizza e gestisci le candidature ricevute per questo progetto.</p>
-                <a href="{{ route('admin.applications.index', $project->id) }}"
-                    class="btn btn-ae btn-ae-success btn-lg btn-ae-pill px-4 py-2">
-                    <i class="bi bi-people-fill me-2"></i> Gestisci Candidature
-                </a>
-            @else
-                {{-- Sezione per utenti normali con progetti attivi --}}
-                <h1 class="fw-bold py-3 fs-3 fs-md-2">Presenta la tua candidatura!</h1>
-                @if (auth()->check())
-                    {{-- Utente registrato: verifica se si è già candidato --}}
-                    @php
-                        $hasApplied = \App\Models\Application::where('user_id', auth()->id())
-                            ->where('project_id', $project->id)
-                            ->exists();
-                    @endphp
+                <div class="col-6 col-md-3">
+                    <div class="bg-white border p-4 text-center h-100 shadow-sm transition-hover"
+                        style="border-radius: 1.25rem;">
+                        <i class="bi bi-geo-alt-fill fs-2 mb-2 d-block text-warning"></i>
+                        <span class="d-block fw-bold fs-6">{{ $project->location }}</span>
+                        <span class="small text-secondary fw-semibold">Luogo</span>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="bg-white border p-4 text-center h-100 shadow-sm transition-hover"
+                        style="border-radius: 1.25rem;">
+                        <i class="bi bi-calendar2-week-fill fs-2 mb-2 d-block text-info"></i>
+                        <span class="d-block fw-bold fs-6">{{ $formatHumanDate($project->start_date) }}</span>
+                        <span class="small text-secondary fw-semibold">Inizio</span>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="bg-white border p-4 text-center h-100 shadow-sm transition-hover"
+                        style="border-radius: 1.25rem;">
+                        <i class="bi bi-calendar-x-fill fs-2 mb-2 d-block text-danger"></i>
+                        <span class="d-block fw-bold fs-6 text-danger">{{ $formatHumanDate($project->expire_date) }}</span>
+                        <span class="small text-secondary fw-semibold">Scadenza</span>
+                    </div>
+                </div>
+            </div>
+        </section>
 
-                    @if($hasApplied)
-                        <div class="alert alert-info mb-4">
-                            <i class="bi bi-check-circle me-2"></i>
-                            Ti sei già candidato per questo progetto. Puoi controllare lo stato della tua candidatura nella sezione
-                            delle <a href="{{ route('applications.index') }}">tue candidature</a>.
-                        </div>
-                    @else
-                        <p class="lead mb-4">Compila il form con i tuoi dati e carica il tuo CV per candidarti!</p>
-                        <a href="{{ route('applications.create', $project->id) }}"
-                            class="btn btn-ae btn-ae-primary btn-lg btn-ae-pill px-4 py-2">
-                            <i class="bi bi-bookmark-plus-fill me-2"></i> Candidati ora
-                        </a>
-                    @endif
-                @else
-                    {{-- Utente non loggato: mostra modal per autenticazione --}}
-                    <button class="btn btn-ae btn-ae-primary btn-lg btn-ae-pill px-4 py-2" data-bs-toggle="modal"
-                        data-bs-target="#authModalApply">
-                        <i class="bi bi-bookmark-plus-fill me-2"></i> Candidati
-                    </button>
+        <div class="row g-4">
+            <div class="col-lg-8">
+                <div class="bg-white border p-4 p-md-5 mb-4 shadow-sm" style="border-radius: 1.25rem;">
+                    <h3 class="h4 fw-bold mb-4 text-primary"><i class="bi bi-journal-text me-2"></i>Il viaggio in pillole
+                    </h3>
+                    <p class="text-secondary" style="white-space: pre-line;">{{ $project->full_description }}</p>
+                </div>
 
-                    {{-- Modal per l'autenticazione candidatura --}}
-                    <div class="modal fade" id="authModalApply" tabindex="-1" aria-labelledby="authModalApplyLabel">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="authModalApplyLabel">Accedi per candidarti</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                </div>
-                                <div class="modal-body text-start">
-                                    <p>Per candidarti a questo progetto, devi prima accedere al tuo account.</p>
-                                    <p>Se non hai un account, puoi registrarti gratuitamente e iniziare subito a esplorare le
-                                        opportunità europee!</p>
-                                </div>
-                                <div class="modal-footer">
-                                    <a href="{{ route('login') }}" class="btn btn-ae btn-ae-primary">Accedi</a>
-                                    <a href="{{ route('register') }}" class="btn btn-ae btn-ae-secondary">Registrati</a>
-                                    <button type="button" class="btn btn-ae btn-ae-danger" data-bs-dismiss="modal">Chiudi</button>
-                                </div>
-                            </div>
+                <div class="bg-white border p-4 p-md-5 shadow-sm" style="border-radius: 1.25rem;">
+                    <h3 class="h4 fw-bold mb-4 text-primary"><i class="bi bi-list-check me-2"></i>Requisiti di
+                        partecipazione</h3>
+                    <p class="text-secondary mb-0" style="white-space: pre-line;">{{ $project->requirements }}</p>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="bg-white border p-4 shadow-sm mb-4" style="border-radius: 1.25rem;">
+                    <h3 class="h6 fw-bold mb-3 text-muted text-uppercase">Condizioni Economiche</h3>
+                    <p class="text-secondary small mb-0" style="white-space: pre-line;">{{ $project->travel_conditions }}
+                    </p>
+                </div>
+
+                <div class="bg-light border p-4 shadow-sm sticky-top" style="border-radius: 1.25rem; top: 110px;">
+                    <h3 class="h6 fw-bold mb-2 text-muted text-uppercase">L'Associazione</h3>
+                    <h4 class="h5 fw-bold mb-3 text-primary">{{ $project->association->name }}</h4>
+                    <p class="text-secondary small mb-0">{{ $project->association->description }}</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    @if ($isAdmin)
+        <div class="modal fade" id="deleteProjectModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content border-0 shadow-lg" style="border-radius: 1.25rem;">
+                    <div class="modal-body p-5 text-center">
+                        <i class="bi bi-exclamation-triangle-fill text-danger display-3 mb-3 d-block"></i>
+                        <h4 class="fw-bold mb-3">Elimina Definitivamente "{{ $project->title }}"?</h4>
+                        <p class="text-secondary mb-4">L'azione è irreversibile e rimuoverà anche tutte le candidature
+                            associate.</p>
+                        <div class="d-flex justify-content-center gap-2">
+                            <button type="button" class="btn btn-ae btn-ae-outline-secondary px-4"
+                                data-bs-dismiss="modal">Annulla</button>
+                            <form method="post" action="{{ route('project.destroy', ['id' => $project->id]) }}" class="m-0">
+                                @method('DELETE')
+                                @csrf
+                                <button type="submit" class="btn btn-ae btn-ae-danger px-4">Elimina</button>
+                            </form>
                         </div>
                     </div>
-                @endif
-            @endif
+                </div>
+            </div>
         </div>
-    </div>
-
+    @endif
 @endsection
 
 @section('scripts')
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            // Gestione pulsante preferiti
-            const favoriteBtn = document.querySelector('.favorite-btn');
-            if (favoriteBtn) {
-                favoriteBtn.addEventListener('click', function () {
-                    const projectId = this.dataset.projectId;
-                    toggleFavorite(projectId, this);
-                });
+            const shouldOpenDeleteModal = @json($isAdmin && $openDeleteModal);
+            if (!shouldOpenDeleteModal) {
+                return;
             }
+
+            const modalEl = document.getElementById('deleteProjectModal');
+            if (!modalEl || !window.bootstrap || !bootstrap.Modal) {
+                return;
+            }
+
+            bootstrap.Modal.getOrCreateInstance(modalEl).show();
+
+            const current = new URL(window.location.href);
+            current.searchParams.delete('openDeleteModal');
+            const cleanQuery = current.searchParams.toString();
+            const cleanUrl = current.pathname + (cleanQuery ? `?${cleanQuery}` : '') + current.hash;
+            window.history.replaceState({}, document.title, cleanUrl);
         });
-
-        function toggleFavorite(projectId, button) {
-            // Disabilita il pulsante durante la richiesta
-            button.disabled = true;
-
-            fetch('{{ route("favorites.toggle") }}', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                },
-                body: JSON.stringify({
-                    project_id: projectId
-                })
-            })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        // Aggiorna l'interfaccia
-                        const icon = button.querySelector('i');
-                        const text = button.querySelector('.btn-text');
-
-                        if (data.is_favorite) {
-                            // Il progetto è ora nei preferiti
-                            icon.className = 'bi bi-heart-fill me-2 fs-4';
-                            text.textContent = 'Rimuovi';
-                            button.dataset.isFavorite = 'true';
-                        } else {
-                            // Il progetto è stato rimosso dai preferiti
-                            icon.className = 'bi bi-heart me-2 fs-4';
-                            text.textContent = 'Salva';
-                            button.dataset.isFavorite = 'false';
-                        }
-
-                        // Mostra toast
-                        if (window.showFavoriteToast) {
-                            window.showFavoriteToast(data.message, 'success');
-                        }
-                    } else {
-                        if (window.showFavoriteToast) {
-                            window.showFavoriteToast(data.message, 'danger');
-                        }
-                    }
-                })
-                .catch(error => {
-                    console.error('Errore:', error);
-                    if (window.showFavoriteToast) {
-                        window.showFavoriteToast('Si e verificato un errore. Riprova piu tardi.', 'danger');
-                    }
-                })
-                .finally(() => {
-                    // Riabilita il pulsante
-                    button.disabled = false;
-                });
-        }
     </script>
-
 @endsection

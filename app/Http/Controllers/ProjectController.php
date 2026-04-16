@@ -6,6 +6,7 @@ use App\Models\DataLayer;
 use App\Http\Requests\ProjectRequest;
 use App\Models\Category;
 use App\Models\Project;
+use App\Models\Association;
 use App\Models\Application;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -147,7 +148,16 @@ class ProjectController extends Controller
     public function store(ProjectRequest $request)
     {
         $dl = new DataLayer();
+        $isDraftMode = $request->input('form_submit_mode') === 'draft';
         $data = $request->validated();
+
+        if ($isDraftMode) {
+            $data = $this->applyDraftDefaults($data);
+        }
+
+        if (empty($data['category_id']) || empty($data['association_id'])) {
+            return redirect()->back()->withInput()->with('error', 'Impossibile salvare la bozza: serve almeno una categoria e un\'associazione configurate.');
+        }
         
         // Gestisci l'upload dell'immagine
         if ($request->hasFile('image_path')) {
@@ -157,12 +167,18 @@ class ProjectController extends Controller
             } catch (\Exception $e) {
                 return redirect()->back()->withInput()->with('error', 'Errore durante il caricamento dell\'immagine. Riprova.');
             }
+        } elseif ($isDraftMode && empty($data['image_path'])) {
+            $data['image_path'] = 'img/projects/default.png';
         }
         
         $project = $dl->addProject($data);
 
         if ($project) {
-            return redirect()->route('project.show', $project->id)->with('success', 'Progetto creato con successo!');
+            $successMessage = $isDraftMode
+                ? 'Bozza salvata con successo!'
+                : 'Progetto creato con successo!';
+
+            return redirect()->route('project.show', $project->id)->with('success', $successMessage);
         } else {
             return redirect()->back()->withInput()->with('error', 'Errore nella creazione del progetto. Riprova più tardi.');
         }
@@ -222,6 +238,8 @@ class ProjectController extends Controller
     {
         $dl = new DataLayer();
         $project = $dl->findProjectByID($id);
+        $isDraftMode = $request->input('form_submit_mode') === 'draft';
+        $isCompletionConfirmed = $request->boolean('completion_confirmed');
 
         if ($project != null) {
             // Controlla se il progetto è completato
@@ -231,12 +249,20 @@ class ProjectController extends Controller
             }
 
             $data = $request->validated();
+
+            if ($isDraftMode) {
+                $data = $this->applyDraftDefaults($data, $project);
+            }
             
-            // Se si tenta di impostare lo status come 'completed', reindirizza alla pagina di conferma
-            if (isset($data['status']) && $data['status'] === 'completed' && $project->status !== 'completed') {
-                // Salva i dati del form in sessione per riutilizzarli dopo la conferma
-                session(['completion_form_data' => $data]);
-                return redirect()->route('project.confirm.completion', ['id' => $id]);
+            // Il completamento richiede conferma esplicita dal modale nella pagina di modifica
+            if (
+                !$isDraftMode
+                && isset($data['status'])
+                && $data['status'] === 'completed'
+                && $project->status !== 'completed'
+                && !$isCompletionConfirmed
+            ) {
+                return redirect()->back()->withInput()->with('warning', 'Conferma il completamento del progetto dal modale per procedere.');
             }
             
             // Gestisci l'upload dell'immagine se presente
@@ -257,14 +283,22 @@ class ProjectController extends Controller
                     return redirect()->back()->withInput()->with('error', 'Errore durante il caricamento dell\'immagine. Riprova.');
                 }
             } else {
-                // Se non c'è una nuova immagine, mantieni quella esistente
-                unset($data['image_path']);
+                if ($isDraftMode) {
+                    $data['image_path'] = $project->image_path ?: 'img/projects/default.png';
+                } else {
+                    // Se non c'è una nuova immagine, mantieni quella esistente
+                    unset($data['image_path']);
+                }
             }
             
             $updatedProject = $dl->editProject($id, $data);
 
             if ($updatedProject) {
-                return redirect()->route('project.show', $id)->with('success', 'Progetto aggiornato con successo!');
+                $successMessage = $isDraftMode
+                    ? 'Bozza aggiornata con successo!'
+                    : 'Progetto aggiornato con successo!';
+
+                return redirect()->route('project.show', $id)->with('success', $successMessage);
             } else {
                 return redirect()->back()->withInput()->with('error', 'Errore nell\'aggiornamento del progetto. Riprova più tardi.');
             }
@@ -274,7 +308,55 @@ class ProjectController extends Controller
     }
 
     /**
-     * Mostra la pagina di conferma per il completamento del progetto
+     * Applica fallback consistenti per il salvataggio bozza.
+     */
+    private function applyDraftDefaults(array $data, ?Project $existingProject = null): array
+    {
+        $now = Carbon::now();
+
+        $title = trim((string) ($data['title'] ?? ($existingProject?->title ?? '')));
+        if ($title === '') {
+            $title = 'Bozza progetto ' . $now->format('YmdHis');
+        }
+
+        $titleQuery = Project::query()->where('title', $title);
+        if ($existingProject) {
+            $titleQuery->where('id', '!=', $existingProject->id);
+        }
+        if ($titleQuery->exists()) {
+            $title .= ' ' . strtoupper(substr(uniqid(), -4));
+        }
+
+        $startDate = $data['start_date']
+            ?? ($existingProject?->start_date ? Carbon::parse($existingProject->start_date)->toDateString() : $now->copy()->addDay()->toDateString());
+
+        $endDate = $data['end_date']
+            ?? ($existingProject?->end_date ? Carbon::parse($existingProject->end_date)->toDateString() : Carbon::parse($startDate)->copy()->addDays(7)->toDateString());
+
+        $expireDate = $data['expire_date']
+            ?? ($existingProject?->expire_date ? Carbon::parse($existingProject->expire_date)->toDateString() : Carbon::parse($startDate)->copy()->subDay()->toDateString());
+
+        return array_merge($data, [
+            'title' => $title,
+            'status' => 'draft',
+            'user_id' => $data['user_id'] ?? $existingProject?->user_id ?? Auth::id(),
+            'category_id' => $data['category_id'] ?? $existingProject?->category_id ?? Category::query()->value('id'),
+            'association_id' => $data['association_id'] ?? $existingProject?->association_id ?? Association::query()->value('id'),
+            'requested_people' => (int) ($data['requested_people'] ?? $existingProject?->requested_people ?? 0),
+            'location' => $data['location'] ?? $existingProject?->location ?? 'Da definire',
+            'start_date' => $startDate,
+            'end_date' => $endDate,
+            'expire_date' => $expireDate,
+            'sum_description' => $data['sum_description'] ?? $existingProject?->sum_description ?? 'Bozza in lavorazione',
+            'full_description' => $data['full_description'] ?? $existingProject?->full_description ?? 'Contenuto in preparazione',
+            'requirements' => $data['requirements'] ?? $existingProject?->requirements ?? 'Requisiti in definizione',
+            'travel_conditions' => $data['travel_conditions'] ?? $existingProject?->travel_conditions ?? 'Condizioni in definizione',
+            'image_path' => $data['image_path'] ?? $existingProject?->image_path ?? 'img/projects/default.png',
+        ]);
+    }
+
+    /**
+     * Endpoint legacy: reindirizza alla pagina modifica con apertura modale di completamento.
      */
     public function confirmCompletion(string $id)
     {
@@ -291,17 +373,10 @@ class ProjectController extends Controller
                 ->with('info', 'Questo progetto è già stato completato.');
         }
 
-        // Recupera i dati del form dalla sessione
-        $formData = session('completion_form_data', []);
-        
-        if (empty($formData)) {
-            return redirect()->route('project.edit', $id)
-                ->with('error', 'Sessione scaduta. Riprova a modificare il progetto.');
-        }
-        
-        return view('project.confirmCompletion')
-            ->with('project', $project)
-            ->with('formData', $formData);
+        return redirect()->route('project.edit', [
+            'id' => $id,
+            'openCompletionModal' => 1,
+        ]);
     }
 
     /**
@@ -322,25 +397,7 @@ class ProjectController extends Controller
                 ->with('info', 'Questo progetto è già stato completato.');
         }
 
-        // Recupera i dati del form dalla sessione
-        $formData = session('completion_form_data', []);
-        
-        if (empty($formData)) {
-            return redirect()->route('project.edit', $id)
-                ->with('error', 'Dati di sessione mancanti. Riprova.');
-        }
-
-        // Assicurati che lo status sia impostato su 'completed'
-        $formData['status'] = 'completed';
-
-        // Non gestire l'upload dell'immagine qui - sarà gestito separatamente se necessario
-        // Rimuovi sempre il campo image_path dai dati della sessione
-        unset($formData['image_path']);
-
-        $updatedProject = $dl->editProject($id, $formData);
-
-        // Rimuovi i dati dalla sessione
-        session()->forget('completion_form_data');
+        $updatedProject = $dl->editProject($id, ['status' => 'completed']);
 
         if ($updatedProject) {
             return redirect()->route('project.show', $id)
@@ -357,7 +414,10 @@ class ProjectController extends Controller
         $project = $dl->findProjectByID($id);
 
         if ($project != null) {
-            return view('project.deleteProject')->with('project', $project);
+            return redirect()->route('project.show', [
+                'project' => $project->id,
+                'openDeleteModal' => 1,
+            ]);
         } else {
             return redirect()->route('project.index')->with('error', 'Progetto non trovato. Impossibile eliminare.');
         }

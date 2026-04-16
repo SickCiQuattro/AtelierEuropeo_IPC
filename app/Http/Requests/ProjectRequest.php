@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use App\Models\Project;
 
 class ProjectRequest extends FormRequest
 {
@@ -23,15 +24,64 @@ class ProjectRequest extends FormRequest
     {
         $projectId = $this->route('id'); // Per l'update, escludi il progetto corrente
         $isUpdate = !is_null($projectId); // Determina se è un aggiornamento
-        
-        $rules = [
-            'title' => [
-                'required',
+        $isDraftMode = $this->input('form_submit_mode') === 'draft';
+        $existingProject = $isUpdate ? Project::query()->find($projectId) : null;
+        $incomingTitle = trim((string) $this->input('title', ''));
+        $existingTitle = trim((string) ($existingProject?->title ?? ''));
+        $isTitleChanged = !$isUpdate || $incomingTitle !== $existingTitle;
+
+        if ($isDraftMode) {
+            $draftTitleRules = [
+                'nullable',
                 'string',
-                'min:5',
                 'max:255',
-                \Illuminate\Validation\Rule::unique('projects', 'title')->ignore($projectId)
-            ],
+            ];
+
+            if ($incomingTitle !== '' && $isTitleChanged) {
+                $draftTitleRules[] = \Illuminate\Validation\Rule::unique('projects', 'title')->ignore($projectId);
+            }
+
+            $draftRules = [
+                'title' => $draftTitleRules,
+                'category_id' => 'nullable|exists:categories,id',
+                'association_id' => 'nullable|exists:associations,id',
+                'user_id' => 'required|exists:users,id',
+                'requested_people' => 'nullable|integer|min:0|max:999',
+                'location' => 'nullable|string|max:255',
+                'sum_description' => 'nullable|string|max:500',
+                'full_description' => 'nullable|string',
+                'requirements' => 'nullable|string',
+                'travel_conditions' => 'nullable|string',
+                'start_date' => 'nullable|date',
+                'end_date' => 'nullable|date|after:start_date',
+                'expire_date' => 'nullable|date|before:start_date',
+                'image_path' => 'nullable|image|mimes:jpeg,jpg,png,gif,webp|max:2048',
+                'form_submit_mode' => 'nullable|in:publish,draft',
+                'completion_confirmed' => 'nullable|boolean',
+            ];
+
+            if ($isUpdate) {
+                $draftRules['status'] = 'nullable|in:draft,published,completed';
+            } else {
+                $draftRules['status'] = 'nullable|in:draft,published';
+            }
+
+            return $draftRules;
+        }
+        
+        $titleRules = [
+            'required',
+            'string',
+            'min:5',
+            'max:255',
+        ];
+
+        if ($isTitleChanged) {
+            $titleRules[] = \Illuminate\Validation\Rule::unique('projects', 'title')->ignore($projectId);
+        }
+
+        $rules = [
+            'title' => $titleRules,
             'category_id' => 'required|exists:categories,id',
             'association_id' => 'required|exists:associations,id',
             'user_id' => 'required|exists:users,id',
@@ -41,6 +91,8 @@ class ProjectRequest extends FormRequest
             'full_description' => 'required|string|min:50',
             'requirements' => 'required|string|min:10',
             'travel_conditions' => 'required|string|min:10',
+            'form_submit_mode' => 'nullable|in:publish,draft',
+            'completion_confirmed' => 'nullable|boolean',
         ];
 
         // Regole per le date - bilanciate tra usabilità e correttezza

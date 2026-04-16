@@ -183,8 +183,8 @@
                                 $editUrl = ($projectId && \Illuminate\Support\Facades\Route::has('project.edit'))
                                     ? route('project.edit', $projectId)
                                     : '#';
-                                $deleteUrl = ($projectId && \Illuminate\Support\Facades\Route::has('project.destroy.confirm'))
-                                    ? route('project.destroy.confirm', $projectId)
+                                $deleteUrl = ($projectId && \Illuminate\Support\Facades\Route::has('project.show'))
+                                    ? route('project.show', ['project' => $projectId, 'openDeleteModal' => 1])
                                     : '#';
                             @endphp
 
