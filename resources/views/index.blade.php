@@ -146,68 +146,15 @@
                 @if ($randomTestimonials && $randomTestimonials->count() > 0)
 
                     {{-- Desktop Carousel --}}
-                    <div class="d-none d-lg-flex align-items-center justify-content-center gap-4 testimonial-carousel-shell"
-                        data-carousel-root data-carousel-id="testimonialsCarouselDesktop">
-                        <button class="testimonial-arrow" type="button" data-carousel-action="prev"
-                            aria-label="Slide precedente testimonianze desktop">
-                            <i class="bi bi-chevron-left"></i>
-                        </button>
-
-                        <div class="flex-grow-1" style="max-width: 1140px;">
-                            <div id="testimonialsCarouselDesktop" class="carousel slide">
-                                <div class="carousel-inner">
-                                    @foreach ($randomTestimonials->chunk(3) as $index => $chunk)
-                                        <div class="carousel-item {{ $index === 0 ? 'active' : '' }}">
-                                            <div class="d-flex justify-content-center gap-4 py-3">
-                                                @foreach ($chunk as $testimonial)
-                                                    <div class="testimonial-card">
-                                                        <div class="quote"><i class="bi bi-quote"></i></div>
-                                                        <p class="author">{{ $testimonial->author->name }}</p>
-                                                        <p class="project">{{ $testimonial->project->title }}</p>
-                                                        <p class="text">{{ $testimonial->content }}</p>
-                                                        <a href="{{ route('project.show', ['project' => $testimonial->project->id]) }}"
-                                                            class="link">
-                                                            Vai al progetto <i class="bi bi-arrow-right project-arrow"></i>
-                                                        </a>
-                                                    </div>
-                                                @endforeach
-                                            </div>
-                                        </div>
-                                    @endforeach
-                                </div>
-
-                                <div class="carousel-indicators testimonial-indicators">
-                                    @foreach ($randomTestimonials->chunk(3) as $index => $chunk)
-                                        <button type="button" data-bs-target="#testimonialsCarouselDesktop"
-                                            data-bs-slide-to="{{ $index }}" class="{{ $index === 0 ? 'active' : '' }}">
-                                        </button>
-                                    @endforeach
-                                </div>
-                            </div>
-                        </div>
-
-                        <button class="testimonial-arrow" type="button" data-carousel-action="next"
-                            aria-label="Slide successiva testimonianze desktop">
-                            <i class="bi bi-chevron-right"></i>
-                        </button>
-                    </div>
-
-                    {{-- Mobile Carousel --}}
-                    <div class="d-lg-none d-flex align-items-center justify-content-center gap-2 testimonial-carousel-shell"
-                        data-carousel-root data-carousel-id="testimonialsCarouselMobile">
-                        <button class="testimonial-arrow flex-shrink-0" type="button" data-carousel-action="prev"
-                            aria-label="Slide precedente testimonianze mobile">
-                            <i class="bi bi-chevron-left"></i>
-                        </button>
-
-                        <div class="flex-grow-1 overflow-hidden">
-                            <div id="testimonialsCarouselMobile" class="carousel slide">
-                                <div class="carousel-inner">
-                                    @foreach ($randomTestimonials as $index => $testimonial)
-                                        <div class="carousel-item {{ $index === 0 ? 'active' : '' }}">
-                                            <div class="d-flex justify-content-center py-3">
+                    <div class="d-none d-lg-block">
+                        <div id="testimonialsCarouselDesktop" class="carousel slide carousel-dark testimonials-carousel" data-bs-ride="carousel">
+                            <div class="carousel-inner px-4 px-md-5">
+                                @foreach ($randomTestimonials->chunk(3) as $index => $chunk)
+                                    <div class="carousel-item {{ $index === 0 ? 'active' : '' }}">
+                                        <div class="d-flex justify-content-center gap-4 py-3">
+                                            @foreach ($chunk as $testimonial)
                                                 <div class="testimonial-card">
-                                                    <div class="quote">""</div>
+                                                    <div class="quote"><i class="bi bi-quote"></i></div>
                                                     <p class="author">{{ $testimonial->author->name }}</p>
                                                     <p class="project">{{ $testimonial->project->title }}</p>
                                                     <p class="text">{{ $testimonial->content }}</p>
@@ -215,26 +162,75 @@
                                                         class="link">
                                                         Vai al progetto <i class="bi bi-arrow-right project-arrow"></i>
                                                     </a>
-                                                </div>
+                        </div>
+                                            @endforeach
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+
+                            <div class="carousel-indicators testimonial-indicators">
+                                @foreach ($randomTestimonials->chunk(3) as $index => $chunk)
+                                    <button type="button" data-bs-target="#testimonialsCarouselDesktop"
+                                        data-bs-slide-to="{{ $index }}" class="{{ $index === 0 ? 'active' : '' }}">
+                                    </button>
+                                @endforeach
+                            </div>
+
+                            <button class="carousel-control-prev" type="button"
+                                data-bs-target="#testimonialsCarouselDesktop" data-bs-slide="prev">
+                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                <span class="visually-hidden">Precedente</span>
+                            </button>
+                            <button class="carousel-control-next" type="button"
+                                data-bs-target="#testimonialsCarouselDesktop" data-bs-slide="next">
+                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                <span class="visually-hidden">Successivo</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    {{-- Mobile Carousel --}}
+                    <div class="d-lg-none d-block">
+                        <div id="testimonialsCarouselMobile" class="carousel slide carousel-dark testimonials-carousel" data-bs-ride="carousel">
+                            <div class="carousel-inner px-4 px-md-5">
+                                @foreach ($randomTestimonials as $index => $testimonial)
+                                    <div class="carousel-item {{ $index === 0 ? 'active' : '' }}">
+                                        <div class="d-flex justify-content-center py-3">
+                                            <div class="testimonial-card">
+                                                <div class="quote">""</div>
+                                                <p class="author">{{ $testimonial->author->name }}</p>
+                                                <p class="project">{{ $testimonial->project->title }}</p>
+                                                <p class="text">{{ $testimonial->content }}</p>
+                                                <a href="{{ route('project.show', ['project' => $testimonial->project->id]) }}"
+                                                    class="link">
+                                                    Vai al progetto <i class="bi bi-arrow-right project-arrow"></i>
+                                                </a>
                                             </div>
                                         </div>
-                                    @endforeach
-                                </div>
-
-                                <div class="carousel-indicators testimonial-indicators">
-                                    @foreach ($randomTestimonials as $index => $testimonial)
-                                        <button type="button" data-bs-target="#testimonialsCarouselMobile"
-                                            data-bs-slide-to="{{ $index }}" class="{{ $index === 0 ? 'active' : '' }}">
-                                        </button>
-                                    @endforeach
-                                </div>
+                                    </div>
+                                @endforeach
                             </div>
-                        </div>
 
-                        <button class="testimonial-arrow flex-shrink-0" type="button" data-carousel-action="next"
-                            aria-label="Slide successiva testimonianze mobile">
-                            <i class="bi bi-chevron-right"></i>
-                        </button>
+                            <div class="carousel-indicators testimonial-indicators">
+                                @foreach ($randomTestimonials as $index => $testimonial)
+                                    <button type="button" data-bs-target="#testimonialsCarouselMobile"
+                                        data-bs-slide-to="{{ $index }}" class="{{ $index === 0 ? 'active' : '' }}">
+                                    </button>
+                                @endforeach
+                            </div>
+
+                            <button class="carousel-control-prev" type="button"
+                                data-bs-target="#testimonialsCarouselMobile" data-bs-slide="prev">
+                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                <span class="visually-hidden">Precedente</span>
+                            </button>
+                            <button class="carousel-control-next" type="button"
+                                data-bs-target="#testimonialsCarouselMobile" data-bs-slide="next">
+                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                <span class="visually-hidden">Successivo</span>
+                            </button>
+                        </div>
                     </div>
 
                 @endif
@@ -243,58 +239,4 @@
 
     </div>
 
-@endsection
-
-@section('scripts')
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            if (!window.bootstrap || !window.bootstrap.Carousel) {
-                return;
-            }
-
-            document.querySelectorAll('.home-page [data-carousel-root]').forEach(function (root) {
-                const carouselId = root.getAttribute('data-carousel-id');
-                const carouselElement = carouselId ? document.getElementById(carouselId) : null;
-
-                if (!carouselElement) {
-                    return;
-                }
-
-                const carousel = bootstrap.Carousel.getOrCreateInstance(carouselElement, {
-                    interval: 7000,
-                    touch: true,
-                    pause: 'hover',
-                    wrap: true,
-                });
-
-                carousel.cycle();
-
-                carouselElement.addEventListener('slide.bs.carousel', function () {
-                    root.classList.add('is-sliding');
-                });
-
-                carouselElement.addEventListener('slid.bs.carousel', function () {
-                    root.classList.remove('is-sliding');
-                });
-
-                root.querySelectorAll('[data-carousel-action]').forEach(function (control) {
-                    control.addEventListener('click', function (event) {
-                        event.preventDefault();
-
-                        if (root.classList.contains('is-sliding')) {
-                            return;
-                        }
-
-                        const action = control.getAttribute('data-carousel-action');
-
-                        if (action === 'prev') {
-                            carousel.prev();
-                        } else if (action === 'next') {
-                            carousel.next();
-                        }
-                    });
-                });
-            });
-        });
-    </script>
 @endsection
