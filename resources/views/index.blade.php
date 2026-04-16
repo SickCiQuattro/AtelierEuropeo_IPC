@@ -26,26 +26,26 @@
                     con l'obiettivo di promuovere la cittadinanza europea attiva e avvicinare
                     i giovani e le realtà locali alle opportunità offerte dall'Unione Europea.
                 </p>
-                <div class="d-flex flex-wrap justify-content-center gap-3 mb-5">
+                <div class="d-flex flex-wrap justify-content-center gap-4 mb-5">
                     <div
-                        class="card border-0 shadow-sm rounded-4 card-home stat-card-1 d-flex align-items-center justify-content-center">
+                        class="card border-0 shadow-sm rounded-4 card-home stat-card d-flex align-items-center justify-content-center">
                         <div class="text-center">
-                            <p class="stat-number mb-1">10+</p>
-                            <p class="stat-label mb-0">anni di esperienza</p>
+                            <p class="stat-number text-dark mb-1">10+</p>
+                            <p class="main-text mb-0">anni di esperienza</p>
                         </div>
                     </div>
                     <div
-                        class="card border-0 shadow-sm rounded-4 card-home stat-card-2 d-flex align-items-center justify-content-center">
+                        class="card border-0 shadow-sm rounded-4 card-home stat-card d-flex align-items-center justify-content-center">
                         <div class="text-center">
-                            <p class="stat-number mb-1">100+</p>
-                            <p class="stat-label mb-0">partner in tutta Europa</p>
+                            <p class="stat-number text-dark mb-1">100+</p>
+                            <p class="main-text mb-0">partner in tutta Europa</p>
                         </div>
                     </div>
                     <div
-                        class="card border-0 shadow-sm rounded-4 card-home stat-card-3 d-flex align-items-center justify-content-center">
+                        class="card border-0 shadow-sm rounded-4 card-home stat-card d-flex align-items-center justify-content-center">
                         <div class="text-center">
-                            <p class="stat-number mb-1">200+</p>
-                            <p class="stat-label mb-0">progetti realizzati</p>
+                            <p class="stat-number text-dark mb-1">200+</p>
+                            <p class="main-text mb-0">progetti realizzati</p>
                         </div>
                     </div>
                 </div>
@@ -147,7 +147,8 @@
 
                     {{-- Desktop Carousel --}}
                     <div class="d-none d-lg-block">
-                        <div id="testimonialsCarouselDesktop" class="carousel slide carousel-dark testimonials-carousel" data-bs-ride="carousel">
+                        <div id="testimonialsCarouselDesktop" class="carousel slide carousel-dark testimonials-carousel"
+                            data-bs-ride="carousel">
                             <div class="carousel-inner px-4 px-md-5">
                                 @foreach ($randomTestimonials->chunk(3) as $index => $chunk)
                                     <div class="carousel-item {{ $index === 0 ? 'active' : '' }}">
@@ -162,7 +163,7 @@
                                                         class="link">
                                                         Vai al progetto <i class="bi bi-arrow-right project-arrow"></i>
                                                     </a>
-                        </div>
+                                                </div>
                                             @endforeach
                                         </div>
                                     </div>
@@ -177,13 +178,13 @@
                                 @endforeach
                             </div>
 
-                            <button class="carousel-control-prev" type="button"
-                                data-bs-target="#testimonialsCarouselDesktop" data-bs-slide="prev">
+                            <button class="carousel-control-prev" type="button" data-bs-target="#testimonialsCarouselDesktop"
+                                data-bs-slide="prev">
                                 <span class="carousel-control-prev-icon" aria-hidden="true"></span>
                                 <span class="visually-hidden">Precedente</span>
                             </button>
-                            <button class="carousel-control-next" type="button"
-                                data-bs-target="#testimonialsCarouselDesktop" data-bs-slide="next">
+                            <button class="carousel-control-next" type="button" data-bs-target="#testimonialsCarouselDesktop"
+                                data-bs-slide="next">
                                 <span class="carousel-control-next-icon" aria-hidden="true"></span>
                                 <span class="visually-hidden">Successivo</span>
                             </button>
@@ -192,7 +193,8 @@
 
                     {{-- Mobile Carousel --}}
                     <div class="d-lg-none d-block">
-                        <div id="testimonialsCarouselMobile" class="carousel slide carousel-dark testimonials-carousel" data-bs-ride="carousel">
+                        <div id="testimonialsCarouselMobile" class="carousel slide carousel-dark testimonials-carousel"
+                            data-bs-ride="carousel">
                             <div class="carousel-inner px-4 px-md-5">
                                 @foreach ($randomTestimonials as $index => $testimonial)
                                     <div class="carousel-item {{ $index === 0 ? 'active' : '' }}">
@@ -220,13 +222,13 @@
                                 @endforeach
                             </div>
 
-                            <button class="carousel-control-prev" type="button"
-                                data-bs-target="#testimonialsCarouselMobile" data-bs-slide="prev">
+                            <button class="carousel-control-prev" type="button" data-bs-target="#testimonialsCarouselMobile"
+                                data-bs-slide="prev">
                                 <span class="carousel-control-prev-icon" aria-hidden="true"></span>
                                 <span class="visually-hidden">Precedente</span>
                             </button>
-                            <button class="carousel-control-next" type="button"
-                                data-bs-target="#testimonialsCarouselMobile" data-bs-slide="next">
+                            <button class="carousel-control-next" type="button" data-bs-target="#testimonialsCarouselMobile"
+                                data-bs-slide="next">
                                 <span class="carousel-control-next-icon" aria-hidden="true"></span>
                                 <span class="visually-hidden">Successivo</span>
                             </button>

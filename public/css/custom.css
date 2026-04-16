@@ -1251,34 +1251,18 @@ p {
 }
 
 .home-page .stat-number {
-    color: var(--bs-primary);
     font-weight: 700;
     font-size: 2rem;
 }
 
-.home-page .stat-label {
-    color: var(--bs-secondary);
-    font-size: 0.95rem;
-}
-
-.home-page .stat-card-1 {
-    width: 201px;
-    height: 108px;
-}
-
-.home-page .stat-card-2 {
-    width: 240px;
-    height: 108px;
-}
-
-.home-page .stat-card-3 {
-    width: 196px;
-    height: 108px;
+.home-page .stat-card {
+    width: 200px;
+    min-height: 120px;
 }
 
 .home-page .program-card {
     width: 380px;
-    min-height: 360px;
+    min-height: 300px;
     border: 1px solid #f0f2f5;
     border-radius: 1rem;
     background-color: #ffffff;
