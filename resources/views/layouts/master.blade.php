@@ -56,7 +56,7 @@
                         <span
                             class="main-navbar-admin-label-line">{{ $adminPanelLabelParts[0] ?? __('master.admin_panel') }}</span>
                         @if (!empty($adminPanelLabelParts[1]))
-                            <span class="main-navbar-admin-label-line">{{ $adminPanelLabelParts[1] }}</span>
+                            <span class="   main-navbar-admin-label-line">{{ $adminPanelLabelParts[1] }}</span>
                         @endif
                     </span>
                 @endif
