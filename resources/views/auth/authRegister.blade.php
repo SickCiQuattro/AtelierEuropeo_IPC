@@ -77,7 +77,7 @@
                     .addClass(progressPercentage < 40 ? 'bg-danger' : progressPercentage < 100 ? 'bg-warning' : 'bg-success');
 
                 if (isComplete) {
-                    strengthBadge.removeClass('text-bg-light border').addClass('text-bg-success');
+                    strengthBadge.removeClass('text-bg-light border').addClass('password-strength-badge-complete');
                     requirementsAlert.addClass('password-requirements-alert-complete');
 
                     if (requirementsDetails.is(':visible')) {
@@ -86,7 +86,7 @@
 
                     requirementsCompact.removeClass('d-none').hide().stop(true, true).fadeIn(160);
                 } else {
-                    strengthBadge.removeClass('text-bg-success').addClass('text-bg-light border');
+                    strengthBadge.removeClass('password-strength-badge-complete').addClass('text-bg-light border');
                     requirementsAlert.removeClass('password-requirements-alert-complete');
 
                     if (!requirementsDetails.is(':visible')) {
@@ -347,6 +347,12 @@
 
         .password-strength-badge {
             font-weight: 600;
+        }
+
+        .password-strength-badge.password-strength-badge-complete {
+            background-color: #d1e7dd !important;
+            color: #0f5132 !important;
+            border: 1px solid #75b798 !important;
         }
 
         .password-requirements-progress {
