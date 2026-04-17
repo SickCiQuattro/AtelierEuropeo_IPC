@@ -9,21 +9,47 @@
         $isEditMode = isset($project);
         $currentProjectStatus = $isEditMode ? ($project->status ?? 'draft') : 'draft';
         $openCompletionModal = request()->boolean('openCompletionModal');
+        $defaultBackUrl = route('admin.projects.index');
         
         $currentUrl = url()->current();
         $previousUrl = url()->previous();
+        $previousPath = parse_url($previousUrl, PHP_URL_PATH) ?? '';
+        $isShowcaseOrLegacyProjects = $previousPath === '/progetti' || $previousPath === '/project';
+        $isUnsafeBackTarget = $previousUrl === $currentUrl
+            || str_contains($previousPath, '/project/create')
+            || (str_contains($previousPath, '/project/') && str_contains($previousPath, '/edit'))
+            || $isShowcaseOrLegacyProjects;
 
-        $backUrl = ($previousUrl !== $currentUrl && !str_contains($previousUrl, 'edit')) 
-                    ? $previousUrl 
-                    : route('project.index');
+        $backUrl = $isUnsafeBackTarget ? $defaultBackUrl : $previousUrl;
     @endphp
+
+    <style>
+        #project-form .ae-invalid-field {
+            border: 2px solid var(--bs-danger) !important;
+            background-color: #fff5f5 !important;
+            box-shadow: none !important;
+        }
+
+        #project-form .ae-invalid-addon {
+            border-top: 2px solid var(--bs-danger) !important;
+            border-bottom: 2px solid var(--bs-danger) !important;
+            border-left: 2px solid var(--bs-danger) !important;
+            border-right: 0 !important;
+            color: var(--bs-danger) !important;
+            background-color: #fff5f5 !important;
+        }
+
+        #project-form .input-group .ae-invalid-field {
+            border-left: 0 !important;
+        }
+    </style>
 
     <div class="container-fluid px-3 px-md-4 py-4">
         <div class="row justify-content-center">
             <div class="col-12 col-lg-10 col-xl-8">
                 
                 <x-breadcrumb>
-                    <li class="breadcrumb-item"><a href="{{ route('project.index') }}">Progetti</a></li>
+                    <li class="breadcrumb-item"><a href="{{ route('admin.projects.index') }}">Gestione Progetti</a></li>
                     <li class="breadcrumb-item active" aria-current="page">{{ $isEditMode ? 'Modifica Progetto' : 'Nuovo Progetto' }}</li>
                 </x-breadcrumb>
 
@@ -51,6 +77,13 @@
                             <input type="hidden" name="form_submit_mode" id="form_submit_mode" value="publish">
                             <input type="hidden" name="completion_confirmed" id="completion_confirmed" value="0">
                             <input type="hidden" name="user_id" value="{{ $isEditMode ? $project->user_id : auth()->id() }}" />
+
+                            <div id="project-validation-summary"
+                                class="alert alert-danger d-flex align-items-start gap-2 mb-4 {{ $errors->any() ? '' : 'd-none' }}"
+                                role="alert" aria-live="assertive" aria-hidden="{{ $errors->any() ? 'false' : 'true' }}">
+                                <i class="bi bi-exclamation-triangle-fill mt-1"></i>
+                                <div>Attenzione: alcuni campi obbligatori non sono stati compilati. Controlla i campi evidenziati in rosso.</div>
+                            </div>
 
                             <div class="mb-5">
                                 <h5 class="fw-bold text-primary mb-4 pb-2 border-bottom"><i class="bi bi-info-circle-fill me-2"></i>Informazioni Base</h5>
@@ -143,12 +176,12 @@
                             <div class="border-top pt-4 mt-5 d-flex flex-column flex-xl-row align-items-xl-center justify-content-between gap-4">
                                 
                                 <div class="d-flex align-items-center gap-3">
-                                    <label class="form-label text-secondary fw-medium mb-0 text-nowrap">Stato:</label>
+                                    <label class="form-label text-secondary fw-medium mb-0 text-nowrap">Stato del progetto:</label>
                                     <select class="form-select bg-light border-0 fw-semibold text-primary py-2 px-3 shadow-none" style="border-radius: 0.75rem; width: auto; min-width: 180px; cursor: pointer;" name="status" id="status">
                                         <option value="draft" @if(old('status', $project->status ?? 'draft') == 'draft') selected @endif>Bozza (Invisibile)</option>
-                                        <option value="published" @if(old('status', $project->status ?? '') == 'published') selected @endif>Pubblicato</option>
+                                        <option value="published" @if(old('status', $project->status ?? '') == 'published') selected @endif>Pubblicato (Visibile)</option>
                                         @if($isEditMode) 
-                                            <option value="completed" @if(old('status', $project->status ?? '') == 'completed') selected @endif>Completato</option> 
+                                            <option value="completed" @if(old('status', $project->status ?? '') == 'completed') selected @endif>Completato (Archiviato)</option> 
                                         @endif
                                     </select>
                                 </div>
@@ -164,11 +197,11 @@
                                     </button>
 
                                     <button type="button" class="btn btn-ae btn-ae-outline-primary rounded-pill px-4 py-2 text-nowrap fw-semibold" id="save-draft-btn">
-                                        <i class="bi bi-floppy me-2"></i>Bozza
+                                        <i class="bi bi-floppy me-2"></i>Salva Bozza
                                     </button>
 
                                     <button type="submit" class="btn btn-ae btn-ae-primary rounded-pill px-4 py-2 shadow-sm text-nowrap fw-bold" id="submit-btn">
-                                        <i class="bi bi-check-circle-fill me-2"></i>{{ $isEditMode ? 'Aggiorna Progetto' : 'Pubblica' }}
+                                        <i class="bi bi-check-circle-fill me-2"></i>{{ $isEditMode ? 'Aggiorna Progetto' : 'Pubblica Progetto' }}
                                     </button>
 
                                 </div>
@@ -182,13 +215,13 @@
                                     <div class="modal-body p-4 p-md-5">
                                         <div class="text-center mb-4">
                                             <i class="bi bi-exclamation-triangle-fill text-warning display-5 d-block mb-3"></i>
-                                            <h4 class="fw-bold mb-2">Annullare il processo?</h4>
-                                            <p class="text-secondary mb-0">Se esci ora, la compilazione del progetto verrà annullata e le modifiche non salvate andranno perse.</p>
+                                            <h4 class="fw-bold mb-2">Vuoi abbandonare la pagina?</h4>
+                                            <p class="text-secondary mb-0">Le modifiche inserite non sono state salvate. Se esci ora, i dati andranno persi.</p>
                                         </div>
 
-                                        <div class="d-flex flex-column flex-sm-row gap-2 justify-content-end">
-                                            <button type="button" class="btn btn-ae btn-ae-outline-secondary" data-bs-dismiss="modal">Continua modifica</button>
-                                            <a href="{{ $backUrl }}" id="confirm-cancel-process-link" class="btn btn-ae btn-ae-danger">Conferma annullamento</a>
+                                        <div class="d-flex flex-column flex-sm-row gap-2 justify-content-center">
+                                            <button type="button" class="btn btn-ae btn-ae-outline-secondary px-4 fw-semibold" data-bs-dismiss="modal">Resta qui</button>
+                                            <a href="{{ $backUrl }}" id="confirm-cancel-process-link" class="btn btn-ae btn-ae-danger px-4 fw-semibold">Sì, esci senza salvare</a>
                                         </div>
                                     </div>
                                 </div>
@@ -200,14 +233,18 @@
                                 <div class="modal-content border-0 shadow-lg" style="border-radius: 1.25rem;">
                                     <div class="modal-body p-4 p-md-5">
                                         <div class="text-center mb-4">
-                                            <i class="bi bi-check-circle-fill text-warning display-5 d-block mb-3"></i>
-                                            <h4 class="fw-bold mb-2">Confermare il completamento?</h4>
-                                            <p class="text-secondary mb-0">Una volta completato, il progetto non sarà più assolutamente modificabile. Vuoi proseguire?</p>
+                                            <div class="d-inline-flex align-items-center justify-content-center bg-light rounded-circle mb-3" style="width: 80px; height: 80px;">
+                                                <i class="bi bi-archive-fill text-dark display-5"></i>
+                                            </div>
+                                            <h4 class="fw-bold mb-2">Vuoi archiviare questo progetto?</h4>
+                                            <p class="text-secondary mb-0">Modificando lo stato in <strong>Completato</strong>, il progetto verrà chiuso e <strong>non potrà più essere modificato</strong> in futuro. Le candidature rimarranno intatte.</p>
                                         </div>
 
-                                        <div class="d-flex flex-column flex-sm-row gap-2 justify-content-end">
-                                            <button type="button" class="btn btn-ae btn-ae-outline-secondary" data-bs-dismiss="modal">Annulla</button>
-                                            <button type="button" id="confirm-completion-submit" class="btn btn-ae btn-ae-warning">Conferma completamento</button>
+                                        <div class="d-flex flex-column flex-sm-row gap-2 justify-content-center">
+                                            <button type="button" class="btn btn-ae btn-ae-outline-secondary px-4 fw-semibold" data-bs-dismiss="modal">Annulla</button>
+                                            <button type="button" id="confirm-completion-submit" class="btn btn-ae btn-ae-dark px-4 fw-semibold">
+                                                <i class="bi bi-archive-fill me-2"></i>Archivia definitivamente
+                                            </button>
                                         </div>
                                     </div>
                                 </div>
@@ -218,24 +255,24 @@
                             <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
                                 <div class="modal-content border-0 shadow-lg" style="border-radius: 1.25rem;">
                                     <div class="modal-header border-0 pb-0 px-4 px-md-5 pt-4">
-                                        <h4 class="fw-bold mb-0">Anteprima progetto</h4>
+                                        <h4 class="fw-bold mb-0 text-primary"><i class="bi bi-eye-fill me-2"></i>Anteprima progetto</h4>
                                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Chiudi"></button>
                                     </div>
                                     <div class="modal-body px-4 px-md-5 pb-4">
-                                        <p class="text-secondary small mb-4">Questa anteprima mostra come potrebbe apparire il progetto una volta salvato e pubblicato.</p>
+                                        <p class="text-secondary small mb-4">Così è come apparirà la card e il riepilogo nella vetrina pubblica.</p>
 
                                         <div class="row g-4">
                                             <div class="col-12 col-lg-5">
-                                                <article class="card border-0 shadow-sm h-100" style="border-radius: 1rem; overflow: hidden;">
+                                                <article class="card border-0 shadow-sm h-100" style="border-radius: 1.25rem; overflow: hidden; border: 1px solid var(--project-card-border);">
                                                     <img id="preview-image" src="{{ $isEditMode ? $project->image_url : asset('img/projects/default.png') }}"
-                                                        alt="Anteprima immagine progetto" class="w-100 object-fit-cover" style="height: 220px;">
+                                                        alt="Anteprima" class="w-100 object-fit-cover" style="height: 220px;">
                                                     <div class="card-body p-4">
                                                         <div class="d-flex flex-wrap gap-2 mb-3">
-                                                            <span id="preview-category" class="badge bg-light text-dark border">Categoria</span>
-                                                            <span id="preview-status" class="badge bg-primary">Stato</span>
+                                                            <span id="preview-category" class="badge bg-light text-dark border px-2 py-1">Categoria</span>
+                                                            <span id="preview-status" class="badge bg-primary px-2 py-1">Stato</span>
                                                         </div>
                                                         <h5 id="preview-title" class="fw-bold mb-2">Titolo progetto</h5>
-                                                        <p id="preview-summary" class="text-secondary mb-0">Descrizione breve del progetto...</p>
+                                                        <p id="preview-summary" class="text-secondary mb-0 small">Descrizione breve del progetto...</p>
                                                     </div>
                                                 </article>
                                             </div>
@@ -272,14 +309,14 @@
                                                 </div>
 
                                                 <div class="bg-white border p-4" style="border-radius: 1rem;">
-                                                    <h6 class="fw-bold text-primary mb-2">Estratto descrizione completa</h6>
-                                                    <p id="preview-description" class="text-secondary mb-0" style="white-space: pre-line;">Contenuto descrizione...</p>
+                                                    <h6 class="fw-bold text-primary mb-2">Descrizione completa (estratto)</h6>
+                                                    <p id="preview-description" class="text-secondary mb-0 small" style="white-space: pre-line; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden;">Contenuto descrizione...</p>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="modal-footer border-0 px-4 px-md-5 pb-4 pt-0">
-                                        <button type="button" class="btn btn-ae btn-ae-outline-secondary" data-bs-dismiss="modal">Chiudi anteprima</button>
+                                        <button type="button" class="btn btn-ae btn-ae-outline-secondary fw-semibold" data-bs-dismiss="modal">Chiudi anteprima</button>
                                     </div>
                                 </div>
                             </div>
@@ -320,6 +357,8 @@
             const previewEndDate = document.getElementById('preview-end-date');
             const previewDescription = document.getElementById('preview-description');
             const fallbackPreviewImage = @json($isEditMode ? $project->image_url : asset('img/projects/default.png'));
+            const validationSummary = document.getElementById('project-validation-summary');
+            const serverErrorFields = @json($errors->keys());
 
             let cancelModalInstance = null;
             if (cancelModalEl && window.bootstrap && bootstrap.Modal) {
@@ -334,6 +373,125 @@
             const isEditMode = @json($isEditMode);
             const currentProjectStatus = @json($currentProjectStatus);
             const shouldOpenCompletionModalOnLoad = @json($openCompletionModal);
+
+            function hasNonEmptyValue(field) {
+                if (!field) {
+                    return true;
+                }
+
+                if (field.type === 'file') {
+                    return field.files && field.files.length > 0;
+                }
+
+                const value = field.value;
+                if (typeof value === 'string') {
+                    return value.trim() !== '';
+                }
+
+                return value !== null && value !== '';
+            }
+
+            function setValidationSummaryVisible(visible) {
+                if (!validationSummary) {
+                    return;
+                }
+
+                validationSummary.classList.toggle('d-none', !visible);
+                validationSummary.setAttribute('aria-hidden', visible ? 'false' : 'true');
+            }
+
+            function setFieldInvalidState(field, invalid) {
+                if (!field) {
+                    return;
+                }
+
+                field.classList.toggle('ae-invalid-field', invalid);
+
+                if (invalid) {
+                    field.setAttribute('aria-invalid', 'true');
+                } else {
+                    field.removeAttribute('aria-invalid');
+                }
+
+                const inputGroup = field.closest('.input-group');
+                if (!inputGroup) {
+                    return;
+                }
+
+                const addon = inputGroup.querySelector('.input-group-text');
+                if (addon) {
+                    addon.classList.toggle('ae-invalid-addon', invalid);
+                }
+            }
+
+            function getFieldByName(name) {
+                if (!form || !name) {
+                    return null;
+                }
+
+                const safeName = String(name).replace(/"/g, '\\"');
+                return form.querySelector(`[name="${safeName}"]`);
+            }
+
+            function applyServerValidationState() {
+                if (!Array.isArray(serverErrorFields) || serverErrorFields.length === 0) {
+                    setValidationSummaryVisible(false);
+                    return;
+                }
+
+                serverErrorFields.forEach(function(name) {
+                    const field = getFieldByName(name);
+                    setFieldInvalidState(field, true);
+                });
+
+                setValidationSummaryVisible(true);
+            }
+
+            function validateRequiredFields() {
+                if (!form) {
+                    return true;
+                }
+
+                const requiredFields = form.querySelectorAll('input[required], select[required], textarea[required]');
+                let isValid = true;
+
+                requiredFields.forEach(function(field) {
+                    const fieldHasValue = hasNonEmptyValue(field);
+                    setFieldInvalidState(field, !fieldHasValue);
+
+                    if (!fieldHasValue) {
+                        isValid = false;
+                    }
+                });
+
+                setValidationSummaryVisible(!isValid);
+                return isValid;
+            }
+
+            function bindInlineValidationReset() {
+                if (!form) {
+                    return;
+                }
+
+                const requiredFields = form.querySelectorAll('input[required], select[required], textarea[required]');
+                requiredFields.forEach(function(field) {
+                    const eventName = field.tagName === 'SELECT' || field.type === 'file' ? 'change' : 'input';
+
+                    field.addEventListener(eventName, function() {
+                        if (hasNonEmptyValue(field)) {
+                            setFieldInvalidState(field, false);
+                        }
+
+                        const hasAnyInvalid = form.querySelector('.ae-invalid-field') !== null;
+                        if (!hasAnyInvalid) {
+                            setValidationSummaryVisible(false);
+                        }
+                    });
+                });
+            }
+
+            applyServerValidationState();
+            bindInlineValidationReset();
 
             document.querySelectorAll('.js-cancel-process').forEach(function(button) {
                 button.addEventListener('click', function() {
@@ -521,6 +679,18 @@
             if (form) {
                 form.addEventListener('submit', function(event) {
                     const submitMode = submitModeInput ? submitModeInput.value : 'publish';
+
+                    if (submitMode !== 'draft') {
+                        const isRequiredFieldsValid = validateRequiredFields();
+                        if (!isRequiredFieldsValid) {
+                            event.preventDefault();
+                            if (validationSummary) {
+                                validationSummary.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            }
+                            return;
+                        }
+                    }
+
                     const selectedStatus = statusSelect ? statusSelect.value : 'draft';
                     const isCompletionTransition =
                         isEditMode
@@ -535,7 +705,7 @@
                         if (completionModalInstance) {
                             completionModalInstance.show();
                         } else {
-                            const fallbackConfirmed = window.confirm('Una volta completato, il progetto non sarà più modificabile. Vuoi proseguire?');
+                            const fallbackConfirmed = window.confirm('Una volta archiviato, il progetto non sarà più modificabile. Vuoi proseguire?');
                             if (fallbackConfirmed) {
                                 if (completionConfirmedInput) {
                                     completionConfirmedInput.value = '1';

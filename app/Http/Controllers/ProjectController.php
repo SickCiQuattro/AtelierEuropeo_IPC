@@ -200,7 +200,11 @@ class ProjectController extends Controller
 
             return view('project.details')->with('project', $project);
         } else {
-            return redirect()->route('project.index')->with('error', 'Progetto non trovato. Potrebbe essere stato eliminato.');
+            $fallbackRoute = Auth::check() && (bool) Auth::user()->is_admin && \Illuminate\Support\Facades\Route::has('admin.projects.index')
+                ? 'admin.projects.index'
+                : 'project.index';
+
+            return redirect()->route($fallbackRoute)->with('error', 'Progetto non trovato. Potrebbe essere stato eliminato.');
         }
     }
 
@@ -227,7 +231,7 @@ class ProjectController extends Controller
                 ->with('categories', $categories)
                 ->with('associations', $associations);
         } else {
-            return redirect()->route('project.index')->with('error', 'Progetto non trovato. Impossibile modificare.');
+            return redirect()->route('admin.projects.index')->with('error', 'Progetto non trovato. Impossibile modificare.');
         }
     }
 
@@ -303,7 +307,7 @@ class ProjectController extends Controller
                 return redirect()->back()->withInput()->with('error', 'Errore nell\'aggiornamento del progetto. Riprova più tardi.');
             }
         } else {
-            return redirect()->route('project.index')->with('error', 'Progetto non trovato. Impossibile aggiornare.');
+            return redirect()->route('admin.projects.index')->with('error', 'Progetto non trovato. Impossibile aggiornare.');
         }
     }
 
@@ -364,7 +368,7 @@ class ProjectController extends Controller
         $project = $dl->findProjectByID($id);
 
         if ($project == null) {
-            return redirect()->route('project.index')->with('error', 'Progetto non trovato. Impossibile completare.');
+            return redirect()->route('admin.projects.index')->with('error', 'Progetto non trovato. Impossibile completare.');
         }
 
         // Controlla se il progetto è già completato
@@ -388,7 +392,7 @@ class ProjectController extends Controller
         $project = $dl->findProjectByID($id);
 
         if ($project == null) {
-            return redirect()->route('project.index')->with('error', 'Progetto non trovato. Impossibile completare.');
+            return redirect()->route('admin.projects.index')->with('error', 'Progetto non trovato. Impossibile completare.');
         }
 
         // Controlla se il progetto è già completato
@@ -419,7 +423,7 @@ class ProjectController extends Controller
                 'openDeleteModal' => 1,
             ]);
         } else {
-            return redirect()->route('project.index')->with('error', 'Progetto non trovato. Impossibile eliminare.');
+            return redirect()->route('admin.projects.index')->with('error', 'Progetto non trovato. Impossibile eliminare.');
         }
     }
 
@@ -432,15 +436,15 @@ class ProjectController extends Controller
         $project = $dl->findProjectByID($id);
         
         if ($project == null) {
-            return redirect()->route('project.index')->with('error', 'Progetto non trovato. Impossibile eliminare.');
+            return redirect()->route('admin.projects.index')->with('error', 'Progetto non trovato. Impossibile eliminare.');
         }
         
         $deleted = $dl->deleteProject($id);
         
         if ($deleted) {
-            return redirect()->route('project.index')->with('success', 'Progetto eliminato con successo!');
+            return redirect()->route('admin.projects.index')->with('success', 'Progetto eliminato con successo!');
         } else {
-            return redirect()->route('project.index')->with('error', 'Si è verificato un errore durante l\'eliminazione del progetto.');
+            return redirect()->route('admin.projects.index')->with('error', 'Si è verificato un errore durante l\'eliminazione del progetto.');
         }
     }
 

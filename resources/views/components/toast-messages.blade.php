@@ -77,7 +77,9 @@
         }
     }
 
-    if ($errors->any()) {
+    $suppressValidationErrorToasts = request()->routeIs('project.create') || request()->routeIs('project.edit');
+
+    if ($errors->any() && !$suppressValidationErrorToasts) {
         foreach ($errors->all() as $errorMessage) {
             $addToast($errorMessage, 'danger', 'Errore di validazione');
         }
