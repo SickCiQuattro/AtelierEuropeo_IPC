@@ -66,7 +66,7 @@
                 <h1 class="display-6 fw-bold text-dark mb-0">Tutti i Progetti</h1>
             </div>
             <div class="col-lg-auto">
-                <a href="{{ route('project.create') }}" class="btn btn-ae btn-ae-success btn-ae-square px-4 py-2">
+                <a href="{{ route('project.create', ['adminContext' => 1]) }}" class="btn btn-ae btn-ae-success btn-ae-square px-4 py-2">
                     <i class="bi bi-plus-lg me-2"></i>Crea Nuovo Progetto
                 </a>
             </div>
@@ -178,13 +178,13 @@
                                 $statusConfig = $statusMap[$status] ?? $statusMap['draft'];
 
                                 $showUrl = ($projectId && \Illuminate\Support\Facades\Route::has('project.show'))
-                                    ? route('project.show', $projectId)
+                                    ? route('project.show', ['project' => $projectId, 'adminContext' => 1])
                                     : '#';
                                 $editUrl = ($projectId && \Illuminate\Support\Facades\Route::has('project.edit'))
-                                    ? route('project.edit', $projectId)
+                                    ? route('project.edit', ['id' => $projectId, 'adminContext' => 1])
                                     : '#';
                                 $deleteUrl = ($projectId && \Illuminate\Support\Facades\Route::has('project.show'))
-                                    ? route('project.show', ['project' => $projectId, 'openDeleteModal' => 1])
+                                    ? route('project.show', ['project' => $projectId, 'openDeleteModal' => 1, 'adminContext' => 1])
                                     : '#';
                             @endphp
 

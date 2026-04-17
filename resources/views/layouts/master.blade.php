@@ -37,8 +37,13 @@
 <body class="d-flex flex-column min-vh-100">
     @php
         $isAdmin = auth()->check() && auth()->user()->isAdmin();
-        $isAdminPreview = $isAdmin && session('admin_user_view', false) && !request()->routeIs('admin.*');
-        $showAdminNav = $isAdmin && !$isAdminPreview;
+        $isAdminContext = $isAdmin
+            && request()->boolean('adminContext')
+            && request()->routeIs('project.show', 'project.edit', 'project.create');
+        $isUserProjectSource = request()->routeIs('project.show')
+            && in_array((string) request()->query('source'), ['projects', 'portfolio'], true);
+        $isAdminPreview = $isAdmin && session('admin_user_view', false) && !request()->routeIs('admin.*') && !$isAdminContext;
+        $showAdminNav = $isAdmin && ($isAdminContext || (!$isAdminPreview && !$isUserProjectSource));
         $brandRoute = $showAdminNav ? route('admin.dashboard') : route('home');
         $isWideLocale = in_array(app()->getLocale(), ['fr', 'es'], true);
         $adminPanelLabelParts = preg_split('/\s+/', trim(__('master.admin_panel')), 2);

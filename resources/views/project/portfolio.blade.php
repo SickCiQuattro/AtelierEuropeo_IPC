@@ -212,7 +212,7 @@
                     </div>
                 @else
                     <div class="my-4">
-                        <x-project-grid :projects="$projects" :showFavoriteIcon="false" />
+                        <x-project-grid :projects="$projects" :showFavoriteIcon="false" source="portfolio" />
                     </div>
 
                     <div class="d-flex justify-content-center mt-5 mb-5">

@@ -13,7 +13,8 @@
                     <a href="#" class="btn btn-ae btn-ae-square btn-ae-outline-secondary px-4 py-2">
                         <i class="bi bi-download me-2"></i>Scarica Report Mensile
                     </a>
-                    <a href="{{ route('project.create') }}" class="btn btn-ae btn-ae-success btn-ae-square px-4 py-2">
+                    <a href="{{ route('project.create', ['adminContext' => 1]) }}"
+                        class="btn btn-ae btn-ae-success btn-ae-square px-4 py-2">
                         <i class="bi bi-plus-lg me-2"></i>Crea Nuovo Progetto
                     </a>
                 </div>
@@ -34,7 +35,7 @@
             <div class="col-md-6 col-lg-3">
                 <div
                     class="card border-0 shadow-sm rounded-4 h-100 p-3 d-flex flex-row align-items-center gap-3 admin-kpi-card">
-                    <i class="bi bi-person-arms-up admin-kpi-icon-pending fs-1"></i>
+                    <i class="bi bi-hourglass-split admin-kpi-icon-pending fs-1"></i>
                     <div>
                         <div class="fs-2 fw-bold lh-1 text-dark mb-1">{{ $pendingApplicationsCount }}</div>
                         <div class="small text-body-secondary">Candidature in Sospeso</div>
@@ -44,7 +45,7 @@
             <div class="col-md-6 col-lg-3">
                 <div
                     class="card border-0 shadow-sm rounded-4 h-100 p-3 d-flex flex-row align-items-center gap-3 admin-kpi-card">
-                    <i class="bi bi-calendar-event-fill admin-kpi-icon-expiring fs-1"></i>
+                    <i class="bi bi-alarm-fill admin-kpi-icon-expiring fs-1"></i>
                     <div>
                         <div class="fs-2 fw-bold lh-1 text-dark mb-1">{{ $expiringProjectsCount }}</div>
                         <div class="small text-body-secondary">Progetti in Scadenza</div>
@@ -54,7 +55,7 @@
             <div class="col-md-6 col-lg-3">
                 <div
                     class="card border-0 shadow-sm rounded-4 h-100 p-3 d-flex flex-row align-items-center gap-3 admin-kpi-card">
-                    <i class="bi bi-vector-pen text-secondary fs-1"></i>
+                    <i class="bi bi-file-earmark-text text-secondary fs-1"></i>
                     <div>
                         <div class="fs-2 fw-bold lh-1 text-dark mb-1">{{ $draftProjectsCount }}</div>
                         <div class="small text-body-secondary">Progetti in Bozza</div>
@@ -137,8 +138,8 @@
                             <tbody>
                                 @forelse ($expiringProjects as $project)
                                     <tr class="admin-clickable-row" role="link" tabindex="0"
-                                        onclick="window.location.href='{{ route('project.edit', $project->id) }}'"
-                                        onkeydown="if(event.key === 'Enter' || event.key === ' '){ event.preventDefault(); window.location.href='{{ route('project.edit', $project->id) }}'; }">
+                                        onclick="window.location.href='{{ route('project.edit', ['id' => $project->id, 'adminContext' => 1]) }}'"
+                                        onkeydown="if(event.key === 'Enter' || event.key === ' '){ event.preventDefault(); window.location.href='{{ route('project.edit', ['id' => $project->id, 'adminContext' => 1]) }}'; }">
                                         <td class="fw-semibold">{{ $project->title }}</td>
                                         <td>{{ $project->location ?? $project->country ?? 'N/D' }}</td>
                                         <td>

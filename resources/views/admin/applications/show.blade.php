@@ -14,7 +14,7 @@
                         <a href="{{ route('admin.projects.index') }}" class="text-decoration-none">Progetti Disponibili</a>
                     </li>
                     <li class="breadcrumb-item">
-                        <a href="{{ route('project.show', $application->project) }}"
+                        <a href="{{ route('project.show', ['project' => $application->project, 'adminContext' => 1]) }}"
                             class="text-decoration-none">{{ $application->project->title }}</a>
                     </li>
                     <li class="breadcrumb-item">
@@ -168,7 +168,7 @@
                         </div>
 
                         <div class="mt-3">
-                            <a href="{{ route('project.show', $application->project) }}"
+                            <a href="{{ route('project.show', ['project' => $application->project, 'adminContext' => 1]) }}"
                                 class="btn btn-ae btn-ae-outline-secondary btn-sm">
                                 <i class="bi bi-eye me-1"></i>
                                 Visualizza Progetto

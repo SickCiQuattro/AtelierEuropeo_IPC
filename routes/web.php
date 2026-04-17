@@ -147,6 +147,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::prefix('project')->name('project.')->group(function () {
         // Operazioni CRUD progetti (route create spostata sopra)
         Route::post('/', [ProjectController::class, 'store'])->name('store');
+        Route::match(['post', 'put'], '/preview', [ProjectController::class, 'preview'])->name('preview');
         Route::get('/{id}/edit', [ProjectController::class, 'edit'])->name('edit');
         Route::put('/{id}', [ProjectController::class, 'update'])->name('update');
         Route::delete('/{id}', [ProjectController::class, 'destroy'])->name('destroy');

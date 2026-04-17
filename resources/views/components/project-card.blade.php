@@ -1,4 +1,8 @@
-@props(['project', 'showFavoriteIcon' => false])
+@props([
+    'project',
+    'showFavoriteIcon' => false,
+    'source' => null,
+])
 
 @php
     $categoryBadges = [
@@ -12,14 +16,41 @@
 
     $approvedCount = $project->application->where('status', 'approved')->count();
 
-    $durationText = 'N/D';
-    if (!empty($project->start_date) && !empty($project->end_date)) {
-        $startDate = \Carbon\Carbon::parse($project->start_date);
-        $endDate = \Carbon\Carbon::parse($project->end_date);
-        $durationDays = $startDate->diffInDays($endDate);
+    $startDate = null;
+    $endDate = null;
+    $expireDate = null;
+
+    try {
+        if (!empty($project->start_date)) {
+            $startDate = \Carbon\Carbon::parse($project->start_date)->startOfDay();
+        }
+    } catch (\Throwable) {
+        $startDate = null;
+    }
+
+    try {
+        if (!empty($project->end_date)) {
+            $endDate = \Carbon\Carbon::parse($project->end_date)->startOfDay();
+        }
+    } catch (\Throwable) {
+        $endDate = null;
+    }
+
+    try {
+        if (!empty($project->expire_date)) {
+            $expireDate = \Carbon\Carbon::parse($project->expire_date)->startOfDay();
+        }
+    } catch (\Throwable) {
+        $expireDate = null;
+    }
+
+    $durationText = 'Durata da definire';
+    if ($startDate && $endDate) {
+        $secondsDiff = abs($startDate->diffInSeconds($endDate));
+        $durationDays = max(1, (int) ceil($secondsDiff / 86400));
 
         if ($durationDays > 60) {
-            $months = floor($durationDays / 30);
+            $months = max(1, (int) floor($durationDays / 30));
             $durationText = $months . ' ' . ($months == 1 ? 'Mese' : 'Mesi');
         } else {
             $durationText = $durationDays . ' ' . ($durationDays == 1 ? 'Giorno' : 'Giorni');
@@ -29,22 +60,35 @@
     $isAdminUserPreview = auth()->check()
         && auth()->user()->role === 'admin'
         && session('admin_user_view', false);
+
+    $resolvedSource = null;
+    if (in_array((string) $source, ['projects', 'portfolio'], true)) {
+        $resolvedSource = (string) $source;
+    } elseif (request()->routeIs('project.index')) {
+        $resolvedSource = 'projects';
+    } elseif (request()->routeIs('project.portfolio')) {
+        $resolvedSource = 'portfolio';
+    }
+
+    $projectDetailsRouteParams = ['project' => $project->id];
+    if ($resolvedSource !== null) {
+        $projectDetailsRouteParams['source'] = $resolvedSource;
+    }
 @endphp
 
 <div class="project-card d-flex flex-column h-100">
-    <a href="{{ route('project.show', ['project' => $project->id]) }}" class="stretched-link"></a>
+    <a href="{{ route('project.show', $projectDetailsRouteParams) }}" class="stretched-link"></a>
 
     <div class="project-card-media">
         <img src="{{ $project->image_url }}" alt="{{ $project->title }}" class="project-card-image">
 
-        @if ($project->status == 'published')
+        @if ($project->status == 'published' && $startDate)
             <div class="badge-departure shadow-sm">
                 <div class="badge-departure-top">
                     <i class="bi bi-airplane-fill"></i>
-                    <span
-                        class="badge-departure-month">{{ \Carbon\Carbon::parse($project->start_date)->translatedFormat('M') }}</span>
+                    <span class="badge-departure-month">{{ $startDate->translatedFormat('M') }}</span>
                 </div>
-                <div class="badge-departure-day">{{ $project->start_date->format('j') }}</div>
+                <div class="badge-departure-day">{{ $startDate->format('j') }}</div>
             </div>
         @endif
 
@@ -97,13 +141,23 @@
                     </div>
 
                     <span class="project-card-deadline small text-body-secondary fw-semibold text-end">
-                        <i class="bi bi-calendar2-event-fill me-1"></i>Scad. {{ $project->expire_date->format('d/m/Y') }}
+                        <i class="bi bi-calendar2-event-fill me-1"></i>
+                        @if ($expireDate)
+                            Scad. {{ $expireDate->format('d/m/Y') }}
+                        @else
+                            Scadenza da definire
+                        @endif
                     </span>
                 </div>
             @else
                 <div class="text-center position-relative z-3">
                     <span class="project-status-ended">
-                        <i class="bi bi-calendar3"></i> Terminato il {{ $project->end_date->format('d/m/Y') }}
+                        <i class="bi bi-calendar3"></i>
+                        @if ($endDate)
+                            Terminato il {{ $endDate->format('d/m/Y') }}
+                        @else
+                            Terminato
+                        @endif
                     </span>
                 </div>
             @endif

@@ -8,6 +8,14 @@
     @php
         $isAuthenticated = auth()->check();
         $isAdmin = $isAuthenticated && auth()->user()->role === 'admin';
+        $detailSource = (string) request()->query('source');
+        $isUserSource = in_array($detailSource, ['projects', 'portfolio'], true);
+        $isAdminPreviewMode = $isAdmin && session('admin_user_view', false);
+        $isAdminContextRequested = $isAdmin && request()->boolean('adminContext');
+        $isAdminContext = $isAdmin && ($isAdminContextRequested || (!$isAdminPreviewMode && !$isUserSource));
+
+        $userListRoute = $detailSource === 'portfolio' ? 'project.portfolio' : 'project.index';
+        $userListLabel = $detailSource === 'portfolio' ? 'Archivio Progetti' : 'Progetti Disponibili';
         $isCompleted = $project->status === 'completed';
         $openDeleteModal = request()->boolean('openDeleteModal');
 
@@ -21,9 +29,9 @@
         $previousUrl = url()->previous();
         $currentUrl = url()->current();
         $previousPath = parse_url($previousUrl, PHP_URL_PATH) ?? '';
-        $defaultBackUrl = ($isAdmin && \Illuminate\Support\Facades\Route::has('admin.projects.index'))
+        $defaultBackUrl = ($isAdminContext && \Illuminate\Support\Facades\Route::has('admin.projects.index'))
             ? route('admin.projects.index')
-            : route('project.index');
+            : route($userListRoute);
         
         $isUnsafeBackTarget = $previousUrl === $currentUrl
             || str_contains($previousPath, '/project/create')
@@ -55,11 +63,11 @@
 
                 <div class="d-flex flex-column flex-md-row align-items-md-start justify-content-between gap-3 mb-4">
                     <div class="flex-grow-1" style="margin-bottom: -1.5rem;">
-                        <x-breadcrumb>
-                            @if($isAdmin)
+                        <x-breadcrumb :home-url="$isAdminContext ? route('admin.dashboard') : route('home')">
+                            @if($isAdminContext)
                                 <li class="breadcrumb-item"><a href="{{ route('admin.projects.index') }}">Gestione Progetti</a></li>
                             @else
-                                <li class="breadcrumb-item"><a href="{{ route('project.index') }}">Progetti Disponibili</a></li>
+                                <li class="breadcrumb-item"><a href="{{ route($userListRoute) }}">{{ $userListLabel }}</a></li>
                             @endif
                             <li class="breadcrumb-item active" aria-current="page">{{ $project->title }}</li>
                         </x-breadcrumb>
@@ -77,7 +85,7 @@
                             
                             <div class="d-flex flex-column align-items-start gap-2 mb-3">
                                 
-                                @if($isAdmin)
+                                @if($isAdminContext)
                                     <span class="badge rounded-pill bg-light border px-3 py-2 {{ $statusConfig['color'] }} shadow-sm" style="font-size: 0.85rem;">
                                         <i class="bi {{ $statusConfig['icon'] }} me-1"></i> Stato: {{ $statusConfig['label'] }}
                                     </span>
@@ -122,7 +130,7 @@
                     </div>
                 </article>
 
-                @if ($isAdmin)
+                @if ($isAdminContext)
                     <section class="bg-white border shadow-sm p-3 mb-5 d-flex flex-column flex-sm-row align-items-sm-center justify-content-between gap-3" style="border-radius: 1.25rem;">
                         <div class="text-secondary fw-semibold ps-2 d-none d-md-block">
                             <i class="bi bi-gear-fill me-2"></i>Pannello Operativo
@@ -138,7 +146,7 @@
                             </a>
 
                             @if (!$isCompleted)
-                                <a href="{{ route('project.edit', ['id' => $project->id]) }}" class="btn btn-ae btn-ae-primary rounded-pill px-4 shadow-sm">
+                                <a href="{{ route('project.edit', ['id' => $project->id, 'adminContext' => $isAdminContext ? 1 : null]) }}" class="btn btn-ae btn-ae-primary rounded-pill px-4 shadow-sm">
                                     <i class="bi bi-pencil-fill me-2"></i>Modifica Progetto
                                 </a>
                             @endif
@@ -209,7 +217,7 @@
         </div>
     </div>
 
-    @if ($isAdmin)
+    @if ($isAdminContext)
         <div class="modal fade" id="deleteProjectModal" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content border-0 shadow-lg" style="border-radius: 1.25rem;">
@@ -266,7 +274,7 @@
 @section('scripts')
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            const shouldOpenDeleteModal = @json($isAdmin && $openDeleteModal);
+            const shouldOpenDeleteModal = @json($isAdminContext && $openDeleteModal);
             if (!shouldOpenDeleteModal) {
                 return;
             }

@@ -14,7 +14,7 @@
                     <a href="{{ route('admin.projects.index') }}" class="text-decoration-none">Progetti Disponibili</a>
                 </li>
                 <li class="breadcrumb-item">
-                    <a href="{{ route('project.show', $project) }}" class="text-decoration-none">{{ $project->title }}</a>
+                    <a href="{{ route('project.show', ['project' => $project, 'adminContext' => 1]) }}" class="text-decoration-none">{{ $project->title }}</a>
                 </li>
                 <li class="breadcrumb-item active" aria-current="page">Candidature</li>
             </ol>

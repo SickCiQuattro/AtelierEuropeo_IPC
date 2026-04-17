@@ -48,7 +48,7 @@
         <div class="row justify-content-center">
             <div class="col-12 col-lg-10 col-xl-8">
                 
-                <x-breadcrumb>
+                <x-breadcrumb :home-url="route('admin.dashboard')">
                     <li class="breadcrumb-item"><a href="{{ route('admin.projects.index') }}">Gestione Progetti</a></li>
                     <li class="breadcrumb-item active" aria-current="page">{{ $isEditMode ? 'Modifica Progetto' : 'Nuovo Progetto' }}</li>
                 </x-breadcrumb>
@@ -77,6 +77,7 @@
                             <input type="hidden" name="form_submit_mode" id="form_submit_mode" value="publish">
                             <input type="hidden" name="completion_confirmed" id="completion_confirmed" value="0">
                             <input type="hidden" name="user_id" value="{{ $isEditMode ? $project->user_id : auth()->id() }}" />
+                            <input type="hidden" name="preview_existing_image_url" value="{{ $isEditMode ? $project->image_url : asset('img/projects/default.png') }}" />
 
                             <div id="project-validation-summary"
                                 class="alert alert-danger d-flex align-items-start gap-2 mb-4 {{ $errors->any() ? '' : 'd-none' }}"
@@ -192,7 +193,7 @@
                                         Annulla
                                     </button>
 
-                                    <button type="button" class="btn btn-ae btn-ae-outline-secondary rounded-pill px-4 py-2 text-nowrap fw-semibold" id="preview-project-btn" data-bs-toggle="modal" data-bs-target="#projectPreviewModal">
+                                    <button type="button" formnovalidate class="btn btn-ae btn-ae-outline-secondary rounded-pill px-4 py-2 text-nowrap fw-semibold" id="preview-project-btn">
                                         <i class="bi bi-eye me-2"></i>Anteprima
                                     </button>
 
@@ -343,22 +344,11 @@
             const completionModalEl = document.getElementById('confirmCompletionModal');
             const confirmCompletionSubmitButton = document.getElementById('confirm-completion-submit');
             const previewButton = document.getElementById('preview-project-btn');
-            const previewModalEl = document.getElementById('projectPreviewModal');
-            const previewImage = document.getElementById('preview-image');
-            const previewCategory = document.getElementById('preview-category');
-            const previewStatus = document.getElementById('preview-status');
-            const previewTitle = document.getElementById('preview-title');
-            const previewSummary = document.getElementById('preview-summary');
-            const previewAssociation = document.getElementById('preview-association');
-            const previewLocation = document.getElementById('preview-location');
-            const previewPeople = document.getElementById('preview-people');
-            const previewExpireDate = document.getElementById('preview-expire-date');
-            const previewStartDate = document.getElementById('preview-start-date');
-            const previewEndDate = document.getElementById('preview-end-date');
-            const previewDescription = document.getElementById('preview-description');
-            const fallbackPreviewImage = @json($isEditMode ? $project->image_url : asset('img/projects/default.png'));
             const validationSummary = document.getElementById('project-validation-summary');
             const serverErrorFields = @json($errors->keys());
+            const previewEndpoint = @json(route('project.preview'));
+            const csrfTokenMeta = document.querySelector('meta[name="csrf-token"]');
+            const csrfToken = csrfTokenMeta ? csrfTokenMeta.getAttribute('content') : '';
 
             let cancelModalInstance = null;
             if (cancelModalEl && window.bootstrap && bootstrap.Modal) {
@@ -490,8 +480,90 @@
                 });
             }
 
+            function clearValidationState() {
+                if (!form) {
+                    return;
+                }
+
+                form.querySelectorAll('.ae-invalid-field').forEach(function(field) {
+                    setFieldInvalidState(field, false);
+                });
+
+                setValidationSummaryVisible(false);
+            }
+
             applyServerValidationState();
             bindInlineValidationReset();
+
+            async function openProjectPreviewInNewTab(event) {
+                event.preventDefault();
+                event.stopPropagation();
+
+                if (!form || !previewEndpoint) {
+                    return;
+                }
+
+                clearValidationState();
+
+                const previousSubmitMode = submitModeInput ? submitModeInput.value : 'publish';
+                if (submitModeInput) {
+                    submitModeInput.value = 'preview';
+                }
+
+                if (!csrfToken) {
+                    window.alert('Token CSRF non disponibile. Ricarica la pagina e riprova.');
+                    if (submitModeInput) {
+                        submitModeInput.value = previousSubmitMode;
+                    }
+                    return;
+                }
+
+                const previewTab = window.open('', '_blank');
+                if (!previewTab) {
+                    window.alert('Impossibile aprire la scheda di anteprima. Controlla il blocco popup del browser.');
+                    if (submitModeInput) {
+                        submitModeInput.value = previousSubmitMode;
+                    }
+                    return;
+                }
+
+                previewTab.document.open();
+                previewTab.document.write('<!doctype html><html lang="it"><head><meta charset="utf-8"><title>Generazione anteprima...</title></head><body style="font-family: sans-serif; padding: 2rem; color: #334155;"><p>Generazione anteprima in corso...</p></body></html>');
+                previewTab.document.close();
+
+                const formData = new FormData(form);
+                formData.delete('_method');
+                formData.set('_token', csrfToken);
+
+                try {
+                    const response = await fetch(previewEndpoint, {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': csrfToken,
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'Accept': 'text/html',
+                        },
+                        body: formData,
+                    });
+
+                    if (!response.ok) {
+                        throw new Error('Preview request failed');
+                    }
+
+                    const previewHtml = await response.text();
+                    previewTab.document.open();
+                    previewTab.document.write(previewHtml);
+                    previewTab.document.close();
+                } catch (error) {
+                    console.error('Errore durante la generazione anteprima:', error);
+                    previewTab.close();
+                    window.alert('Errore durante la generazione dell\'anteprima. Riprova tra poco.');
+                } finally {
+                    if (submitModeInput) {
+                        submitModeInput.value = previousSubmitMode;
+                    }
+                }
+            }
 
             document.querySelectorAll('.js-cancel-process').forEach(function(button) {
                 button.addEventListener('click', function() {
@@ -529,115 +601,8 @@
                 });
             }
 
-            function getInputValue(name, fallback = 'N/D') {
-                if (!form) {
-                    return fallback;
-                }
-
-                const field = form.querySelector(`[name="${name}"]`);
-                if (!field) {
-                    return fallback;
-                }
-
-                const value = (field.value || '').trim();
-                return value !== '' ? value : fallback;
-            }
-
-            function getSelectedText(name, fallback = 'N/D') {
-                if (!form) {
-                    return fallback;
-                }
-
-                const select = form.querySelector(`[name="${name}"]`);
-                if (!select) {
-                    return fallback;
-                }
-
-                const selectedOption = select.options[select.selectedIndex];
-                if (!selectedOption) {
-                    return fallback;
-                }
-
-                const text = (selectedOption.text || '').trim();
-                const invalidPlaceholder = text === '' || text.startsWith('Seleziona');
-
-                return invalidPlaceholder ? fallback : text;
-            }
-
-            function formatDate(value) {
-                if (!value || value === 'N/D') {
-                    return 'N/D';
-                }
-
-                const parsedDate = new Date(`${value}T00:00:00`);
-                if (Number.isNaN(parsedDate.getTime())) {
-                    return 'N/D';
-                }
-
-                return new Intl.DateTimeFormat('it-IT', {
-                    day: 'numeric',
-                    month: 'long',
-                    year: 'numeric'
-                }).format(parsedDate);
-            }
-
-            function updateProjectPreviewImage() {
-                if (!form || !previewImage) {
-                    return;
-                }
-
-                const imageInput = form.querySelector('input[name="image_path"]');
-                if (!imageInput || !imageInput.files || imageInput.files.length === 0) {
-                    previewImage.setAttribute('src', fallbackPreviewImage);
-                    return;
-                }
-
-                const file = imageInput.files[0];
-                const reader = new FileReader();
-                reader.onload = function(event) {
-                    if (event.target && event.target.result) {
-                        previewImage.setAttribute('src', event.target.result);
-                    }
-                };
-                reader.readAsDataURL(file);
-            }
-
-            function updateProjectPreview() {
-                if (!previewTitle) {
-                    return;
-                }
-
-                const title = getInputValue('title', 'Titolo progetto');
-                const summary = getInputValue('sum_description', 'Descrizione breve del progetto...');
-                const description = getInputValue('full_description', 'Contenuto descrizione...');
-                const location = getInputValue('location');
-                const people = getInputValue('requested_people');
-                const category = getSelectedText('category_id', 'Categoria');
-                const association = getSelectedText('association_id');
-                const status = getSelectedText('status', 'Bozza');
-
-                previewTitle.textContent = title;
-                previewSummary.textContent = summary;
-                previewDescription.textContent = description;
-                previewLocation.textContent = location;
-                previewPeople.textContent = people;
-                previewCategory.textContent = category;
-                previewAssociation.textContent = association;
-                previewStatus.textContent = status;
-
-                previewStartDate.textContent = formatDate(getInputValue('start_date', 'N/D'));
-                previewEndDate.textContent = formatDate(getInputValue('end_date', 'N/D'));
-                previewExpireDate.textContent = formatDate(getInputValue('expire_date', 'N/D'));
-
-                updateProjectPreviewImage();
-            }
-
             if (previewButton) {
-                previewButton.addEventListener('click', updateProjectPreview);
-            }
-
-            if (previewModalEl) {
-                previewModalEl.addEventListener('show.bs.modal', updateProjectPreview);
+                previewButton.addEventListener('click', openProjectPreviewInNewTab);
             }
 
             if (saveDraftButton) {
@@ -679,6 +644,11 @@
             if (form) {
                 form.addEventListener('submit', function(event) {
                     const submitMode = submitModeInput ? submitModeInput.value : 'publish';
+
+                    if (submitMode === 'preview') {
+                        event.preventDefault();
+                        return;
+                    }
 
                     if (submitMode !== 'draft') {
                         const isRequiredFieldsValid = validateRequiredFields();

@@ -12,6 +12,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
+use Throwable;
 
 
 class ProjectController extends Controller
@@ -140,6 +141,129 @@ class ProjectController extends Controller
         return view('project.editProject')
             ->with('categories', $categories)
             ->with('associations', $associations);
+    }
+
+    /**
+     * Renderizza una pagina di anteprima in una nuova scheda senza persistere i dati.
+     */
+    public function preview(Request $request)
+    {
+        $allowedStatuses = ['draft', 'published', 'completed'];
+        $status = in_array($request->input('status'), $allowedStatuses, true)
+            ? $request->input('status')
+            : 'draft';
+
+        $startDate = $this->parsePreviewDate($request->input('start_date'));
+        $endDate = $this->parsePreviewDate($request->input('end_date'));
+        $expireDate = $this->parsePreviewDate($request->input('expire_date'));
+
+        if (!$startDate && $endDate) {
+            $startDate = $endDate->copy()->subDays(7)->startOfDay();
+        }
+        if (!$startDate) {
+            $startDate = Carbon::now()->copy()->addDay()->startOfDay();
+        }
+
+        if (!$endDate) {
+            $endDate = $startDate->copy()->addDays(7);
+        }
+        if ($endDate->lessThan($startDate)) {
+            $endDate = $startDate->copy()->addDay();
+        }
+
+        if (!$expireDate) {
+            $expireDate = $startDate->copy()->subDay();
+        }
+        if ($expireDate->greaterThan($startDate)) {
+            $expireDate = $startDate->copy()->subDay();
+        }
+
+        $category = Category::query()->find($request->input('category_id'));
+        if (!$category) {
+            $category = Category::query()->first();
+        }
+
+        $association = Association::query()->find($request->input('association_id'));
+        if (!$association) {
+            $association = Association::query()->first();
+        }
+
+        $title = trim((string) $request->input('title', 'Titolo progetto (anteprima)'));
+        if ($title === '') {
+            $title = 'Titolo progetto (anteprima)';
+        }
+
+        $previewProject = new \stdClass();
+        $previewProject->id = 0;
+        $previewProject->title = $title;
+        $previewProject->status = $status;
+        $previewProject->location = trim((string) $request->input('location', 'Da definire')) ?: 'Da definire';
+        $previewProject->requested_people = max(0, (int) $request->input('requested_people', 0));
+        $previewProject->sum_description = trim((string) $request->input('sum_description', 'Descrizione breve non disponibile.')) ?: 'Descrizione breve non disponibile.';
+        $previewProject->full_description = trim((string) $request->input('full_description', 'Descrizione completa non disponibile.')) ?: 'Descrizione completa non disponibile.';
+        $previewProject->requirements = trim((string) $request->input('requirements', 'Requisiti non disponibili.')) ?: 'Requisiti non disponibili.';
+        $previewProject->travel_conditions = trim((string) $request->input('travel_conditions', 'Condizioni economiche non disponibili.')) ?: 'Condizioni economiche non disponibili.';
+        $previewProject->start_date = $startDate;
+        $previewProject->end_date = $endDate;
+        $previewProject->expire_date = $expireDate;
+        $previewProject->image_url = $this->resolvePreviewImageUrl($request);
+        $previewProject->application = collect();
+        $previewProject->category = $category ?: (object) [
+            'tag' => 'CES',
+            'name' => 'Programma',
+        ];
+        $previewProject->association = $association ?: (object) [
+            'name' => 'Associazione da definire',
+            'description' => 'Descrizione associazione non disponibile in anteprima.',
+        ];
+
+        return response()
+            ->view('project.previewProject', [
+                'previewProject' => $previewProject,
+            ])
+            ->header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0');
+    }
+
+    /**
+     * Converte la data ricevuta dal form in Carbon, con fallback sicuro.
+     */
+    private function parsePreviewDate(?string $value): ?Carbon
+    {
+        try {
+            if (is_string($value) && trim($value) !== '') {
+                return Carbon::parse($value)->startOfDay();
+            }
+        } catch (Throwable) {
+            // fallback gestito sotto
+        }
+
+        return null;
+    }
+
+    /**
+     * Risolve l'immagine di copertina in anteprima senza salvataggio definitivo.
+     */
+    private function resolvePreviewImageUrl(Request $request): string
+    {
+        if ($request->hasFile('image_path')) {
+            $uploadedImage = $request->file('image_path');
+
+            if ($uploadedImage && $uploadedImage->isValid()) {
+                $mimeType = $uploadedImage->getMimeType() ?: 'image/jpeg';
+                $rawContent = @file_get_contents($uploadedImage->getRealPath());
+
+                if ($rawContent !== false) {
+                    return 'data:' . $mimeType . ';base64,' . base64_encode($rawContent);
+                }
+            }
+        }
+
+        $existingImageUrl = trim((string) $request->input('preview_existing_image_url', ''));
+        if ($existingImageUrl !== '') {
+            return $existingImageUrl;
+        }
+
+        return asset('img/projects/default.png');
     }
 
     /**

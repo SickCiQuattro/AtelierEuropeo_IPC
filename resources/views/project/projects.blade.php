@@ -213,7 +213,7 @@
                     </div>
                 @else
                     <div class="my-4">
-                        <x-project-grid :projects="$projects" />
+                        <x-project-grid :projects="$projects" source="projects" />
                     </div>
 
                     <div class="d-flex justify-content-center mt-5 mb-5">
