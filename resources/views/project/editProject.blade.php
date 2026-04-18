@@ -69,10 +69,19 @@
         <div class="row justify-content-center">
             <div class="col-12 col-lg-10 col-xl-8">
                 
-                <x-breadcrumb :home-url="route('admin.dashboard')">
-                    <li class="breadcrumb-item"><a href="{{ route('admin.projects.index') }}">Gestione Progetti</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">{{ $isEditMode ? 'Modifica Progetto' : 'Nuovo Progetto' }}</li>
-                </x-breadcrumb>
+                <div class="d-md-none mb-3">
+                    <button type="button" class="btn btn-ae btn-ae-light border shadow-sm rounded-pill px-3 py-2 text-secondary fw-semibold transition-hover js-cancel-process"
+                        data-cancel-url="{{ $backUrl }}">
+                        <i class="bi bi-arrow-left me-2"></i>Indietro
+                    </button>
+                </div>
+
+                <div class="d-none d-md-block">
+                    <x-breadcrumb :home-url="route('admin.dashboard')">
+                        <li class="breadcrumb-item"><a href="{{ route('admin.projects.index') }}">Gestione Progetti</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">{{ $isEditMode ? 'Modifica Progetto' : 'Nuovo Progetto' }}</li>
+                    </x-breadcrumb>
+                </div>
 
                 <div class="mb-4 d-flex align-items-center justify-content-between flex-wrap gap-3">
                     <div>
@@ -82,10 +91,6 @@
                         </h1>
                         <p class="text-secondary mb-0 small">Compila i dettagli per la pubblicazione nella vetrina.</p>
                     </div>
-                    <button type="button" class="btn btn-ae btn-ae-light border shadow-sm rounded-pill px-3 py-2 text-secondary fw-semibold transition-hover js-cancel-process"
-                        data-cancel-url="{{ $backUrl }}">
-                        <i class="bi bi-arrow-left me-2"></i>Indietro
-                    </button>
                 </div>
 
                 <div class="card border-0 shadow-sm mb-5" style="border-radius: 1.25rem; background-color: var(--project-card-bg);">
