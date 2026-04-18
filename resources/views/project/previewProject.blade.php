@@ -38,6 +38,18 @@
             z-index: 1030;
         }
 
+        @media (max-width: 991.98px) {
+            .project-preview-banner {
+                top: 70px;
+            }
+        }
+
+        @media (max-width: 575.98px) {
+            .project-preview-banner {
+                top: 60px;
+            }
+        }
+
         .project-preview-card-shell .stretched-link,
         .project-preview-card-shell .btn-favorite {
             pointer-events: none;
