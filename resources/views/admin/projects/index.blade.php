@@ -219,6 +219,7 @@
                                     <div class="d-inline-flex align-items-center gap-1">
                                         <a href="{{ $showUrl }}"
                                             class="btn btn-sm btn-ae btn-ae-square admin-project-action-view"
+                                            title="Visualizza progetto"
                                             aria-label="Visualizza progetto">
                                             <i class="bi bi-eye"></i>
                                         </a>
@@ -232,6 +233,7 @@
                                         @else
                                             <a href="{{ $editUrl }}"
                                                 class="btn btn-sm btn-ae btn-ae-square admin-project-action-edit"
+                                                title="Modifica progetto"
                                                 aria-label="Modifica progetto">
                                                 <i class="bi bi-pencil"></i>
                                             </a>
@@ -239,6 +241,7 @@
                                         <span class="vr admin-project-action-divider mx-1" aria-hidden="true"></span>
                                         <a href="{{ $deleteUrl }}"
                                             class="btn btn-sm btn-ae btn-ae-square btn-ae-outline-danger"
+                                            title="Elimina progetto"
                                             aria-label="Elimina progetto">
                                             <i class="bi bi-trash"></i>
                                         </a>
@@ -267,7 +270,7 @@
             x-transition style="display: none;">
             <div class="shadow-lg bg-white p-2 px-3 d-flex align-items-center gap-3 rounded-4 border">
                 <button type="button" class="btn btn-sm btn-ae btn-ae-square btn-ae-outline-secondary"
-                    @click="clearSelection" aria-label="Annulla selezione">
+                    @click="clearSelection" aria-label="Annulla selezione" title="Annulla selezione">
                     <i class="bi bi-x-lg"></i>
                 </button>
                 <span class="small fw-semibold"><span x-text="selectedCount"></span> progetti selezionati</span>
@@ -292,7 +295,7 @@
                         <h5 class="modal-title fw-bold" id="bulkStatusModalLabel">Cambia stato progetti</h5>
                         <button type="button"
                             class="btn btn-sm btn-ae btn-ae-square btn-ae-outline-secondary admin-bulk-modal-close"
-                            data-bs-dismiss="modal" aria-label="Chiudi modale">
+                            data-bs-dismiss="modal" aria-label="Chiudi modale" title="Chiudi modale">
                             <i class="bi bi-x-lg"></i>
                         </button>
                     </div>
@@ -335,7 +338,7 @@
                         <h5 class="modal-title fw-bold" id="bulkDeleteModalLabel">Elimina progetti</h5>
                         <button type="button"
                             class="btn btn-sm btn-ae btn-ae-square btn-ae-outline-secondary admin-bulk-modal-close"
-                            data-bs-dismiss="modal" aria-label="Chiudi modale">
+                            data-bs-dismiss="modal" aria-label="Chiudi modale" title="Chiudi modale">
                             <i class="bi bi-x-lg"></i>
                         </button>
                     </div>

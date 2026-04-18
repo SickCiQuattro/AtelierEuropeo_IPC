@@ -35,7 +35,7 @@
             <div class="col-md-6 col-lg-3">
                 <div
                     class="card border-0 shadow-sm rounded-4 h-100 p-3 d-flex flex-row align-items-center gap-3 admin-kpi-card">
-                    <i class="bi bi-hourglass-split admin-kpi-icon-pending fs-1"></i>
+                    <i class="bi bi-file-earmark-person-fill admin-kpi-icon-pending fs-1"></i>
                     <div>
                         <div class="fs-2 fw-bold lh-1 text-dark mb-1">{{ $pendingApplicationsCount }}</div>
                         <div class="small text-body-secondary">Candidature in Sospeso</div>
@@ -96,13 +96,20 @@
                                     </tr>
                                 @empty
                                     <tr class="admin-empty-row">
-                                        <td colspan="4" class="text-center text-muted">Nessuna candidatura in sospeso.</td>
+                                        <td colspan="4" class="py-5">
+                                            <div
+                                                class="d-flex flex-column align-items-center justify-content-center text-center gap-2 text-muted">
+                                                <i class="bi bi-check-circle fs-1 text-success-emphasis"></i>
+                                                <p class="mb-0 fw-semibold">Tutto tranquillo! Nessuna candidatura in sospeso.
+                                                </p>
+                                            </div>
+                                        </td>
                                     </tr>
                                 @endforelse
                             </tbody>
                         </table>
                     </div>
-                    <div class="text-center mt-auto pt-3 border-top">
+                    <div class="text-end mt-auto pt-3 border-top">
                         @php
                             // TODO: abilita la route dedicata quando sara creata (es. admin.applications.list)
                             $allApplicationsRouteName = 'admin.applications.list';
@@ -155,13 +162,20 @@
                                     </tr>
                                 @empty
                                     <tr class="admin-empty-row">
-                                        <td colspan="4" class="text-center text-muted">Nessun progetto in scadenza a breve.</td>
+                                        <td colspan="4" class="py-5">
+                                            <div
+                                                class="d-flex flex-column align-items-center justify-content-center text-center gap-2 text-muted">
+                                                <i class="bi bi-check-circle fs-1 text-success-emphasis"></i>
+                                                <p class="mb-0 fw-semibold">Tutto tranquillo! Nessun progetto in scadenza a
+                                                    breve.</p>
+                                            </div>
+                                        </td>
                                     </tr>
                                 @endforelse
                             </tbody>
                         </table>
                     </div>
-                    <div class="text-center mt-auto pt-3 border-top">
+                    <div class="text-end mt-auto pt-3 border-top">
                         <a href="{{ route('admin.projects.index') }}"
                             class="admin-list-link fw-semibold text-decoration-none d-inline-flex align-items-center gap-1">Vedi
                             tutti i progetti <i class="bi bi-arrow-right"></i></a>

@@ -140,15 +140,15 @@
 
             <div class="row g-4 mb-5">
                 <div class="col-lg-8">
-                    <div class="bg-white border p-4 p-md-5 mb-4 shadow-sm" style="border-radius: 1.25rem;">
+                    <section class="mb-5">
                         <h3 class="h4 fw-bold mb-4 text-primary"><i class="bi bi-journal-text me-2"></i>Il viaggio in pillole</h3>
-                        <p class="text-secondary" style="white-space: pre-line; line-height: 1.8;">{{ $previewProject->full_description }}</p>
-                    </div>
+                        <p class="text-secondary fs-6 mb-0" style="white-space: pre-line; line-height: 1.85;">{{ $previewProject->full_description }}</p>
+                    </section>
 
-                    <div class="bg-white border p-4 p-md-5 shadow-sm" style="border-radius: 1.25rem;">
+                    <section>
                         <h3 class="h4 fw-bold mb-4 text-primary"><i class="bi bi-list-check me-2"></i>Requisiti di partecipazione</h3>
-                        <p class="text-secondary mb-0" style="white-space: pre-line; line-height: 1.8;">{{ $previewProject->requirements }}</p>
-                    </div>
+                        <p class="text-secondary fs-6 mb-0" style="white-space: pre-line; line-height: 1.85;">{{ $previewProject->requirements }}</p>
+                    </section>
                 </div>
 
                 <div class="col-lg-4">
