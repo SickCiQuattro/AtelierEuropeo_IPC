@@ -77,7 +77,7 @@
                 </div>
 
                 <div class="d-none d-md-block">
-                    <x-breadcrumb :home-url="route('admin.dashboard')">
+                    <x-breadcrumb>
                         <li class="breadcrumb-item"><a href="{{ route('admin.projects.index') }}">Gestione Progetti</a></li>
                         <li class="breadcrumb-item active" aria-current="page">{{ $isEditMode ? 'Modifica Progetto' : 'Nuovo Progetto' }}</li>
                     </x-breadcrumb>

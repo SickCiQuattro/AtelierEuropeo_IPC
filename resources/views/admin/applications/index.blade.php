@@ -8,9 +8,6 @@
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb mb-0">
                 <li class="breadcrumb-item">
-                    <a href="{{ route('home') }}" class="text-decoration-none">Home</a>
-                </li>
-                <li class="breadcrumb-item">
                     <a href="{{ route('admin.projects.index') }}" class="text-decoration-none">Progetti Disponibili</a>
                 </li>
                 <li class="breadcrumb-item">

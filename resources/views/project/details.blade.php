@@ -63,7 +63,7 @@
 
                 <div class="d-flex flex-column flex-md-row align-items-md-start justify-content-between gap-3 mb-4">
                     <div class="flex-grow-1" style="margin-bottom: -1.5rem;">
-                        <x-breadcrumb :home-url="$isAdminContext ? route('admin.dashboard') : route('home')">
+                        <x-breadcrumb>
                             @if($isAdminContext)
                                 <li class="breadcrumb-item"><a href="{{ route('admin.projects.index') }}">Gestione Progetti</a></li>
                             @else
