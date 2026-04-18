@@ -246,7 +246,7 @@ p {
 
 /* Outline Grigio */
 .btn-ae-outline-secondary { background-color: transparent; border-color: var(--bs-secondary); color: var(--bs-secondary); }
-.btn-ae-outline-secondary:hover, .btn-ae-outline-secondary:focus-visible { background-color: var(--bs-secondary); color: #ffffff; }
+.btn-ae-outline-secondary:hover, .btn-ae-outline-secondary:focus-visible { background-color: #475569; color: #ffffff; }
 .btn-ae-outline-secondary:active { background-color: #334155 !important; border-color: #334155 !important; color: #ffffff !important; }
 
 /* Outline Verde */

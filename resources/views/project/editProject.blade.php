@@ -42,6 +42,27 @@
         #project-form .input-group .ae-invalid-field {
             border-left: 0 !important;
         }
+
+        .project-form-actions {
+            width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: thin;
+        }
+
+        .project-form-actions-inner {
+            display: flex;
+            flex-wrap: nowrap;
+            align-items: center;
+            gap: 0.65rem;
+            min-width: max-content;
+        }
+
+        @media (min-width: 1200px) {
+            .project-form-actions {
+                overflow-x: visible;
+            }
+        }
     </style>
 
     <div class="container-fluid px-3 px-md-4 py-4">
@@ -179,31 +200,30 @@
                                 <div class="d-flex align-items-center gap-3">
                                     <label class="form-label text-secondary fw-medium mb-0 text-nowrap">Stato del progetto:</label>
                                     <select class="form-select bg-light border-0 fw-semibold text-primary py-2 px-3 shadow-none" style="border-radius: 0.75rem; width: auto; min-width: 180px; cursor: pointer;" name="status" id="status">
-                                        <option value="draft" @if(old('status', $project->status ?? 'draft') == 'draft') selected @endif>Bozza (Invisibile)</option>
-                                        <option value="published" @if(old('status', $project->status ?? '') == 'published') selected @endif>Pubblicato (Visibile)</option>
+                                        <option value="draft" @if(old('status', $project->status ?? 'draft') == 'draft') selected @endif>Bozza</option>
+                                        <option value="published" @if(old('status', $project->status ?? '') == 'published') selected @endif>Pubblicato</option>
                                         @if($isEditMode) 
-                                            <option value="completed" @if(old('status', $project->status ?? '') == 'completed') selected @endif>Completato (Archiviato)</option> 
+                                            <option value="completed" @if(old('status', $project->status ?? '') == 'completed') selected @endif>Completato</option> 
                                         @endif
                                     </select>
                                 </div>
                                 
-                                <div class="d-flex flex-wrap align-items-center justify-content-start justify-content-xl-end gap-2 gap-sm-3">
+                                <div class="project-form-actions d-flex justify-content-start justify-content-xl-end">
+                                    <div class="project-form-actions-inner">
                                     
-                                    <button type="button" class="btn btn-link text-secondary text-decoration-none fw-medium px-2 py-2 text-nowrap transition-hover js-cancel-process" data-cancel-url="{{ $backUrl }}">
-                                        Annulla
-                                    </button>
+                                        <button type="button" class="btn btn-link text-secondary text-decoration-none fw-medium px-2 py-2 text-nowrap transition-hover js-cancel-process" data-cancel-url="{{ $backUrl }}">
+                                            Annulla
+                                        </button>
 
-                                    <button type="button" formnovalidate class="btn btn-ae btn-ae-outline-secondary rounded-pill px-4 py-2 text-nowrap fw-semibold" id="preview-project-btn">
-                                        <i class="bi bi-eye me-2"></i>Anteprima
-                                    </button>
+                                        <button type="button" formnovalidate class="btn btn-ae btn-ae-outline-secondary rounded-pill px-4 py-2 text-nowrap fw-semibold" id="preview-project-btn">
+                                            <i class="bi bi-eye me-2"></i>Anteprima
+                                        </button>
 
-                                    <button type="button" class="btn btn-ae btn-ae-outline-primary rounded-pill px-4 py-2 text-nowrap fw-semibold" id="save-draft-btn">
-                                        <i class="bi bi-floppy me-2"></i>Salva Bozza
-                                    </button>
+                                        <button type="submit" class="btn btn-ae btn-ae-primary rounded-pill px-4 py-2 shadow-sm text-nowrap fw-bold" id="submit-btn">
+                                            <i class="bi bi-check-circle-fill me-2" id="submit-btn-icon"></i><span id="submit-btn-label">{{ $isEditMode ? 'Aggiorna Progetto' : 'Pubblica Progetto' }}</span>
+                                        </button>
 
-                                    <button type="submit" class="btn btn-ae btn-ae-primary rounded-pill px-4 py-2 shadow-sm text-nowrap fw-bold" id="submit-btn">
-                                        <i class="bi bi-check-circle-fill me-2"></i>{{ $isEditMode ? 'Aggiorna Progetto' : 'Pubblica Progetto' }}
-                                    </button>
+                                    </div>
 
                                 </div>
                             </div>
@@ -337,8 +357,9 @@
             const submitModeInput = document.getElementById('form_submit_mode');
             const completionConfirmedInput = document.getElementById('completion_confirmed');
             const statusSelect = document.getElementById('status');
-            const saveDraftButton = document.getElementById('save-draft-btn');
             const submitButton = document.getElementById('submit-btn');
+            const submitButtonLabel = document.getElementById('submit-btn-label');
+            const submitButtonIcon = document.getElementById('submit-btn-icon');
             const cancelModalEl = document.getElementById('cancelProjectProcessModal');
             const confirmCancelLink = document.getElementById('confirm-cancel-process-link');
             const completionModalEl = document.getElementById('confirmCompletionModal');
@@ -363,6 +384,57 @@
             const isEditMode = @json($isEditMode);
             const currentProjectStatus = @json($currentProjectStatus);
             const shouldOpenCompletionModalOnLoad = @json($openCompletionModal);
+
+            function getPrimaryActionConfig(status) {
+                switch (status) {
+                    case 'draft':
+                        return {
+                            label: 'Salva come Bozza',
+                            icon: 'bi-floppy',
+                            submitMode: 'draft',
+                            buttonClass: 'btn-ae-secondary',
+                        };
+                    case 'completed':
+                        return {
+                            label: 'Segna come Completato',
+                            icon: 'bi-check2-circle',
+                            submitMode: 'publish',
+                            buttonClass: 'btn-ae-warning',
+                        };
+                    case 'published':
+                    default:
+                        return {
+                            label: isEditMode ? 'Aggiorna Progetto' : 'Pubblica Progetto',
+                            icon: 'bi-check-circle-fill',
+                            submitMode: 'publish',
+                            buttonClass: 'btn-ae-primary',
+                        };
+                }
+            }
+
+            function updatePrimaryActionFromStatus() {
+                if (!statusSelect || !submitButton) {
+                    return;
+                }
+
+                const selectedStatus = statusSelect.value || 'draft';
+                const actionConfig = getPrimaryActionConfig(selectedStatus);
+
+                if (submitButtonLabel) {
+                    submitButtonLabel.textContent = actionConfig.label;
+                }
+
+                if (submitButtonIcon) {
+                    submitButtonIcon.className = `bi ${actionConfig.icon} me-2`;
+                }
+
+                submitButton.classList.remove('btn-ae-primary', 'btn-ae-secondary', 'btn-ae-danger');
+                submitButton.classList.add(actionConfig.buttonClass);
+
+                if (submitModeInput) {
+                    submitModeInput.value = actionConfig.submitMode;
+                }
+            }
 
             function hasNonEmptyValue(field) {
                 if (!field) {
@@ -583,9 +655,7 @@
 
             if (submitButton) {
                 submitButton.addEventListener('click', function() {
-                    if (submitModeInput) {
-                        submitModeInput.value = 'publish';
-                    }
+                    updatePrimaryActionFromStatus();
 
                     if (completionConfirmedInput) {
                         completionConfirmedInput.value = '0';
@@ -598,31 +668,13 @@
                     if (completionConfirmedInput && statusSelect.value !== 'completed') {
                         completionConfirmedInput.value = '0';
                     }
+
+                    updatePrimaryActionFromStatus();
                 });
             }
 
             if (previewButton) {
                 previewButton.addEventListener('click', openProjectPreviewInNewTab);
-            }
-
-            if (saveDraftButton) {
-                saveDraftButton.addEventListener('click', function() {
-                    if (submitModeInput) {
-                        submitModeInput.value = 'draft';
-                    }
-
-                    if (completionConfirmedInput) {
-                        completionConfirmedInput.value = '0';
-                    }
-
-                    if (statusSelect) {
-                        statusSelect.value = 'draft';
-                    }
-
-                    if (form) {
-                        form.submit();
-                    }
-                });
             }
 
             if (confirmCompletionSubmitButton) {
@@ -710,6 +762,8 @@
                 const cleanUrl = current.pathname + (cleanQuery ? `?${cleanQuery}` : '') + current.hash;
                 window.history.replaceState({}, document.title, cleanUrl);
             }
+
+            updatePrimaryActionFromStatus();
         });
     </script>
 @endsection
