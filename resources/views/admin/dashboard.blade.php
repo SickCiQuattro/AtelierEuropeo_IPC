@@ -68,8 +68,8 @@
             <div class="col-lg-6">
                 <div class="card border-0 shadow-sm rounded-4 h-100 p-4 d-flex flex-column">
                     <h2 class="h4 fw-bold text-center mb-4">Ultime Candidature da Valutare</h2>
-                    <div class="table-responsive flex-grow-1">
-                        <table class="table table-hover align-middle mb-0 admin-table-clean">
+                    <div class="table-responsive flex-grow-1 d-none d-md-block">
+                        <table class="table table-hover align-middle mb-0 admin-table-clean d-none d-md-table">
                             <thead>
                                 <tr>
                                     <th scope="col" class="text-body-secondary small text-uppercase fw-semibold">Nome
@@ -109,6 +109,33 @@
                             </tbody>
                         </table>
                     </div>
+
+                    <div class="d-md-none flex-grow-1 admin-mobile-list">
+                        @forelse ($latestPendingApplications as $application)
+                            <a href="{{ route('admin.applications.show', $application->id) }}"
+                                class="admin-mobile-item admin-mobile-item-link admin-mobile-item-application text-decoration-none text-reset d-block">
+                                <div class="d-flex align-items-start justify-content-between gap-2 mb-2">
+                                    <span class="admin-mobile-kicker">Candidato</span>
+                                    <i class="bi bi-chevron-right admin-mobile-chevron"></i>
+                                </div>
+                                <h3 class="h6 fw-bold mb-2 admin-mobile-title">
+                                    {{ $application->user->name ?? 'Utente Sconosciuto' }}</h3>
+                                <p class="mb-1 small admin-mobile-meta"><span class="text-body-secondary">Progetto:</span>
+                                    {{ $application->project->title ?? 'Progetto Rimosso' }}</p>
+                                <p class="mb-0 small admin-mobile-meta"><span class="text-body-secondary">Data invio:</span>
+                                    {{ $application->created_at->format('d/m/Y') }}</p>
+                            </a>
+                        @empty
+                            <div class="py-5 admin-mobile-empty-state">
+                                <div
+                                    class="d-flex flex-column align-items-center justify-content-center text-center gap-2 text-muted">
+                                    <i class="bi bi-check-circle fs-1 text-success-emphasis"></i>
+                                    <p class="mb-0 fw-semibold">Tutto tranquillo! Nessuna candidatura in sospeso.</p>
+                                </div>
+                            </div>
+                        @endforelse
+                    </div>
+
                     <div class="text-end mt-auto pt-3 border-top">
                         @php
                             // TODO: abilita la route dedicata quando sara creata (es. admin.applications.list)
@@ -128,8 +155,8 @@
             <div class="col-lg-6">
                 <div class="card border-0 shadow-sm rounded-4 h-100 p-4 d-flex flex-column">
                     <h2 class="h4 fw-bold text-center mb-4">Progetti In Scadenza</h2>
-                    <div class="table-responsive flex-grow-1">
-                        <table class="table table-hover align-middle mb-0 admin-table-clean">
+                    <div class="table-responsive flex-grow-1 d-none d-md-block">
+                        <table class="table table-hover align-middle mb-0 admin-table-clean d-none d-md-table">
                             <thead>
                                 <tr>
                                     <th scope="col" class="text-body-secondary small text-uppercase fw-semibold">Nome
@@ -175,6 +202,38 @@
                             </tbody>
                         </table>
                     </div>
+
+                    <div class="d-md-none flex-grow-1 admin-mobile-list">
+                        @forelse ($expiringProjects as $project)
+                            <a href="{{ route('project.edit', ['id' => $project->id, 'adminContext' => 1]) }}"
+                                class="admin-mobile-item admin-mobile-item-link admin-mobile-item-project text-decoration-none text-reset d-block">
+                                <div class="d-flex align-items-start justify-content-between gap-2 mb-2">
+                                    <span class="admin-mobile-kicker">Progetto</span>
+                                    <i class="bi bi-chevron-right admin-mobile-chevron"></i>
+                                </div>
+                                <h3 class="h6 fw-bold mb-2 admin-mobile-title">{{ $project->title }}</h3>
+                                <p class="mb-1 small admin-mobile-meta"><span class="text-body-secondary">Paese:</span>
+                                    {{ $project->location ?? $project->country ?? 'N/D' }}</p>
+                                <p class="mb-0 small admin-mobile-meta">
+                                    <span class="text-body-secondary">Scadenza:</span>
+                                    @if ($project->expire_date)
+                                        Scade {{ $project->expire_date->locale(app()->getLocale())->diffForHumans() }}
+                                    @else
+                                        Data non disponibile
+                                    @endif
+                                </p>
+                            </a>
+                        @empty
+                            <div class="py-5 admin-mobile-empty-state">
+                                <div
+                                    class="d-flex flex-column align-items-center justify-content-center text-center gap-2 text-muted">
+                                    <i class="bi bi-check-circle fs-1 text-success-emphasis"></i>
+                                    <p class="mb-0 fw-semibold">Tutto tranquillo! Nessun progetto in scadenza a breve.</p>
+                                </div>
+                            </div>
+                        @endforelse
+                    </div>
+
                     <div class="text-end mt-auto pt-3 border-top">
                         <a href="{{ route('admin.projects.index') }}"
                             class="admin-list-link fw-semibold text-decoration-none d-inline-flex align-items-center gap-1">Vedi

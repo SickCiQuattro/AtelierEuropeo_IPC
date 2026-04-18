@@ -25,16 +25,20 @@
         selectAll: false,
         selectedProjectIds: [],
         bulkStatus: 'published',
+        getActiveRowCheckboxes() {
+            const rowCheckboxes = Array.from(this.$root.querySelectorAll('.project-row-checkbox:not([disabled])'));
+            return rowCheckboxes.filter((checkbox) => checkbox.offsetParent !== null);
+        },
         toggleAll(event) {
             this.selectAll = event.target.checked;
-            const rowCheckboxes = this.$root.querySelectorAll('.project-row-checkbox:not([disabled])');
+            const rowCheckboxes = this.getActiveRowCheckboxes();
             rowCheckboxes.forEach((checkbox) => {
                 checkbox.checked = this.selectAll;
             });
             this.updateCount();
         },
         updateCount() {
-            const rowCheckboxes = this.$root.querySelectorAll('.project-row-checkbox:not([disabled])');
+            const rowCheckboxes = this.getActiveRowCheckboxes();
             const checkedRows = Array.from(rowCheckboxes).filter((checkbox) => checkbox.checked);
             this.selectedProjectIds = checkedRows.map((checkbox) => checkbox.value);
             this.selectedCount = this.selectedProjectIds.length;
@@ -46,7 +50,7 @@
             }
         },
         clearSelection() {
-            const rowCheckboxes = this.$root.querySelectorAll('.project-row-checkbox:not([disabled])');
+            const rowCheckboxes = this.getActiveRowCheckboxes();
             rowCheckboxes.forEach((checkbox) => {
                 checkbox.checked = false;
             });
@@ -134,8 +138,8 @@
         </div>
 
         <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
-            <div class="table-responsive">
-                <table class="table table-hover align-middle admin-table-clean mb-0">
+            <div class="table-responsive d-none d-md-block">
+                <table class="table table-hover align-middle admin-table-clean mb-0 d-none d-md-table">
                     <thead class="bg-light">
                         <tr>
                             <th scope="col" class="ps-3">
@@ -255,6 +259,99 @@
                         @endforelse
                     </tbody>
                 </table>
+            </div>
+
+            <div class="d-md-none p-3 admin-mobile-list admin-mobile-projects-list">
+                @forelse ($projectsCollection as $project)
+                    @php
+                        $projectId = data_get($project, 'id');
+                        $projectTitle = data_get($project, 'title', 'Ecosistema Urbano');
+                        $projectLocation = data_get($project, 'location', data_get($project, 'country', 'Milano, Italia'));
+
+                        $expireDateRaw = data_get($project, 'expire_date', data_get($project, 'deadline'));
+                        $deadlineText = $expireDateRaw
+                            ? \Carbon\Carbon::parse($expireDateRaw)->format('d/m/Y')
+                            : '08/04/2026';
+
+                        $categoryTag = strtoupper((string) data_get($project, 'category.tag', data_get($project, 'category_tag', 'CES')));
+                        $categoryConfig = $categoryMap[$categoryTag] ?? [
+                            'icon' => 'tag-fill',
+                            'label' => $categoryTag ?: 'N/D',
+                            'class' => 'text-secondary',
+                        ];
+
+                        $applicationsCount = data_get($project, 'approved_applications_count', data_get($project, 'applications_count', 0));
+                        $requestedPeople = data_get($project, 'requested_people', 6);
+
+                        $status = strtolower((string) data_get($project, 'status', 'published'));
+                        $isCompleted = $status === 'completed';
+                        $statusConfig = $statusMap[$status] ?? $statusMap['draft'];
+
+                        $showUrl = ($projectId && \Illuminate\Support\Facades\Route::has('project.show'))
+                            ? route('project.show', ['project' => $projectId, 'adminContext' => 1])
+                            : '#';
+                        $editUrl = ($projectId && \Illuminate\Support\Facades\Route::has('project.edit'))
+                            ? route('project.edit', ['id' => $projectId, 'adminContext' => 1])
+                            : '#';
+                        $deleteUrl = ($projectId && \Illuminate\Support\Facades\Route::has('project.show'))
+                            ? route('project.show', ['project' => $projectId, 'openDeleteModal' => 1, 'adminContext' => 1])
+                            : '#';
+                    @endphp
+
+                    <div class="admin-mobile-item admin-mobile-project-card">
+                        <div class="d-flex align-items-start justify-content-between gap-2 mb-2 admin-mobile-project-head">
+                            <div class="d-flex align-items-center gap-2 admin-mobile-project-title-wrap">
+                                <input type="checkbox" class="form-check-input project-row-checkbox"
+                                    value="{{ $projectId }}" @change="updateCount" @disabled(!$projectId)
+                                    aria-label="Seleziona progetto">
+                                <h3 class="h6 fw-bold mb-0 admin-mobile-title">{{ $projectTitle }}</h3>
+                            </div>
+                            <span class="rounded-pill px-3 py-1 text-white d-inline-flex align-items-center gap-1 small admin-mobile-status-badge"
+                                style="background-color: {{ $statusConfig['color'] }};">
+                                <i class="bi bi-{{ $statusConfig['icon'] }}"></i>
+                                {{ $statusConfig['label'] }}
+                            </span>
+                        </div>
+
+                        <div class="mb-2 d-flex align-items-center gap-2 admin-mobile-meta-row">
+                            <span class="d-inline-flex align-items-center gap-1 {{ $categoryConfig['class'] }} fw-semibold small">
+                                <i class="bi bi-{{ $categoryConfig['icon'] }}"></i>
+                                {{ $categoryConfig['label'] }}
+                            </span>
+                        </div>
+
+                        <p class="mb-1 small admin-mobile-meta"><span class="text-body-secondary">Paese:</span> {{ $projectLocation }}</p>
+                        <p class="mb-2 small admin-mobile-meta"><span class="text-body-secondary">Scadenza:</span> {{ $deadlineText }}</p>
+
+                        <div class="mb-3 admin-mobile-project-progress">
+                            <x-participants-progress :current="$applicationsCount" :max="$requestedPeople" />
+                        </div>
+
+                        <div class="d-flex align-items-center gap-2 admin-mobile-project-actions">
+                            <a href="{{ $showUrl }}" class="btn btn-sm btn-ae btn-ae-square admin-project-action-view"
+                                title="Visualizza progetto" aria-label="Visualizza progetto">
+                                <i class="bi bi-eye"></i>
+                            </a>
+                            @if ($isCompleted)
+                                <button type="button" class="btn btn-sm btn-ae btn-ae-square btn-ae-outline-secondary opacity-50"
+                                    disabled title="Progetto completato non modificabile" aria-label="Modifica non disponibile">
+                                    <i class="bi bi-pencil"></i>
+                                </button>
+                            @else
+                                <a href="{{ $editUrl }}" class="btn btn-sm btn-ae btn-ae-square admin-project-action-edit"
+                                    title="Modifica progetto" aria-label="Modifica progetto">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                            @endif
+                            <a href="{{ $deleteUrl }}" class="btn btn-sm btn-ae btn-ae-square btn-ae-outline-danger"
+                                title="Elimina progetto" aria-label="Elimina progetto">
+                                <i class="bi bi-trash"></i>
+                            </a>
+                        </div>
+                    </div>
+                @empty
+                    <div class="py-4 text-center text-muted">Nessun progetto disponibile.</div>
+                @endforelse
             </div>
 
             <div class="card-footer bg-white border-0 border-top py-3">

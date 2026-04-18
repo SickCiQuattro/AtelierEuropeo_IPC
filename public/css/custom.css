@@ -1185,6 +1185,84 @@ p {
     opacity: 0.6;
 }
 
+@media (max-width: 767.98px) {
+    .admin-mobile-list {
+        display: grid;
+        gap: 0.75rem;
+    }
+
+    .admin-mobile-item {
+        background: #ffffff;
+        border: 1px solid #e7edf5;
+        border-radius: 1rem;
+        padding: 0.9rem 0.95rem;
+        box-shadow: 0 4px 14px rgba(15, 23, 42, 0.06);
+    }
+
+    .admin-mobile-item-link {
+        transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .admin-mobile-item-link:active {
+        transform: scale(0.99);
+        box-shadow: 0 2px 10px rgba(15, 23, 42, 0.08);
+    }
+
+    .admin-mobile-kicker {
+        font-size: 0.68rem;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        color: #64748b;
+    }
+
+    .admin-mobile-chevron {
+        color: #64748b;
+        font-size: 1rem;
+    }
+
+    .admin-mobile-title {
+        line-height: 1.35;
+        color: #0f172a;
+    }
+
+    .admin-mobile-meta {
+        line-height: 1.45;
+    }
+
+    .admin-mobile-empty-state {
+        background: #ffffff;
+        border: 1px dashed #cbd5e1;
+        border-radius: 1rem;
+    }
+
+    .admin-mobile-project-card .project-row-checkbox {
+        margin-top: 0.1rem;
+        flex-shrink: 0;
+    }
+
+    .admin-mobile-project-title-wrap {
+        min-width: 0;
+    }
+
+    .admin-mobile-status-badge {
+        font-size: 0.69rem !important;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    .admin-mobile-project-progress {
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 0.75rem;
+        padding: 0.6rem 0.7rem;
+    }
+
+    .admin-mobile-project-actions .btn {
+        min-width: 2.2rem;
+    }
+}
+
 /* ---------------------------------------------------------
    Admin projects bulk actions
    --------------------------------------------------------- */
