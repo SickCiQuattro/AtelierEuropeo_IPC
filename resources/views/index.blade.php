@@ -15,6 +15,10 @@
                 <h1 class="fw-bold text-warning mb-3 home-hero-title">Atelier Europeo</h1>
                 <p class="text-white col-md-8 mx-auto home-hero-subtitle">Opportunità per crescere, viaggiare e
                     imparare.</p>
+                <a href="{{ route('project.index') }}"
+                    class="btn btn-ae btn-ae-warning btn-ae-pill px-4 py-2 mt-3 shadow-sm">
+                    Trova la tua opportunità
+                </a>
             </div>
         </section>
 
@@ -73,9 +77,9 @@
                             </p>
                         </div>
                         <div class="card-footer program-card-footer bg-transparent border-0">
-                            <button type="button" class="btn btn-ae btn-ae-square btn-prog-ces" data-bs-toggle="modal"
-                                data-bs-target="#infoModal-CES">Scopri di più <i class="bi bi-arrow-right ms-1"
-                                    aria-hidden="true"></i></button>
+                            <button type="button" class="btn btn-ae btn-ae-square btn-prog-ces-outline"
+                                data-bs-toggle="modal" data-bs-target="#infoModal-CES">Scopri di più <i
+                                    class="bi bi-arrow-right ms-1" aria-hidden="true"></i></button>
                         </div>
                     </div>
 
@@ -89,9 +93,9 @@
                             </p>
                         </div>
                         <div class="card-footer program-card-footer bg-transparent border-0">
-                            <button type="button" class="btn btn-ae btn-ae-square btn-prog-sg" data-bs-toggle="modal"
-                                data-bs-target="#infoModal-SG">Scopri di più <i class="bi bi-arrow-right ms-1"
-                                    aria-hidden="true"></i></button>
+                            <button type="button" class="btn btn-ae btn-ae-square btn-prog-sg-outline"
+                                data-bs-toggle="modal" data-bs-target="#infoModal-SG">Scopri di più <i
+                                    class="bi bi-arrow-right ms-1" aria-hidden="true"></i></button>
                         </div>
                     </div>
 
@@ -106,9 +110,9 @@
                             </p>
                         </div>
                         <div class="card-footer program-card-footer bg-transparent border-0">
-                            <button type="button" class="btn btn-ae btn-ae-square btn-prog-cf" data-bs-toggle="modal"
-                                data-bs-target="#infoModal-CF">Scopri di più <i class="bi bi-arrow-right ms-1"
-                                    aria-hidden="true"></i></button>
+                            <button type="button" class="btn btn-ae btn-ae-square btn-prog-cf-outline"
+                                data-bs-toggle="modal" data-bs-target="#infoModal-CF">Scopri di più <i
+                                    class="bi bi-arrow-right ms-1" aria-hidden="true"></i></button>
                         </div>
                     </div>
 
@@ -130,6 +134,11 @@
                 @else
                     <x-project-grid :projects="$featuredProjects" />
                 @endif
+                <div class="text-center mt-3">
+                    <a href="{{ route('project.index') }}" class="btn btn-ae btn-ae-pill btn-ae-outline-primary px-4 py-2">
+                        Vedi tutti i progetti disponibili <i class="bi bi-arrow-right ms-2" aria-hidden="true"></i>
+                    </a>
+                </div>
             </div>
         </section>
 
