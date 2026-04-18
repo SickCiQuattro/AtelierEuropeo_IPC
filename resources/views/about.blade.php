@@ -55,7 +55,7 @@
                         <div class="card h-100 p-2">
                             <div class="card-body">
                                 <div class="mb-4">
-                                    <i class="bi bi-heart text-danger fs-1"></i>
+                                    <i class="bi bi-heart text-primary fs-1"></i>
                                 </div>
                                 <h5 class="fw-bold mb-3">Finalità Sociali</h5>
                                 <p class="text-body-secondary mb-0">
@@ -69,7 +69,7 @@
                         <div class="card h-100 p-2">
                             <div class="card-body">
                                 <div class="mb-4">
-                                    <i class="bi bi-people text-success fs-1"></i>
+                                    <i class="bi bi-people text-primary fs-1"></i>
                                 </div>
                                 <h5 class="fw-bold mb-3">Partecipazione Attiva</h5>
                                 <p class="text-body-secondary mb-0">
@@ -98,7 +98,7 @@
             </div>
         </section>
 
-        <section class="py-5 bg-white">
+        <section class="py-5 bg-light">
             <div class="container">
                 <div class="row mb-0">
                     <div class="col-12 mb-4">
@@ -203,7 +203,7 @@
                                     <h6 class="mb-1 fw-semibold text-dark">Atto Costitutivo e Statuto</h6>
                                     <small class="text-body-secondary">Fondazione dell'associazione</small>
                                 </div>
-                                <i class="bi bi-cloud-arrow-down ms-auto text-primary fs-5" aria-hidden="true"></i>
+                                <i class="bi bi-file-earmark-arrow-down ms-auto text-primary fs-5" aria-hidden="true"></i>
                             </a>
                             <a href="{{ asset('documents/bilancio-missione-2025.txt') }}" download
                                 class="list-group-item list-group-item-action d-flex align-items-center p-3 transparency-link border-0 border-bottom">
@@ -212,7 +212,7 @@
                                     <h6 class="mb-1 fw-semibold text-dark">Bilancio di Missione 2025</h6>
                                     <small class="text-body-secondary">Archivio rendiconti delle attività</small>
                                 </div>
-                                <i class="bi bi-cloud-arrow-down ms-auto text-primary fs-5" aria-hidden="true"></i>
+                                <i class="bi bi-file-earmark-arrow-down ms-auto text-primary fs-5" aria-hidden="true"></i>
                             </a>
                             <a href="{{ asset('documents/privacy-cookie-policy.txt') }}" download
                                 class="list-group-item list-group-item-action d-flex align-items-center p-3 transparency-link border-0 border-bottom">
@@ -221,7 +221,7 @@
                                     <h6 class="mb-1 fw-semibold text-dark">Privacy & Cookie Policy</h6>
                                     <small class="text-body-secondary">Protezione dei dati personali</small>
                                 </div>
-                                <i class="bi bi-cloud-arrow-down ms-auto text-primary fs-5" aria-hidden="true"></i>
+                                <i class="bi bi-file-earmark-arrow-down ms-auto text-primary fs-5" aria-hidden="true"></i>
                             </a>
                         </div>
                     </div>
