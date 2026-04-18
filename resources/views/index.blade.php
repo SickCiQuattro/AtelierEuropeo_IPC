@@ -132,7 +132,9 @@
                         <p class="lead">Nessun progetto disponibile al momento.</p>
                     </div>
                 @else
-                    <x-project-grid :projects="$featuredProjects" />
+                    <div class="featured-projects-grid">
+                        <x-project-grid :projects="$featuredProjects" />
+                    </div>
                 @endif
                 <div class="text-center mt-3">
                     <a href="{{ route('project.index') }}" class="btn btn-ae btn-ae-pill btn-ae-outline-primary px-4 py-2">

@@ -11,6 +11,18 @@ body {
     line-height: 1.65;
 }
 
+@media (max-width: 991.98px) {
+    body {
+        padding-top: 60px;
+    }
+}
+
+@media (max-width: 575.98px) {
+    body {
+        padding-top: 50px;
+    }
+}
+
 :root {
     /* Brand / Bootstrap palette */
     --bs-primary: #001d3d;
@@ -1523,6 +1535,10 @@ p {
 @media (max-width: 768px) {
     .home-page .program-cards-grid {
         grid-template-columns: 1fr;
+    }
+
+    .home-page .featured-projects-grid .row > .col:nth-child(n+4) {
+        display: none !important;
     }
 
     .home-page .program-card .card-body {
