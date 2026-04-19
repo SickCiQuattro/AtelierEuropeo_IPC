@@ -8,13 +8,13 @@
     @php
         $formatHumanDate = function ($value) {
             if (empty($value)) {
-                return 'N/D';
+                return 'Da definire';
             }
 
             try {
                 return \Carbon\Carbon::parse($value)->format('d/m/Y');
             } catch (\Throwable) {
-                return 'N/D';
+                return 'Da definire';
             }
         };
 
@@ -122,7 +122,7 @@
                     <div class="col-6 col-md-3">
                         <div class="bg-white border p-4 text-center h-100 shadow-sm transition-hover" style="border-radius: 1.25rem;">
                             <i class="bi bi-person-badge-fill fs-2 mb-2 d-block text-primary"></i>
-                            <span class="d-block fw-bold fs-5">{{ $previewProject->requested_people }}</span>
+                            <span class="d-block fw-bold fs-5">{{ $previewProject->requested_people !== null ? $previewProject->requested_people : 'Da definire' }}</span>
                             <span class="small text-secondary fw-semibold">Richiesti</span>
                         </div>
                     </div>

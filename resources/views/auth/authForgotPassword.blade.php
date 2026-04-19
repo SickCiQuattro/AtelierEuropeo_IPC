@@ -39,11 +39,13 @@
                     <div class="card-body p-4 p-md-5">
                         <div class="text-center mb-4">
                             <h1 class="section-title mb-2" style="font-size: 3rem;">Recupero Password</h1>
-                            <p class="section-subtitle mb-4">Inserisci l'indirizzo email associato al tuo account. Ti invieremo un link per creare una nuova password.</p>
+                            <p class="section-subtitle mb-4">Inserisci l'indirizzo email associato al tuo account. Ti
+                                invieremo un link per creare una nuova password.</p>
                         </div>
 
                         @if (session('status'))
-                            <div class="alert alert-success alert-dismissible fade show mb-4 border-0 bg-success bg-opacity-10" role="alert">
+                            <div class="alert alert-success alert-dismissible fade show mb-4 border-0 bg-success bg-opacity-10"
+                                role="alert">
                                 <i class="bi bi-check-circle-fill me-2 text-success"></i>
                                 {{ session('status') }}
                                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>

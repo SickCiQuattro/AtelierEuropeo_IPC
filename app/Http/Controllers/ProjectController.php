@@ -157,24 +157,11 @@ class ProjectController extends Controller
         $endDate = $this->parsePreviewDate($request->input('end_date'));
         $expireDate = $this->parsePreviewDate($request->input('expire_date'));
 
-        if (!$startDate && $endDate) {
-            $startDate = $endDate->copy()->subDays(7)->startOfDay();
-        }
-        if (!$startDate) {
-            $startDate = Carbon::now()->copy()->addDay()->startOfDay();
-        }
-
-        if (!$endDate) {
-            $endDate = $startDate->copy()->addDays(7);
-        }
-        if ($endDate->lessThan($startDate)) {
+        if ($startDate && $endDate && $endDate->lessThan($startDate)) {
             $endDate = $startDate->copy()->addDay();
         }
 
-        if (!$expireDate) {
-            $expireDate = $startDate->copy()->subDay();
-        }
-        if ($expireDate->greaterThan($startDate)) {
+        if ($startDate && $expireDate && $expireDate->greaterThan($startDate)) {
             $expireDate = $startDate->copy()->subDay();
         }
 
@@ -193,12 +180,17 @@ class ProjectController extends Controller
             $title = 'Titolo progetto (anteprima)';
         }
 
+        $requestedPeopleInput = trim((string) $request->input('requested_people', ''));
+        $requestedPeople = $requestedPeopleInput === ''
+            ? null
+            : max(0, (int) $requestedPeopleInput);
+
         $previewProject = new \stdClass();
         $previewProject->id = 0;
         $previewProject->title = $title;
         $previewProject->status = $status;
         $previewProject->location = trim((string) $request->input('location', 'Da definire')) ?: 'Da definire';
-        $previewProject->requested_people = max(0, (int) $request->input('requested_people', 0));
+        $previewProject->requested_people = $requestedPeople;
         $previewProject->sum_description = trim((string) $request->input('sum_description', 'Descrizione breve non disponibile.')) ?: 'Descrizione breve non disponibile.';
         $previewProject->full_description = trim((string) $request->input('full_description', 'Descrizione completa non disponibile.')) ?: 'Descrizione completa non disponibile.';
         $previewProject->requirements = trim((string) $request->input('requirements', 'Requisiti non disponibili.')) ?: 'Requisiti non disponibili.';
@@ -318,7 +310,7 @@ class ProjectController extends Controller
 
         if ($project != null) {
             // Carica le testimonianze se il progetto è completato
-            if ($project->status === 'completed') {
+            if ($project instanceof Project && $project->status === 'completed') {
                 $project->load(['testimonial.author']);
             }
 
@@ -438,7 +430,7 @@ class ProjectController extends Controller
     /**
      * Applica fallback consistenti per il salvataggio bozza.
      */
-    private function applyDraftDefaults(array $data, ?Project $existingProject = null): array
+    private function applyDraftDefaults(array $data, ?object $existingProject = null): array
     {
         $now = Carbon::now();
 

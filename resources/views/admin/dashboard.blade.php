@@ -119,7 +119,8 @@
                                     <i class="bi bi-chevron-right admin-mobile-chevron"></i>
                                 </div>
                                 <h3 class="h6 fw-bold mb-2 admin-mobile-title">
-                                    {{ $application->user->name ?? 'Utente Sconosciuto' }}</h3>
+                                    {{ $application->user->name ?? 'Utente Sconosciuto' }}
+                                </h3>
                                 <p class="mb-1 small admin-mobile-meta"><span class="text-body-secondary">Progetto:</span>
                                     {{ $application->project->title ?? 'Progetto Rimosso' }}</p>
                                 <p class="mb-0 small admin-mobile-meta"><span class="text-body-secondary">Data invio:</span>

@@ -8,7 +8,8 @@
     <main class="container py-4 mb-5 projects-list-page">
         <div class="text-center mb-5">
             <h1 class="display-4 fw-bold text-dark mb-3">I Miei Preferiti</h1>
-            <p class="lead text-body-secondary col-md-8 mx-auto">Gestisci i progetti che hai salvato per consultarli o candidarti in un secondo momento.</p>
+            <p class="lead text-body-secondary col-md-8 mx-auto">Gestisci i progetti che hai salvato per consultarli o
+                candidarti in un secondo momento.</p>
         </div>
 
         @php
@@ -61,8 +62,8 @@
                 <div class="d-flex justify-content-end mt-3">
                     <button type="button" class="btn btn-ae btn-ae-outline-secondary" data-bs-toggle="modal"
                         data-bs-target="#favoriteFiltersModal">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                            class="bi bi-filter" viewBox="0 0 16 16">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-filter"
+                            viewBox="0 0 16 16">
                             <path
                                 d="M6 10.5a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 0 1h-3a.5.5 0 0 1-.5-.5m-2-3a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5m-2-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5" />
                         </svg>
@@ -82,8 +83,7 @@
                                 <span class="badge bg-secondary rounded-pill">
                                     Ricerca: {{ request('q') }}
                                     <a href="{{ route('favorites.index', $removeQParams) }}"
-                                        class="text-white text-decoration-none ms-1"
-                                        aria-label="Rimuovi filtro ricerca">&times;</a>
+                                        class="text-white text-decoration-none ms-1" aria-label="Rimuovi filtro ricerca">&times;</a>
                                 </span>
                             @endif
 
@@ -94,8 +94,7 @@
                                 <span class="badge bg-secondary rounded-pill">
                                     Ordine: In scadenza
                                     <a href="{{ route('favorites.index', $removeSortParams) }}"
-                                        class="text-white text-decoration-none ms-1"
-                                        aria-label="Rimuovi ordinamento">&times;</a>
+                                        class="text-white text-decoration-none ms-1" aria-label="Rimuovi ordinamento">&times;</a>
                                 </span>
                             @elseif (request('sort') === 'latest')
                                 @php
@@ -104,8 +103,7 @@
                                 <span class="badge bg-secondary rounded-pill">
                                     Ordine: Piu recenti
                                     <a href="{{ route('favorites.index', $removeSortParams) }}"
-                                        class="text-white text-decoration-none ms-1"
-                                        aria-label="Rimuovi ordinamento">&times;</a>
+                                        class="text-white text-decoration-none ms-1" aria-label="Rimuovi ordinamento">&times;</a>
                                 </span>
                             @endif
 
@@ -121,29 +119,25 @@
                                     <span class="badge bg-secondary rounded-pill">
                                         Durata: Breve
                                         <a href="{{ route('favorites.index', $removeDurationParams) }}"
-                                            class="text-white text-decoration-none ms-1"
-                                            aria-label="Rimuovi durata breve">&times;</a>
+                                            class="text-white text-decoration-none ms-1" aria-label="Rimuovi durata breve">&times;</a>
                                     </span>
                                 @elseif ($duration === 'medium')
                                     <span class="badge bg-secondary rounded-pill">
                                         Durata: Media
                                         <a href="{{ route('favorites.index', $removeDurationParams) }}"
-                                            class="text-white text-decoration-none ms-1"
-                                            aria-label="Rimuovi durata media">&times;</a>
+                                            class="text-white text-decoration-none ms-1" aria-label="Rimuovi durata media">&times;</a>
                                     </span>
                                 @elseif ($duration === 'long')
                                     <span class="badge bg-secondary rounded-pill">
                                         Durata: Lunga
                                         <a href="{{ route('favorites.index', $removeDurationParams) }}"
-                                            class="text-white text-decoration-none ms-1"
-                                            aria-label="Rimuovi durata lunga">&times;</a>
+                                            class="text-white text-decoration-none ms-1" aria-label="Rimuovi durata lunga">&times;</a>
                                     </span>
                                 @elseif ($duration === 'very_long')
                                     <span class="badge bg-secondary rounded-pill">
                                         Durata: Molto lunga
                                         <a href="{{ route('favorites.index', $removeDurationParams) }}"
-                                            class="text-white text-decoration-none ms-1"
-                                            aria-label="Rimuovi durata molto lunga">&times;</a>
+                                            class="text-white text-decoration-none ms-1" aria-label="Rimuovi durata molto lunga">&times;</a>
                                     </span>
                                 @endif
                             @endforeach
@@ -186,8 +180,7 @@
                                 <span class="badge bg-secondary rounded-pill">
                                     A: {{ request('date_to') }}
                                     <a href="{{ route('favorites.index', $removeDateToParams) }}"
-                                        class="text-white text-decoration-none ms-1"
-                                        aria-label="Rimuovi data fine periodo">&times;</a>
+                                        class="text-white text-decoration-none ms-1" aria-label="Rimuovi data fine periodo">&times;</a>
                                 </span>
                             @endif
 
@@ -205,7 +198,8 @@
                 <i class="bi bi-heartbreak text-muted mb-3" style="font-size: 4rem; opacity: 0.5;"></i>
                 <h3 class="section-title">Nessun progetto salvato</h3>
                 <p class="main-text mb-4 mx-auto" style="max-width: 500px;">
-                    Non hai ancora aggiunto alcun progetto ai tuoi preferiti. Esplora le opportunita disponibili in Europa e salva quelle che ti interessano di piu cliccando sul cuore.
+                    Non hai ancora aggiunto alcun progetto ai tuoi preferiti. Esplora le opportunita disponibili in Europa e
+                    salva quelle che ti interessano di piu cliccando sul cuore.
                 </p>
                 <a href="{{ route('project.index') }}" class="btn btn-ae-primary btn-lg px-4 rounded-pill shadow-sm">
                     <i class="bi bi-search me-2"></i>Esplora i Progetti

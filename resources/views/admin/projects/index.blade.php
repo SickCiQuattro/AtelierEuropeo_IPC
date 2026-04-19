@@ -81,15 +81,13 @@
                 <form method="GET" action="{{ route('admin.projects.index') }}" class="bg-white rounded-4 shadow-sm p-3">
                     <div class="row g-2 align-items-end">
                         <div class="col-lg-5">
-                            <label for="project-search" class="form-label small text-body-secondary fw-semibold mb-1">Cerca
-                                progetto</label>
+                            <label for="project-search" class="form-label small text-body-secondary fw-semibold mb-1">Cerca progetto</label>
                             <div class="input-group">
                                 <span class="input-group-text bg-light border-end-0">
                                     <i class="bi bi-search text-body-secondary"></i>
                                 </span>
-                                <input type="text" id="project-search" name="q"
-                                    value="{{ request('q') }}" class="form-control border-start-0"
-                                    placeholder="Titolo, paese o keyword...">
+                                <input type="text" id="project-search" name="q" value="{{ request()->query('q', '') }}"
+                                    class="form-control border-start-0" placeholder="Titolo, paese o keyword...">
                             </div>
                         </div>
 

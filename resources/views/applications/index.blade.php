@@ -46,13 +46,13 @@
                                             </div>
 
                                             <span class="badge fs-6
-                                                        @if($application->status === 'pending') 
-                                                            bg-warning
-                                                        @elseif($application->status === 'approved') 
-                                                            bg-success
-                                                        @elseif($application->status === 'rejected') 
-                                                            bg-danger
-                                                        @endif">
+                                                                                            @if($application->status === 'pending') 
+                                                                                                bg-warning
+                                                                                            @elseif($application->status === 'approved') 
+                                                                                                bg-success
+                                                                                            @elseif($application->status === 'rejected') 
+                                                                                                bg-danger
+                                                                                            @endif">
                                                 @if($application->status === 'pending')
                                                     <i class="bi bi-clock me-1"></i>In attesa
                                                 @elseif($application->status === 'approved')

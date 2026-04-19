@@ -238,15 +238,19 @@
                                     <div class="d-flex align-items-start gap-2">
                                         <i class="bi bi-shield-lock"></i>
                                         <div class="flex-grow-1">
-                                            <div class="d-flex justify-content-between align-items-center gap-2 flex-wrap mb-2">
+                                            <div
+                                                class="d-flex justify-content-between align-items-center gap-2 flex-wrap mb-2">
                                                 <strong class="d-block mb-0">Requisiti password</strong>
-                                                <span class="badge text-bg-light border password-strength-badge" id="password-strength-badge">0/5 soddisfatti</span>
+                                                <span class="badge text-bg-light border password-strength-badge"
+                                                    id="password-strength-badge">0/5 soddisfatti</span>
                                             </div>
                                             <div id="password-requirements-compact" class="small text-success d-none mb-2">
-                                                <i class="bi bi-check-circle-fill me-1"></i>Password valida: tutti i requisiti soddisfatti.
+                                                <i class="bi bi-check-circle-fill me-1"></i>Password valida: tutti i
+                                                requisiti soddisfatti.
                                             </div>
                                             <div id="password-requirements-details">
-                                                <p class="text-muted mb-2">Usa una password robusta per proteggere il tuo account.</p>
+                                                <p class="text-muted mb-2">Usa una password robusta per proteggere il tuo
+                                                    account.</p>
                                                 <div class="progress mb-3" style="height: 0.4rem;">
                                                     <div class="progress-bar password-requirements-progress bg-danger"
                                                         id="password-requirements-progress" role="progressbar"

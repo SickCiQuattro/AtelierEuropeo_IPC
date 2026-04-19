@@ -37,6 +37,12 @@
             || str_contains($previousPath, '/project/create')
             || (str_contains($previousPath, '/project/') && str_contains($previousPath, '/edit'));
         $backUrl = $isUnsafeBackTarget ? $defaultBackUrl : $previousUrl;
+        $breadcrumbListUrl = $isAdminContext
+            ? route('admin.projects.index')
+            : route($userListRoute);
+        $breadcrumbListLabel = $isAdminContext
+            ? 'Gestione Progetti'
+            : $userListLabel;
 
         // Gestione Badge Categoria
         $categoryBadges = [
@@ -55,27 +61,31 @@
             'completed' => ['label' => 'Completato', 'icon' => 'bi-archive-fill', 'color' => 'text-dark'],
             default     => ['label' => 'Bozza', 'icon' => 'bi-pencil-square', 'color' => 'text-secondary'],
         };
+        $statusBadgeClass = $statusConfig['color'];
+        $statusIconClass = $statusConfig['icon'];
+        $statusLabel = $statusConfig['label'];
+        $programTooltip = 'Info sul programma ' . $categoryName;
     @endphp
 
     <div class="container-fluid px-3 px-md-4 py-4">
         <div class="row justify-content-center">
             <div class="col-12 col-xl-10">
 
-                <div class="d-flex flex-column flex-md-row align-items-md-start justify-content-between gap-3 mb-4">
-                    <div class="flex-grow-1" style="margin-bottom: -1.5rem;">
+                <div class="d-md-none mb-3">
+                    <a href="{{ $backUrl }}" class="btn btn-ae btn-ae-light border shadow-sm rounded-pill px-3 py-2 text-secondary fw-semibold transition-hover">
+                        <i class="bi bi-arrow-left me-2"></i>Indietro
+                    </a>
+                </div>
+
+                <div class="d-none d-md-block mb-4">
+                    <div style="margin-bottom: -1.5rem;">
                         <x-breadcrumb>
-                            @if($isAdminContext)
-                                <li class="breadcrumb-item"><a href="{{ route('admin.projects.index') }}">Gestione Progetti</a></li>
-                            @else
-                                <li class="breadcrumb-item"><a href="{{ route($userListRoute) }}">{{ $userListLabel }}</a></li>
-                            @endif
+                            <li class="breadcrumb-item">
+                                <a href="{{ $breadcrumbListUrl }}">{{ $breadcrumbListLabel }}</a>
+                            </li>
                             <li class="breadcrumb-item active" aria-current="page">{{ $project->title }}</li>
                         </x-breadcrumb>
                     </div>
-                    
-                    <a href="{{ $backUrl }}" class="btn btn-ae btn-ae-light border shadow-sm rounded-pill px-3 py-2 text-secondary fw-semibold transition-hover flex-shrink-0">
-                        <i class="bi bi-arrow-left me-2"></i>Indietro
-                    </a>
                 </div>
 
                 <article class="card border-0 shadow-sm overflow-hidden mb-4" style="border-radius: 1.25rem;">
@@ -85,13 +95,13 @@
                             
                             <div class="d-flex flex-column align-items-start gap-2 mb-3">
                                 
-                                @if($isAdminContext)
-                                    <span class="badge rounded-pill bg-light border px-3 py-2 {{ $statusConfig['color'] }} shadow-sm" style="font-size: 0.85rem;">
-                                        <i class="bi {{ $statusConfig['icon'] }} me-1"></i> Stato: {{ $statusConfig['label'] }}
+                                @if ($isAdminContext)
+                                    <span class="badge rounded-pill bg-light border px-3 py-2 {{ $statusBadgeClass }} shadow-sm" style="font-size: 0.85rem;">
+                                        <i class="bi {{ $statusIconClass }} me-1"></i> Stato: {{ $statusLabel }}
                                     </span>
                                 @endif
                                 
-                                <span class="d-inline-block position-relative z-3" tabindex="0" data-bs-toggle="tooltip" data-bs-placement="top" title="Info sul programma {{ $categoryName }}">
+                                <span class="d-inline-block position-relative z-3" tabindex="0" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $programTooltip }}">
                                     <button type="button" class="{{ $categoryBadgeClass }} border-0 shadow-sm px-3 py-1 mt-1" data-bs-toggle="modal" data-bs-target="#infoModal-{{ $categoryModalTag }}" style="font-size: 0.9rem;">
                                         {{ $tag }} <i class="bi bi-info-circle ms-1"></i>
                                     </button>

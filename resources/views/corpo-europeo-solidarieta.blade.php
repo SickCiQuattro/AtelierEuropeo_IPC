@@ -3,19 +3,19 @@
 @section('title', 'AE - Corpo Europeo di Solidarietà')
 
 @section('breadcrumb')
-<div class="bg-light py-2">
-    <div class="container">
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb mb-0">
-                <li class="breadcrumb-item">
-                    <a href="{{ route('home') }}" class="text-decoration-none">Home</a>
-                </li>
-                <li class="breadcrumb-item active">Viaggiare all'Estero</li>
-                <li class="breadcrumb-item active" aria-current="page">Corpo Europeo di Solidarietà</li>
-            </ol>
-        </nav>
+    <div class="bg-light py-2">
+        <div class="container">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item">
+                        <a href="{{ route('home') }}" class="text-decoration-none">Home</a>
+                    </li>
+                    <li class="breadcrumb-item active">Viaggiare all'Estero</li>
+                    <li class="breadcrumb-item active" aria-current="page">Corpo Europeo di Solidarietà</li>
+                </ol>
+            </nav>
+        </div>
     </div>
-</div>
 @endsection
 
 @section('active_viaggiare', 'active')
@@ -26,7 +26,8 @@
         <div class="row mb-4">
             <div class="col-12">
                 <h1 class="section-title fw-bold text-center">Corpo Europeo di Solidarietà</h1>
-                <h1 class="section-subtitle text-center">Un'opportunità unica per i giovani di contribuire alla solidarietà europea
+                <h1 class="section-subtitle text-center">Un'opportunità unica per i giovani di contribuire alla solidarietà
+                    europea
                     attraverso progetti di volontariato, tirocinio e lavoro in tutta Europa.</h1>
             </div>
         </div>
@@ -93,7 +94,7 @@
             </div>
         </div>
 
-        <!-- Sezione Chi può partecipare -->    
+        <!-- Sezione Chi può partecipare -->
         <div class="row mb-4">
             <div class="col-lg-8 mb-3 mb-lg-0">
                 <h3 class="fw-bold mb-3 fs-2 fs-lg-1">Chi può partecipare</h3>
@@ -210,8 +211,9 @@
                                 <i class="bi bi-info-circle text-success me-2"></i>
                                 Informarsi
                             </div>
-                            <small class="text-muted">Contattare Atelier Europeo per ricevere informazioni dettagliate sui progetti disponibili e sui
-                            requisiti specifici.</small>
+                            <small class="text-muted">Contattare Atelier Europeo per ricevere informazioni dettagliate sui
+                                progetti disponibili e sui
+                                requisiti specifici.</small>
                         </div>
                     </li>
                     <li class="list-group-item d-flex justify-content-between align-items-start py-2">
@@ -220,8 +222,9 @@
                                 <i class="bi bi-file-earmark-text text-success me-2"></i>
                                 Preparare il CV
                             </div>
-                            <small class="text-muted">Creare un CV in formato Europass in lingua inglese, evidenziando le proprie competenze ed
-                            esperienze.</small>
+                            <small class="text-muted">Creare un CV in formato Europass in lingua inglese, evidenziando le
+                                proprie competenze ed
+                                esperienze.</small>
                         </div>
                     </li>
                     <li class="list-group-item d-flex justify-content-between align-items-start py-2">
@@ -230,8 +233,9 @@
                                 <i class="bi bi-person-plus text-success me-2"></i>
                                 Iscriversi
                             </div>
-                            <small class="text-muted">Registrarsi sul portale ufficiale del Corpo Europeo di Solidarietà per creare il proprio
-                            profilo.</small>
+                            <small class="text-muted">Registrarsi sul portale ufficiale del Corpo Europeo di Solidarietà per
+                                creare il proprio
+                                profilo.</small>
                         </div>
                     </li>
                     <li class="list-group-item d-flex justify-content-between align-items-start py-2">
@@ -240,7 +244,8 @@
                                 <i class="bi bi-send text-success me-2"></i>
                                 Candidarsi
                             </div>
-                            <small class="text-muted">Inviare la propria candidatura ai progetti di interesse tramite il supporto di Atelier Europeo.</small>
+                            <small class="text-muted">Inviare la propria candidatura ai progetti di interesse tramite il
+                                supporto di Atelier Europeo.</small>
                         </div>
                     </li>
                 </ol>
