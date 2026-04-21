@@ -216,6 +216,52 @@
                             <p class="text-secondary small mb-0" style="white-space: pre-line; line-height: 1.6;">{{ $project->travel_conditions }}</p>
                         </div>
 
+                        {{-- CTA Candidatura --}}
+                        @if(!$isAdminContext && !$isCompleted)
+                            @php
+                                $alreadyApplied = auth()->check()
+                                    ? \App\Models\Application::where('user_id', auth()->id())
+                                        ->where('project_id', $project->id)
+                                        ->exists()
+                                    : false;
+                            @endphp
+
+                            <div class="bg-white border p-4 shadow-sm mb-4" style="border-radius: 1.25rem;">
+                                <h3 class="h6 fw-bold mb-2 text-muted text-uppercase">
+                                    <i class="bi bi-send me-2"></i>Candidatura
+                                </h3>
+
+                                @guest
+                                    <p class="text-muted small mb-3">
+                                        Accedi per candidarti a questo progetto.
+                                    </p>
+                                    <a href="{{ route('login') }}" class="btn btn-ae btn-ae-primary w-100 rounded-pill">
+                                        <i class="bi bi-box-arrow-in-right me-2"></i>Accedi per candidarti
+                                    </a>
+                                @endguest
+
+                                @auth
+                                    @if($alreadyApplied)
+                                        <p class="text-muted small mb-3">
+                                            Hai già inviato una candidatura per questo progetto.
+                                        </p>
+                                        <a href="{{ route('applications.index') }}"
+                                           class="btn btn-ae btn-ae-outline-primary w-100 rounded-pill">
+                                            <i class="bi bi-file-earmark-text me-2"></i>Le Mie Candidature
+                                        </a>
+                                    @else
+                                        <p class="text-muted small mb-3">
+                                            Invia la tua candidatura per partecipare a questo progetto.
+                                        </p>
+                                        <a href="{{ route('applications.create', $project->id) }}"
+                                           class="btn btn-ae btn-ae-primary w-100 rounded-pill">
+                                            <i class="bi bi-send me-2"></i>Candidati ora
+                                        </a>
+                                    @endif
+                                @endauth
+                            </div>
+                        @endif
+
                         <div class="bg-light border p-4 shadow-sm sticky-top" style="border-radius: 1.25rem; top: 110px;">
                             <h3 class="h6 fw-bold mb-3 text-muted text-uppercase"><i class="bi bi-building me-2"></i>L'Associazione</h3>
                             <h4 class="h5 fw-bold mb-2 text-primary">{{ $project->association->name }}</h4>
