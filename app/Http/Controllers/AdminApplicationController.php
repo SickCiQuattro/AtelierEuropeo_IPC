@@ -11,6 +11,52 @@ use Illuminate\Support\Facades\Auth;
 class AdminApplicationController extends Controller
 {
     /**
+     * Mostra tutte le candidature di tutti i progetti (vista globale admin)
+     */
+    public function all(Request $request)
+    {
+        if (!Auth::check() || Auth::user()->role !== 'admin') {
+            abort(403, 'Accesso non autorizzato.');
+        }
+
+        $query = Application::with(['user', 'project.category', 'updatedByAdmin'])
+            ->orderBy('created_at', 'desc');
+
+        // Filtro per stato
+        if ($request->filled('status') && in_array($request->status, ['pending', 'approved', 'rejected'])) {
+            $query->where('status', $request->status);
+        }
+
+        // Filtro per progetto
+        if ($request->filled('project_id')) {
+            $query->where('project_id', $request->project_id);
+        }
+
+        // Ricerca per nome o email candidato
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->whereHas('user', function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('email', 'like', "%{$search}%");
+            });
+        }
+
+        $applications = $query->paginate(20)->withQueryString();
+
+        $stats = [
+            'total'    => Application::count(),
+            'pending'  => Application::where('status', 'pending')->count(),
+            'approved' => Application::where('status', 'approved')->count(),
+            'rejected' => Application::where('status', 'rejected')->count(),
+        ];
+
+        // Lista progetti per il filtro a tendina
+        $projects = Project::orderBy('title')->get(['id', 'title']);
+
+        return view('admin.applications.all', compact('applications', 'stats', 'projects'));
+    }
+
+    /**
      * Mostra tutte le candidature per un progetto specifico
      */
     public function index($projectId)
