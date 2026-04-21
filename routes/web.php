@@ -112,6 +112,7 @@ Route::middleware('auth')->group(function () {
     Route::prefix('applications')->name('applications.')->group(function () {
         Route::get('/', [ApplicationController::class, 'index'])->name('index');
         Route::get('/{application}', [ApplicationController::class, 'show'])->name('show');
+        Route::delete('/{application}/withdraw', [ApplicationController::class, 'withdraw'])->name('withdraw');
     });
 
     // Route candidatura progetti (nidificate sotto project)
@@ -187,7 +188,10 @@ Route::middleware(['auth', 'admin'])->group(function () {
         Route::post('/projects/bulk-status', [AdminProjectController::class, 'bulkUpdateStatus'])->name('projects.bulk-status');
         Route::delete('/projects/bulk-delete', [AdminProjectController::class, 'bulkDestroy'])->name('projects.bulk-delete');
 
-        // Gestione candidature progetti
+        // Lista globale candidature admin
+        Route::get('/applications', [AdminApplicationController::class, 'all'])->name('applications.all');
+
+        // Gestione candidature per singolo progetto
         Route::prefix('project/{projectId}')->group(function () {
             Route::get('/applications', [AdminApplicationController::class, 'index'])->name('applications.index');
         });
