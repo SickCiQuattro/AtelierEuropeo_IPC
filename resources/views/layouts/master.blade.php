@@ -228,9 +228,8 @@
                                 href="{{ route('admin.projects.index') }}">{{ __('master.nav.projects') }}</a>
                         </li>
                         <li class="nav-item">
-                            {{-- TODO: inserire route dedicata alla lista candidature admin (globale) --}}
-                            <a class="nav-link {{ request()->routeIs('admin.applications.*') ? 'is-active' : '' }}"
-                                href="{{ route('admin.dashboard') }}">{{ __('master.nav.applications') }}</a>
+                            <a class="nav-link {{ request()->routeIs('admin.applications.all') ? 'is-active' : '' }}"
+                                href="{{ route('admin.applications.all') }}">{{ __('master.nav.applications') }}</a>
                         </li>
                     @else
                         <li class="nav-item">
