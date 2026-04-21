@@ -126,6 +126,31 @@ class ApplicationController extends Controller
     }
 
     /**
+     * Ritira una candidatura (solo se in attesa)
+     */
+    public function withdraw(Application $application)
+    {
+        if ($application->user_id !== Auth::id()) {
+            abort(403, 'Non hai i permessi per ritirare questa candidatura.');
+        }
+
+        if ($application->status !== 'pending') {
+            return redirect()->route('applications.index')
+                ->with('error', 'Puoi ritirare solo candidature ancora in attesa di valutazione.');
+        }
+
+        // Elimina il documento allegato se presente
+        if ($application->document_path) {
+            Storage::disk('public')->delete($application->document_path);
+        }
+
+        $application->delete();
+
+        return redirect()->route('applications.index')
+            ->with('success', 'Candidatura ritirata con successo.');
+    }
+
+    /**
      * Mostra i dettagli di una candidatura
      */
     public function show(Application $application)
