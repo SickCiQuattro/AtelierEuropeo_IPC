@@ -54,38 +54,71 @@
             ],
         ],
     ];
+
+    $categoryBadgeMap = [
+        'CES' => 'badge-prog-ces',
+        'SG' => 'badge-prog-sg',
+        'CF' => 'badge-prog-cf',
+    ];
 @endphp
 
 @foreach ($categoriesInfo as $tag => $info)
-    <div class="modal fade" id="infoModal-{{ $tag }}" tabindex="-1" aria-labelledby="infoModalLabel-{{ $tag }}"
-        aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title d-flex align-items-center gap-4" id="infoModalLabel-{{ $tag }}">
-                        <i class="bi {{ $info['icon'] }} {{ $info['colorClass'] }}"></i>
-                        <span class="{{ $info['colorClass'] }}">{{ $info['title'] }}</span>
-                    </h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    <div class="modal fade info-program-modal" id="infoModal-{{ $tag }}" tabindex="-1"
+        aria-labelledby="infoModalLabel-{{ $tag }}" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
+            <div class="modal-content info-program-modal-content">
+                <div class="info-program-modal-accent info-program-modal-accent--{{ strtolower($tag) }}"></div>
+
+                <div class="modal-header border-0 pb-2 info-program-modal-header align-items-center">
+                    <div class="d-flex align-items-center gap-3 w-100">
+
+                        <i class="bi {{ $info['icon'] }} {{ $info['colorClass'] }} info-program-modal-icon"></i>
+
+                        <div class="d-flex flex-column justify-content-center">
+
+                            <div class="d-flex align-items-center gap-2 mb-1">
+                                <span class="small text-uppercase text-body-secondary fw-semibold lh-1">Programma</span>
+                                <span class="{{ $categoryBadgeMap[$tag] ?? 'badge-prog-ces' }} shadow-sm px-2 py-1 rounded"
+                                    style="font-size: 0.7rem; line-height: 1; font-weight: 700;">
+                                    {{ $tag }}
+                                </span>
+                            </div>
+
+                            <h5 class="modal-title mb-0 lh-1" id="infoModalLabel-{{ $tag }}">{{ $info['title'] }}</h5>
+                        </div>
+
+                    </div>
+
+                    <button type="button" class="btn-close ms-auto" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body">
-                    <p class="text-secondary fs-6 mb-3">{{ $info['subtitle'] }}</p>
-                    <hr>
 
-                    @foreach ($info['sections'] as $sectionTitle => $sectionText)
-                        <p class="mb-2"><b>{{ $sectionTitle }}</b> {{ $sectionText }}</p>
-                    @endforeach
+                <div class="modal-body pt-0 info-program-modal-body">
+                    <p class="info-program-modal-subtitle">{{ $info['subtitle'] }}</p>
 
-                    <p class="mt-3 mb-2"><b>{{ $info['listTitle'] }}</b></p>
-                    @if (!empty($info['listIntro']))
-                        <p class="mb-2">{{ $info['listIntro'] }}</p>
-                    @endif
-
-                    <ul class="mb-0">
-                        @foreach ($info['listItems'] as $item)
-                            <li>{!! $item !!}</li>
+                    <div class="info-program-modal-sections">
+                        @foreach ($info['sections'] as $sectionTitle => $sectionText)
+                            <article class="info-program-modal-section-item">
+                                <h6 class="mb-1">{{ $sectionTitle }}</h6>
+                                <p class="mb-0">{{ $sectionText }}</p>
+                            </article>
                         @endforeach
-                    </ul>
+                    </div>
+
+                    <section class="info-program-modal-coverage">
+                        <h6 class="mb-2">{{ $info['listTitle'] }}</h6>
+                        @if (!empty($info['listIntro']))
+                            <p class="mb-2">{{ $info['listIntro'] }}</p>
+                        @endif
+
+                        <ul class="info-program-modal-list mb-0">
+                            @foreach ($info['listItems'] as $item)
+                                <li>
+                                    <i class="bi bi-check2-circle" aria-hidden="true"></i>
+                                    <span>{!! $item !!}</span>
+                                </li>
+                            @endforeach
+                        </ul>
+                    </section>
                 </div>
             </div>
         </div>
