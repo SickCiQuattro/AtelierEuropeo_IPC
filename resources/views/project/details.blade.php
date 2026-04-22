@@ -41,7 +41,7 @@
             ? route('admin.projects.index')
             : route($userListRoute);
         $breadcrumbListLabel = $isAdminContext
-            ? 'Gestione Progetti'
+            ? 'Progetti'
             : $userListLabel;
 
         // Gestione Badge Categoria

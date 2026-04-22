@@ -118,12 +118,6 @@
                             <div class="dropdown-menu dropdown-menu-end p-3 shadow border-0 navbar-user-dropdown-menu"
                                 aria-labelledby="adminUserDropdown">
                                 <div class="d-grid gap-2 navbar-user-menu-grid">
-                                    <a href="{{ route('profile.edit') }}"
-                                        class="btn  btn-ae-primary d-flex align-items-center justify-content-center gap-2">
-                                        <i class="bi bi-person-fill-gear"></i>
-                                        <span>{{ __('master.auth.profile') }}</span>
-                                    </a>
-
                                     @if ($isAdminPreview)
                                         <a href="{{ route('admin.return') }}"
                                             class="btn  btn-ae-secondary d-flex align-items-center justify-content-center gap-2 admin-view-toggle-btn">
@@ -133,9 +127,19 @@
                                     @else
                                         <a href="{{ route('admin.view-user') }}"
                                             class="btn  btn-ae-secondary d-flex align-items-center justify-content-center gap-2 admin-view-toggle-btn">
+                                            <i class="bi bi-eye-fill"></i>
                                             <span>{{ __('master.auth.user_view') }}</span>
                                         </a>
                                     @endif
+
+                                    <hr class="dropdown-divider my-1">
+
+                                    <a href="{{ route('profile.edit') }}"
+                                        class="btn  btn-ae-primary d-flex align-items-center justify-content-center gap-2">
+                                        <i class="bi bi-person-fill-gear"></i>
+                                        <span>{{ __('master.auth.profile') }}</span>
+                                    </a>
+
                                     <form action="{{ route('logout') }}" method="POST">
                                         @csrf
                                         <button type="submit"
@@ -322,195 +326,197 @@
     @yield('body')
 
     <!-- Footer -->
-    <footer class="footer-main bg-primary text-white mt-auto">
-        <div class="container py-4 py-md-5">
-            <!-- Desktop: griglia 4 colonne -->
-            <div class="row g-4 d-none d-md-flex justify-content-between">
-                <div class="col-md-5 col-lg-4">
-                    <div class="d-flex align-items-center mb-3">
-                        <a href="{{ $brandRoute }}" class="d-inline-flex align-items-center text-decoration-none">
-                            <img src="{{ asset('img/ae-icon.svg') }}" alt="Atelier Europeo" height="40" class="me-2">
-                            <h5 class="mb-0 footer-brand-title">{{ __('master.brand') }}</h5>
-                        </a>
-                    </div>
-                    <p class="footer-text mb-0">
-                        {{ __('master.footer.programs_description') }}
-                    </p>
-                </div>
-
-                <div class="col-md-auto">
-                    <h6 class="footer-title mb-3">{{ __('master.footer.quick_links') }}</h6>
-                    <ul class="list-unstyled mb-0 d-grid gap-2">
-                        <li><a class="footer-link" href="{{ route('home') }}">{{ __('master.nav.home') }}</a></li>
-                        <li><a class="footer-link" href="{{ route('about') }}">{{ __('master.nav.about') }}</a></li>
-                        <li><a class="footer-link"
-                                href="{{ route('project.index') }}">{{ __('master.nav.available_projects') }}</a>
-                        </li>
-                        <li><a class="footer-link"
-                                href="{{ route('project.portfolio') }}">{{ __('master.nav.project_archive') }}</a>
-                        </li>
-                        <li><a class="footer-link" href="{{ route('contact') }}">{{ __('master.nav.contacts') }}</a>
-                        </li>
-                    </ul>
-                </div>
-
-                <div class="col-md-auto">
-                    <h6 class="footer-title mb-3">{{ __('master.footer.contacts') }}</h6>
-                    <ul class="list-unstyled mb-0 d-grid gap-2">
-                        <li class="d-flex align-items-center gap-2">
-                            <i class="bi bi-telephone-fill"></i>
-                            <a class="footer-link" href="tel:+390302284900">+39 030 22 84 900</a>
-                        </li>
-                        <li class="d-flex align-items-center gap-2">
-                            <i class="bi bi-envelope-fill"></i>
-                            <a class="footer-link" href="mailto:info@ateliereuropeo.eu">info@ateliereuropeo.eu</a>
-                        </li>
-                    </ul>
-                </div>
-
-                <div class="col-md-auto">
-                    <h6 class="footer-title mb-3">{{ __('master.footer.social') }}</h6>
-                    <ul class="list-unstyled mb-0 d-grid gap-2">
-                        <li class="d-flex align-items-center gap-2">
-                            <i class="bi bi-facebook"></i>
-                            <a class="footer-link" href="https://www.facebook.com/AtelierEuropeo/" target="_blank"
-                                rel="noopener noreferrer">Facebook</a>
-                        </li>
-                        <li class="d-flex align-items-center gap-2">
-                            <i class="bi bi-instagram"></i>
-                            <a class="footer-link" href="https://www.instagram.com/ateliereuropeo/" target="_blank"
-                                rel="noopener noreferrer">Instagram</a>
-                        </li>
-                        <li class="d-flex align-items-center gap-2">
-                            <i class="bi bi-linkedin"></i>
-                            <a class="footer-link" href="https://www.linkedin.com/company/atelier-europeo/"
-                                target="_blank" rel="noopener noreferrer">LinkedIn</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-
-            <!-- Mobile: accordion -->
-            <div class="d-md-none d-block">
-                <div class="d-flex align-items-start mb-4 px-3">
-                    <a href="{{ $brandRoute }}" class="flex-shrink-0 me-3 text-decoration-none mt-1">
-                        <img src="{{ asset('img/ae-icon.svg') }}" alt="Atelier Europeo" height="48">
-                    </a>
-
-                    <div>
-                        <h5 class="mb-1 footer-brand-title">{{ __('master.brand') }}</h5>
-                        <p class="footer-text mb-0 small" style="line-height: 1.4;">
+    @unless ($showAdminNav)
+        <footer class="footer-main bg-primary text-white mt-auto">
+            <div class="container py-4 py-md-5">
+                <!-- Desktop: griglia 4 colonne -->
+                <div class="row g-4 d-none d-md-flex justify-content-between">
+                    <div class="col-md-5 col-lg-4">
+                        <div class="d-flex align-items-center mb-3">
+                            <a href="{{ $brandRoute }}" class="d-inline-flex align-items-center text-decoration-none">
+                                <img src="{{ asset('img/ae-icon.svg') }}" alt="Atelier Europeo" height="40" class="me-2">
+                                <h5 class="mb-0 footer-brand-title">{{ __('master.brand') }}</h5>
+                            </a>
+                        </div>
+                        <p class="footer-text mb-0">
                             {{ __('master.footer.programs_description') }}
                         </p>
+                    </div>
+
+                    <div class="col-md-auto">
+                        <h6 class="footer-title mb-3">{{ __('master.footer.quick_links') }}</h6>
+                        <ul class="list-unstyled mb-0 d-grid gap-2">
+                            <li><a class="footer-link" href="{{ route('home') }}">{{ __('master.nav.home') }}</a></li>
+                            <li><a class="footer-link" href="{{ route('about') }}">{{ __('master.nav.about') }}</a></li>
+                            <li><a class="footer-link"
+                                    href="{{ route('project.index') }}">{{ __('master.nav.available_projects') }}</a>
+                            </li>
+                            <li><a class="footer-link"
+                                    href="{{ route('project.portfolio') }}">{{ __('master.nav.project_archive') }}</a>
+                            </li>
+                            <li><a class="footer-link" href="{{ route('contact') }}">{{ __('master.nav.contacts') }}</a>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="col-md-auto">
+                        <h6 class="footer-title mb-3">{{ __('master.footer.contacts') }}</h6>
+                        <ul class="list-unstyled mb-0 d-grid gap-2">
+                            <li class="d-flex align-items-center gap-2">
+                                <i class="bi bi-telephone-fill"></i>
+                                <a class="footer-link" href="tel:+390302284900">+39 030 22 84 900</a>
+                            </li>
+                            <li class="d-flex align-items-center gap-2">
+                                <i class="bi bi-envelope-fill"></i>
+                                <a class="footer-link" href="mailto:info@ateliereuropeo.eu">info@ateliereuropeo.eu</a>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="col-md-auto">
+                        <h6 class="footer-title mb-3">{{ __('master.footer.social') }}</h6>
+                        <ul class="list-unstyled mb-0 d-grid gap-2">
+                            <li class="d-flex align-items-center gap-2">
+                                <i class="bi bi-facebook"></i>
+                                <a class="footer-link" href="https://www.facebook.com/AtelierEuropeo/" target="_blank"
+                                    rel="noopener noreferrer">Facebook</a>
+                            </li>
+                            <li class="d-flex align-items-center gap-2">
+                                <i class="bi bi-instagram"></i>
+                                <a class="footer-link" href="https://www.instagram.com/ateliereuropeo/" target="_blank"
+                                    rel="noopener noreferrer">Instagram</a>
+                            </li>
+                            <li class="d-flex align-items-center gap-2">
+                                <i class="bi bi-linkedin"></i>
+                                <a class="footer-link" href="https://www.linkedin.com/company/atelier-europeo/"
+                                    target="_blank" rel="noopener noreferrer">LinkedIn</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Mobile: accordion -->
+                <div class="d-md-none d-block">
+                    <div class="d-flex align-items-start mb-4 px-3">
+                        <a href="{{ $brandRoute }}" class="flex-shrink-0 me-3 text-decoration-none mt-1">
+                            <img src="{{ asset('img/ae-icon.svg') }}" alt="Atelier Europeo" height="48">
+                        </a>
+
+                        <div>
+                            <h5 class="mb-1 footer-brand-title">{{ __('master.brand') }}</h5>
+                            <p class="footer-text mb-0 small" style="line-height: 1.4;">
+                                {{ __('master.footer.programs_description') }}
+                            </p>
+                        </div>
+                    </div>
+
+                    <hr class="footer-divider">
+
+                    <div class="accordion accordion-flush footer-accordion" id="footerAccordion">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="footerLinksHeading">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#footerLinksCollapse" aria-expanded="false"
+                                    aria-controls="footerLinksCollapse">
+                                    {{ __('master.footer.quick_links') }}
+                                </button>
+                            </h2>
+                            <div id="footerLinksCollapse" class="accordion-collapse collapse"
+                                aria-labelledby="footerLinksHeading" data-bs-parent="#footerAccordion">
+                                <div class="accordion-body">
+                                    <ul class="list-unstyled mb-0 d-grid gap-2">
+                                        <li><a class="footer-link"
+                                                href="{{ route('home') }}">{{ __('master.nav.home') }}</a></li>
+                                        <li><a class="footer-link"
+                                                href="{{ route('about') }}">{{ __('master.nav.about') }}</a></li>
+                                        <li><a class="footer-link"
+                                                href="{{ route('project.index') }}">{{ __('master.nav.available_projects') }}</a>
+                                        </li>
+                                        <li><a class="footer-link"
+                                                href="{{ route('project.portfolio') }}">{{ __('master.nav.project_archive') }}</a>
+                                        </li>
+                                        <li><a class="footer-link"
+                                                href="{{ route('contact') }}">{{ __('master.nav.contacts') }}</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="footerContactsHeading">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#footerContactsCollapse" aria-expanded="false"
+                                    aria-controls="footerContactsCollapse">
+                                    {{ __('master.footer.contacts') }}
+                                </button>
+                            </h2>
+                            <div id="footerContactsCollapse" class="accordion-collapse collapse"
+                                aria-labelledby="footerContactsHeading" data-bs-parent="#footerAccordion">
+                                <div class="accordion-body">
+                                    <ul class="list-unstyled mb-0 d-grid gap-2">
+                                        <li class="d-flex align-items-center gap-2">
+                                            <i class="bi bi-telephone-fill"></i>
+                                            <a class="footer-link" href="tel:+390302284900">+39 030 22 84 900</a>
+                                        </li>
+                                        <li class="d-flex align-items-center gap-2">
+                                            <i class="bi bi-envelope-fill"></i>
+                                            <a class="footer-link"
+                                                href="mailto:info@ateliereuropeo.eu">info@ateliereuropeo.eu</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="footerSocialHeading">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#footerSocialCollapse" aria-expanded="false"
+                                    aria-controls="footerSocialCollapse">
+                                    {{ __('master.footer.social_links') }}
+                                </button>
+                            </h2>
+                            <div id="footerSocialCollapse" class="accordion-collapse collapse"
+                                aria-labelledby="footerSocialHeading" data-bs-parent="#footerAccordion">
+                                <div class="accordion-body">
+                                    <ul class="list-unstyled mb-0 d-grid gap-2">
+                                        <li class="d-flex align-items-center gap-2">
+                                            <i class="bi bi-facebook"></i>
+                                            <a class="footer-link" href="https://www.facebook.com/AtelierEuropeo/"
+                                                target="_blank" rel="noopener noreferrer">Facebook</a>
+                                        </li>
+                                        <li class="d-flex align-items-center gap-2">
+                                            <i class="bi bi-instagram"></i>
+                                            <a class="footer-link" href="https://www.instagram.com/ateliereuropeo/"
+                                                target="_blank" rel="noopener noreferrer">Instagram</a>
+                                        </li>
+                                        <li class="d-flex align-items-center gap-2">
+                                            <i class="bi bi-linkedin"></i>
+                                            <a class="footer-link" href="https://www.linkedin.com/company/atelier-europeo/"
+                                                target="_blank" rel="noopener noreferrer">LinkedIn</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
                 <hr class="footer-divider">
 
-                <div class="accordion accordion-flush footer-accordion" id="footerAccordion">
-                    <div class="accordion-item">
-                        <h2 class="accordion-header" id="footerLinksHeading">
-                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                                data-bs-target="#footerLinksCollapse" aria-expanded="false"
-                                aria-controls="footerLinksCollapse">
-                                {{ __('master.footer.quick_links') }}
-                            </button>
-                        </h2>
-                        <div id="footerLinksCollapse" class="accordion-collapse collapse"
-                            aria-labelledby="footerLinksHeading" data-bs-parent="#footerAccordion">
-                            <div class="accordion-body">
-                                <ul class="list-unstyled mb-0 d-grid gap-2">
-                                    <li><a class="footer-link"
-                                            href="{{ route('home') }}">{{ __('master.nav.home') }}</a></li>
-                                    <li><a class="footer-link"
-                                            href="{{ route('about') }}">{{ __('master.nav.about') }}</a></li>
-                                    <li><a class="footer-link"
-                                            href="{{ route('project.index') }}">{{ __('master.nav.available_projects') }}</a>
-                                    </li>
-                                    <li><a class="footer-link"
-                                            href="{{ route('project.portfolio') }}">{{ __('master.nav.project_archive') }}</a>
-                                    </li>
-                                    <li><a class="footer-link"
-                                            href="{{ route('contact') }}">{{ __('master.nav.contacts') }}</a></li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="accordion-item">
-                        <h2 class="accordion-header" id="footerContactsHeading">
-                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                                data-bs-target="#footerContactsCollapse" aria-expanded="false"
-                                aria-controls="footerContactsCollapse">
-                                {{ __('master.footer.contacts') }}
-                            </button>
-                        </h2>
-                        <div id="footerContactsCollapse" class="accordion-collapse collapse"
-                            aria-labelledby="footerContactsHeading" data-bs-parent="#footerAccordion">
-                            <div class="accordion-body">
-                                <ul class="list-unstyled mb-0 d-grid gap-2">
-                                    <li class="d-flex align-items-center gap-2">
-                                        <i class="bi bi-telephone-fill"></i>
-                                        <a class="footer-link" href="tel:+390302284900">+39 030 22 84 900</a>
-                                    </li>
-                                    <li class="d-flex align-items-center gap-2">
-                                        <i class="bi bi-envelope-fill"></i>
-                                        <a class="footer-link"
-                                            href="mailto:info@ateliereuropeo.eu">info@ateliereuropeo.eu</a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="accordion-item">
-                        <h2 class="accordion-header" id="footerSocialHeading">
-                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                                data-bs-target="#footerSocialCollapse" aria-expanded="false"
-                                aria-controls="footerSocialCollapse">
-                                {{ __('master.footer.social_links') }}
-                            </button>
-                        </h2>
-                        <div id="footerSocialCollapse" class="accordion-collapse collapse"
-                            aria-labelledby="footerSocialHeading" data-bs-parent="#footerAccordion">
-                            <div class="accordion-body">
-                                <ul class="list-unstyled mb-0 d-grid gap-2">
-                                    <li class="d-flex align-items-center gap-2">
-                                        <i class="bi bi-facebook"></i>
-                                        <a class="footer-link" href="https://www.facebook.com/AtelierEuropeo/"
-                                            target="_blank" rel="noopener noreferrer">Facebook</a>
-                                    </li>
-                                    <li class="d-flex align-items-center gap-2">
-                                        <i class="bi bi-instagram"></i>
-                                        <a class="footer-link" href="https://www.instagram.com/ateliereuropeo/"
-                                            target="_blank" rel="noopener noreferrer">Instagram</a>
-                                    </li>
-                                    <li class="d-flex align-items-center gap-2">
-                                        <i class="bi bi-linkedin"></i>
-                                        <a class="footer-link" href="https://www.linkedin.com/company/atelier-europeo/"
-                                            target="_blank" rel="noopener noreferrer">LinkedIn</a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
+                <div
+                    class="d-flex flex-column flex-md-row justify-content-between align-items-center gap-2 text-center text-md-start">
+                    <small class="footer-bottom-text">
+                        {{ __('master.footer.copyright', ['year' => date('Y')]) }}
+                    </small>
+                    <div class="d-flex gap-3">
+                        <a href="#" class="footer-link"><u>{{ __('master.footer.privacy_policy') }}</u></a>
+                        <a href="#" class="footer-link"><u>{{ __('master.footer.cookie_policy') }}</u></a>
                     </div>
                 </div>
             </div>
-
-            <hr class="footer-divider">
-
-            <div
-                class="d-flex flex-column flex-md-row justify-content-between align-items-center gap-2 text-center text-md-start">
-                <small class="footer-bottom-text">
-                    {{ __('master.footer.copyright', ['year' => date('Y')]) }}
-                </small>
-                <div class="d-flex gap-3">
-                    <a href="#" class="footer-link"><u>{{ __('master.footer.privacy_policy') }}</u></a>
-                    <a href="#" class="footer-link"><u>{{ __('master.footer.cookie_policy') }}</u></a>
-                </div>
-            </div>
-        </div>
-    </footer>
+        </footer>
+    @endunless
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {

@@ -6,7 +6,7 @@
     <div class="container py-5">
         <div class="row align-items-center g-3 mb-5">
             <div class="col-lg">
-                <h1 class="display-6 fw-bold text-dark mb-0">Bentornato, {{ auth()->user()->name ?? 'Daniele' }}</h1>
+                <h1 class="fw-bold text-dark mb-0">Bentornato, {{ auth()->user()->name ?? 'Daniele' }}</h1>
             </div>
             <div class="col-lg-auto">
                 <div class="d-flex flex-column flex-sm-row gap-2 justify-content-lg-end">
@@ -28,17 +28,7 @@
                     <i class="bi bi-folder-fill admin-kpi-icon-active fs-1"></i>
                     <div>
                         <div class="fs-2 fw-bold lh-1 text-dark mb-1">{{ $activeProjectsCount }}</div>
-                        <div class="small text-body-secondary">Progetti Attivi</div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-6 col-lg-3">
-                <div
-                    class="card border-0 shadow-sm rounded-4 h-100 p-3 d-flex flex-row align-items-center gap-3 admin-kpi-card">
-                    <i class="bi bi-file-earmark-person-fill admin-kpi-icon-pending fs-1"></i>
-                    <div>
-                        <div class="fs-2 fw-bold lh-1 text-dark mb-1">{{ $pendingApplicationsCount }}</div>
-                        <div class="small text-body-secondary">Candidature in Sospeso</div>
+                        <div class="small text-body-secondary">Progetti Pubblicati</div>
                     </div>
                 </div>
             </div>
@@ -59,6 +49,16 @@
                     <div>
                         <div class="fs-2 fw-bold lh-1 text-dark mb-1">{{ $draftProjectsCount }}</div>
                         <div class="small text-body-secondary">Progetti in Bozza</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+                <div
+                    class="card border-0 shadow-sm rounded-4 h-100 p-3 d-flex flex-row align-items-center gap-3 admin-kpi-card">
+                    <i class="bi bi-file-earmark-person-fill admin-kpi-icon-pending fs-1"></i>
+                    <div>
+                        <div class="fs-2 fw-bold lh-1 text-dark mb-1">{{ $pendingApplicationsCount }}</div>
+                        <div class="small text-body-secondary">Candidature in Sospeso</div>
                     </div>
                 </div>
             </div>

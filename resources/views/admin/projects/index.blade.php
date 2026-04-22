@@ -67,7 +67,8 @@
 
         <div class="row align-items-center g-3 mb-4">
             <div class="col-lg">
-                <h1 class="display-6 fw-bold text-dark mb-0">Tutti i Progetti</h1>
+                <h1 class="fw-bold text-dark mb-1">Progetti</h1>
+                <p class="text-muted mb-0">Crea e gestisci nuove opportunità. Monitoria i progetti in corso.</p>
             </div>
             <div class="col-lg-auto">
                 <a href="{{ route('project.create', ['adminContext' => 1]) }}" class="btn btn-ae btn-ae-success btn-ae-square px-4 py-2">
@@ -80,25 +81,15 @@
             <div class="col-12">
                 <form method="GET" action="{{ route('admin.projects.index') }}" class="bg-white rounded-4 shadow-sm p-3">
                     <div class="row g-2 align-items-end">
-                        <div class="col-lg-5">
+                        <div class="col-lg-4">
                             <label for="project-search" class="form-label small text-body-secondary fw-semibold mb-1">Cerca progetto</label>
                             <div class="input-group">
                                 <span class="input-group-text bg-light border-end-0">
                                     <i class="bi bi-search text-body-secondary"></i>
                                 </span>
                                 <input type="text" id="project-search" name="q" value="{{ request()->query('q', '') }}"
-                                    class="form-control border-start-0" placeholder="Titolo, paese o keyword...">
+                                    class="form-control border-start-0" placeholder="Titolo, paese, ...">
                             </div>
-                        </div>
-
-                        <div class="col-sm-4 col-lg-2">
-                            <label for="project-status" class="form-label small text-body-secondary fw-semibold mb-1">Stato</label>
-                            <select id="project-status" name="status" class="form-select" onchange="this.form.requestSubmit()">
-                                <option value="">Tutti</option>
-                                <option value="published" @selected(request('status') === 'published')>Pubblicato</option>
-                                <option value="draft" @selected(request('status') === 'draft')>Bozza</option>
-                                <option value="completed" @selected(request('status') === 'completed')>Completato</option>
-                            </select>
                         </div>
 
                         <div class="col-sm-4 col-lg-2">
@@ -124,10 +115,20 @@
                             </select>
                         </div>
 
-                        <div class="col-12 col-lg-1 d-grid">
+                        <div class="col-sm-4 col-lg-2">
+                            <label for="project-status" class="form-label small text-body-secondary fw-semibold mb-1">Stato</label>
+                            <select id="project-status" name="status" class="form-select" onchange="this.form.requestSubmit()">
+                                <option value="">Tutti</option>
+                                <option value="published" @selected(request('status') === 'published')>Pubblicato</option>
+                                <option value="draft" @selected(request('status') === 'draft')>Bozza</option>
+                                <option value="completed" @selected(request('status') === 'completed')>Completato</option>
+                            </select>
+                        </div>
+
+                        <div class="col-12 col-lg-2 d-grid">
                             <a href="{{ route('admin.projects.index') }}"
                                 class="btn btn-ae btn-ae-square btn-ae-outline-secondary d-inline-flex align-items-center">
-                                <i class="bi bi-x-lg me-1"></i>Resetta
+                                <i class="bi bi-x-lg me-1"></i>Cancella Filtri
                             </a>
                         </div>
                     </div>

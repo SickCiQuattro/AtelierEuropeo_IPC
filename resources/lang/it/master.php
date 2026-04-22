@@ -60,7 +60,7 @@ return [
         'about' => 'Organizziamo progetti di mobilita europea per giovani, favorendo inclusione e crescita attraverso esperienze internazionali.',
         'programs_description' => 'Opportunità per crescere, viaggiare e imparare. Costruiamo insieme un\'Europa più inclusiva e solidale.',
         'quick_links' => 'Link Rapidi',
-        'contacts' => 'Contatti',
+        'contacts' => 'Contattaci',
         'social' => 'Social',
         'social_links' => 'Link Social',
         'privacy_policy' => 'Privacy Policy',
