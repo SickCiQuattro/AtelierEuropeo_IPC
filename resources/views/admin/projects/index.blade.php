@@ -9,14 +9,14 @@
         $projectsCollection = $projects ?? collect();
         $availableCountriesCollection = $availableCountries ?? collect();
         $categoryMap = [
-            'CES' => ['icon' => 'heart-fill', 'label' => 'CES', 'class' => 'text-prog-ces'],
-            'SG' => ['icon' => 'people-fill', 'label' => 'SG', 'class' => 'text-prog-sg'],
-            'CF' => ['icon' => 'mortarboard-fill', 'label' => 'CF', 'class' => 'text-prog-cf'],
+            'CES' => ['label' => 'CES', 'badge' => 'badge-prog-ces'],
+            'SG' => ['label' => 'SG', 'badge' => 'badge-prog-sg'],
+            'CF' => ['label' => 'CF', 'badge' => 'badge-prog-cf'],
         ];
         $statusMap = [
-            'completed' => ['label' => 'Completato', 'icon' => 'check-circle', 'color' => '#5b5bd6'],
-            'draft' => ['label' => 'Bozza', 'icon' => 'pencil-square', 'color' => '#6c757d'],
-            'published' => ['label' => 'Pubblicato', 'icon' => 'broadcast', 'color' => '#198754'],
+            'completed' => ['label' => 'Completato', 'icon' => 'bi-archive-fill', 'class' => 'text-dark'],
+            'draft' => ['label' => 'Bozza', 'icon' => 'bi-pencil-square', 'class' => 'text-secondary'],
+            'published' => ['label' => 'Pubblicato', 'icon' => 'bi-broadcast', 'class' => 'text-success'],
         ];
     @endphp
 
@@ -128,7 +128,7 @@
                         <div class="col-12 col-lg-2 d-grid">
                             <a href="{{ route('admin.projects.index') }}"
                                 class="btn btn-ae btn-ae-square btn-ae-outline-secondary d-inline-flex align-items-center">
-                                <i class="bi bi-x-lg me-1"></i>Cancella Filtri
+                                <i class="me-1"></i>Cancella Filtri
                             </a>
                         </div>
                     </div>
@@ -168,9 +168,8 @@
 
                                 $categoryTag = strtoupper((string) data_get($project, 'category.tag', data_get($project, 'category_tag', 'CES')));
                                 $categoryConfig = $categoryMap[$categoryTag] ?? [
-                                    'icon' => 'tag-fill',
                                     'label' => $categoryTag ?: 'N/D',
-                                    'class' => 'text-secondary',
+                                    'badge' => 'badge-prog-ces',
                                 ];
 
                                 $applicationsCount = data_get($project, 'approved_applications_count', data_get($project, 'applications_count', 0));
@@ -199,8 +198,7 @@
                                 </td>
                                 <td class="fw-semibold">{{ $projectTitle }}</td>
                                 <td class="text-center">
-                                    <span class="d-inline-flex align-items-center gap-1 {{ $categoryConfig['class'] }} fw-semibold">
-                                        <i class="bi bi-{{ $categoryConfig['icon'] }}"></i>
+                                    <span class="{{ $categoryConfig['badge'] }} shadow-sm d-inline-flex align-items-center justify-content-center">
                                         {{ $categoryConfig['label'] }}
                                     </span>
                                 </td>
@@ -212,9 +210,9 @@
                                 </td>
                                 <td>{{ $deadlineText }}</td>
                                 <td class="text-center">
-                                    <span class="rounded-pill px-3 py-1 text-white d-inline-flex align-items-center gap-1"
-                                        style="background-color: {{ $statusConfig['color'] }};">
-                                        <i class="bi bi-{{ $statusConfig['icon'] }}"></i>
+                                    <span class="badge rounded-pill bg-light border px-3 py-2 {{ $statusConfig['class'] }} d-inline-flex align-items-center gap-1"
+                                        style="font-size: 0.85rem;">
+                                        <i class="bi {{ $statusConfig['icon'] }}"></i>
                                         {{ $statusConfig['label'] }}
                                     </span>
                                 </td>
@@ -305,16 +303,15 @@
                                     aria-label="Seleziona progetto">
                                 <h3 class="h6 fw-bold mb-0 admin-mobile-title">{{ $projectTitle }}</h3>
                             </div>
-                            <span class="rounded-pill px-3 py-1 text-white d-inline-flex align-items-center gap-1 small admin-mobile-status-badge"
-                                style="background-color: {{ $statusConfig['color'] }};">
-                                <i class="bi bi-{{ $statusConfig['icon'] }}"></i>
+                            <span class="badge rounded-pill bg-light border px-3 py-2 {{ $statusConfig['class'] }} shadow-sm d-inline-flex align-items-center gap-1 small admin-mobile-status-badge"
+                                style="font-size: 0.85rem;">
+                                <i class="bi {{ $statusConfig['icon'] }}"></i>
                                 {{ $statusConfig['label'] }}
                             </span>
                         </div>
 
                         <div class="mb-2 d-flex align-items-center gap-2 admin-mobile-meta-row">
-                            <span class="d-inline-flex align-items-center gap-1 {{ $categoryConfig['class'] }} fw-semibold small">
-                                <i class="bi bi-{{ $categoryConfig['icon'] }}"></i>
+                            <span class="{{ $categoryConfig['badge'] }} shadow-sm d-inline-flex align-items-center justify-content-center">
                                 {{ $categoryConfig['label'] }}
                             </span>
                         </div>
