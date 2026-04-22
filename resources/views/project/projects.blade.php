@@ -198,9 +198,7 @@
                                     </span>
                                 @endif
 
-                                <a href="{{ route('project.index') }}" class="btn btn-ae btn-sm btn-ae-outline-danger">Rimuovi
-                                    tutti i
-                                    filtri</a>
+                                <a href="{{ route('project.index') }}" class="btn btn-ae btn-ae-outline-secondary btn-sm">Cancella filtri</a>
                             </div>
                         </div>
                     @endif

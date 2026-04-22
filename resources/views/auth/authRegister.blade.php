@@ -235,12 +235,11 @@
                                 <!-- Info requisiti password -->
                                 <div class="alert alert-info small mb-3 border-0 bg-info bg-opacity-10 password-requirements-alert"
                                     role="status" aria-live="polite">
-                                    <div class="d-flex align-items-start gap-2">
-                                        <i class="bi bi-shield-lock"></i>
+                                    <div class="d-flex align-items-start">
                                         <div class="flex-grow-1">
                                             <div
                                                 class="d-flex justify-content-between align-items-center gap-2 flex-wrap mb-2">
-                                                <strong class="d-block mb-0">Requisiti password</strong>
+                                                <strong class="d-block mb-0"><i class="bi bi-shield-lock me-2"></i>Requisiti password</strong>
                                                 <span class="badge text-bg-light border password-strength-badge"
                                                     id="password-strength-badge">0/5 soddisfatti</span>
                                             </div>
@@ -320,7 +319,7 @@
             transition: all 0.3s ease;
             font-size: 0.875rem;
             display: flex;
-            align-items: flex-start;
+            align-items: center;
             gap: 0.45rem;
             line-height: 1.35;
             margin-bottom: 0.4rem;

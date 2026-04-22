@@ -198,7 +198,7 @@
                                 @endif
 
                                 <a href="{{ route('project.portfolio') }}"
-                                    class="btn btn-sm btn-ae btn-ae-outline-danger">Rimuovi tutti i filtri</a>
+                                    class="btn btn-sm btn-ae btn-ae-outline-secondary">Cancella filtri</a>
                             </div>
                         </div>
                     @endif

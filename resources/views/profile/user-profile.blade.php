@@ -14,8 +14,9 @@
             </div>
             <div class="col">
                 <h1 class="section-title text-dark mb-2 fw-bold">{{ $user->name }}</h1>
-                <p class="main-text mb-0">
-                    <i class="bi bi-envelope me-2"></i>{{ $user->email }}
+                <p class="main-text mb-0 d-flex align-items-center gap-2">
+                    <i class="bi bi-envelope"></i>
+                    <span>{{ $user->email }}</span>
                 </p>
             </div>
         </div>
@@ -27,26 +28,36 @@
                 <div class="col-12">
                     <div class="row g-4 mb-4">
                         <div class="col-md-6">
-                            <div class="card border-0 shadow-sm rounded-4 h-100 position-relative profile-action-card">
-                                <div class="card-body p-4">
-                                    <i class="bi bi-file-earmark-text text-primary" style="font-size: 2rem;"></i>
-                                    <h5 class="mt-3 mb-2 fw-bold text-primary">Le Mie Candidature</h5>
-                                    <p class="text-muted mb-0 pe-4">Visualizza lo stato e gestisci le tue richieste di
+                            <div class="card text-center border-0 shadow-sm rounded-4 h-100">
+                                <div class="card-body d-flex flex-column align-items-center justify-content-center p-4">
+                                    <i class="bi bi-file-earmark-text text-primary d-block mb-2" style="font-size: 2rem;"></i>
+                                    <h5 class="mb-2 fw-bold text-primary">Le Mie Candidature</h5>
+                                    <p class="text-muted mb-0">Visualizza lo stato e gestisci le tue richieste di
                                         partecipazione.</p>
-                                    <a href="{{ route('applications.index') }}" class="stretched-link"
-                                        aria-label="Vai a Le Mie Candidature"></a>
+                                </div>
+                                <hr class="m-0 text-muted" style="opacity: 0.15;">
+                                <div class="card-footer bg-transparent border-0 p-3">
+                                    <a href="{{ route('applications.index') }}"
+                                        class="btn btn-ae btn-ae-outline-primary">
+                                        Gestisci Candidature <i class="bi bi-arrow-right ms-1" aria-hidden="true"></i>
+                                    </a>
                                 </div>
                             </div>
                         </div>
                         <div class="col-md-6">
-                            <div class="card border-0 shadow-sm rounded-4 h-100 position-relative profile-action-card">
-                                <div class="card-body p-4">
-                                    <i class="bi bi-heart text-primary" style="font-size: 2rem;"></i>
-                                    <h5 class="mt-3 mb-2 fw-bold text-primary">Progetti Preferiti</h5>
-                                    <p class="text-muted mb-0 pe-4">Consulta i progetti che hai salvato per un secondo momento.
+                            <div class="card text-center border-0 shadow-sm rounded-4 h-100">
+                                <div class="card-body d-flex flex-column align-items-center justify-content-center p-4">
+                                    <i class="bi bi-heart text-primary d-block mb-2" style="font-size: 2rem;"></i>
+                                    <h5 class="mb-2 fw-bold text-primary">Progetti Preferiti</h5>
+                                    <p class="text-muted mb-0">Consulta i progetti che hai salvato per un secondo momento.
                                     </p>
-                                    <a href="{{ route('favorites.index') }}" class="stretched-link"
-                                        aria-label="Vai a Progetti Preferiti"></a>
+                                </div>
+                                <hr class="m-0 text-muted" style="opacity: 0.15;">
+                                <div class="card-footer bg-transparent border-0 p-3">
+                                    <a href="{{ route('favorites.index') }}"
+                                        class="btn btn-ae btn-ae-outline-primary">
+                                        Vai ai Preferiti <i class="bi bi-arrow-right ms-1" aria-hidden="true"></i>
+                                    </a>
                                 </div>
                             </div>
                         </div>
@@ -57,7 +68,7 @@
                 <div class="col-md-6">
                     <!-- Aggiorna Informazioni Personali -->
                     <div class="card border-0 shadow-sm rounded-4 h-100">
-                        <div class="card-header bg-transparent border-bottom-0 pt-4 pb-0 px-4">
+                        <div class="card-header bg-transparent bord er-bottom-0 pt-4 pb-0 px-4">
                             <h5 class="mb-0 fw-bold text-primary">
                                 <i class="bi bi-person-lines-fill me-2"></i>Informazioni Personali
                             </h5>
@@ -137,14 +148,14 @@
                                     @error('password', 'updatePassword')
                                         <div class="text-danger small mt-1">{{ $message }}</div>
                                     @enderror
-                                    <div class="alert alert-info small mt-2 mb-0 border-0 bg-info bg-opacity-10 password-requirements-alert"
-                                        id="password-requirements-alert" role="status" aria-live="polite">
-                                        <div class="d-flex align-items-start gap-2">
-                                            <i class="bi bi-shield-lock"></i>
+                                    <div id="password-requirements-alert"
+                                        class="alert alert-info small mb-3 border-0 bg-info bg-opacity-10 password-requirements-alert"
+                                        role="status" aria-live="polite">
+                                        <div class="d-flex align-items-start">
                                             <div class="flex-grow-1">
                                                 <div
                                                     class="d-flex justify-content-between align-items-center gap-2 flex-wrap mb-2">
-                                                    <strong class="d-block mb-0">Requisiti password</strong>
+                                                    <strong class="d-block mb-0"><i class="bi bi-shield-lock me-2"></i>Requisiti password</strong>
                                                     <span class="badge text-bg-light border password-strength-badge"
                                                         id="password-strength-badge">0/5 soddisfatti</span>
                                                 </div>
@@ -162,26 +173,25 @@
                                                             aria-valuemax="100"></div>
                                                     </div>
                                                     <div class="password-requirements">
-                                                        <span id="req-length" class="requirement-item text-danger">
-                                                            <i class="bi bi-x-circle"></i>
-                                                            <span>Almeno 8 caratteri</span>
-                                                        </span>
-                                                        <span id="req-uppercase" class="requirement-item text-danger">
+                                                        <div id="req-length" class="requirement-item text-danger">
+                                                            <i class="bi bi-x-circle"></i>Almeno 8 caratteri
+                                                        </div>
+                                                        <div id="req-uppercase" class="requirement-item text-danger">
                                                             <i class="bi bi-x-circle"></i>
                                                             <span>Almeno una lettera maiuscola (A-Z)</span>
-                                                        </span>
-                                                        <span id="req-lowercase" class="requirement-item text-danger">
+                                                        </div>
+                                                        <div id="req-lowercase" class="requirement-item text-danger">
                                                             <i class="bi bi-x-circle"></i>
                                                             <span>Almeno una lettera minuscola (a-z)</span>
-                                                        </span>
-                                                        <span id="req-number" class="requirement-item text-danger">
+                                                        </div>
+                                                        <div id="req-number" class="requirement-item text-danger">
                                                             <i class="bi bi-x-circle"></i>
                                                             <span>Almeno un numero (0-9)</span>
-                                                        </span>
-                                                        <span id="req-symbol" class="requirement-item text-danger mb-0">
+                                                        </div>
+                                                        <div id="req-symbol" class="requirement-item text-danger mb-0">
                                                             <i class="bi bi-x-circle"></i>
-                                                            <span>Almeno un simbolo (!@#$%^&*)</span>
-                                                        </span>
+                                                            <span>Almeno un simbolo (!@#$%^&amp;*)</span>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -205,7 +215,7 @@
                                     @enderror
                                 </div>
 
-                                <button type="submit" class="btn btn-ae-outline-primary w-100">
+                                <button type="submit" class="btn btn-ae-primary w-100">
                                     <i class="bi bi-key me-2"></i>Aggiorna Password
                                 </button>
                             </form>
@@ -297,16 +307,16 @@
                                     @error('password', 'updatePassword')
                                         <div class="text-danger small mt-1">{{ $message }}</div>
                                     @enderror
-                                    <div class="alert alert-info small mt-2 mb-0 border-0 bg-info bg-opacity-10 password-requirements-alert"
-                                        id="password-requirements-alert-admin" role="status" aria-live="polite">
-                                        <div class="d-flex align-items-start gap-2">
-                                            <i class="bi bi-shield-lock"></i>
+                                    <div id="password-requirements-alert-admin"
+                                        class="alert alert-info small mb-3 border-0 bg-info bg-opacity-10 password-requirements-alert"
+                                        role="status" aria-live="polite">
+                                        <div class="d-flex align-items-start">
                                             <div class="flex-grow-1">
                                                 <div
                                                     class="d-flex justify-content-between align-items-center gap-2 flex-wrap mb-2">
-                                                    <strong class="d-block mb-0">Requisiti password</strong>
+                                                    <strong class="d-block mb-0"><i class="bi bi-shield-lock me-2"></i>Requisiti password</strong>
                                                     <span class="badge text-bg-light border password-strength-badge"
-                                                        id="password-strength-badge-admin">0/5 soddisfatti</span>
+                                                        id="password-strength-b adge-admin">0/5 soddisfatti</span>
                                                 </div>
                                                 <div id="password-requirements-compact-admin"
                                                     class="small text-success d-none mb-2">
@@ -323,26 +333,26 @@
                                                             aria-valuemax="100"></div>
                                                     </div>
                                                     <div class="password-requirements">
-                                                        <span id="req-length-admin" class="requirement-item text-danger">
+                                                        <div id="req-length-admin" class="requirement-item text-danger">
                                                             <i class="bi bi-x-circle"></i>
                                                             <span>Almeno 8 caratteri</span>
-                                                        </span>
-                                                        <span id="req-uppercase-admin" class="requirement-item text-danger">
+                                                        </div>
+                                                        <div id="req-uppercase-admin" class="requirement-item text-danger">
                                                             <i class="bi bi-x-circle"></i>
                                                             <span>Almeno una lettera maiuscola (A-Z)</span>
-                                                        </span>
-                                                        <span id="req-lowercase-admin" class="requirement-item text-danger">
+                                                        </div>
+                                                        <div id="req-lowercase-admin" class="requirement-item text-danger">
                                                             <i class="bi bi-x-circle"></i>
                                                             <span>Almeno una lettera minuscola (a-z)</span>
-                                                        </span>
-                                                        <span id="req-number-admin" class="requirement-item text-danger">
+                                                        </div>
+                                                        <div id="req-number-admin" class="requirement-item text-danger">
                                                             <i class="bi bi-x-circle"></i>
                                                             <span>Almeno un numero (0-9)</span>
-                                                        </span>
-                                                        <span id="req-symbol-admin" class="requirement-item text-danger mb-0">
+                                                        </div>
+                                                        <div id="req-symbol-admin" class="requirement-item text-danger mb-0">
                                                             <i class="bi bi-x-circle"></i>
                                                             <span>Almeno un simbolo (!@#$%^&*)</span>
-                                                        </span>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -367,7 +377,7 @@
                                     @enderror
                                 </div>
 
-                                <button type="submit" class="btn btn-ae-outline-primary w-100">
+                                <button type="submit" class="btn btn-ae-primary w-100">
                                     <i class="bi bi-key me-2"></i>Aggiorna Password
                                 </button>
                             </form>
@@ -384,7 +394,7 @@
         transition: all 0.3s ease;
         font-size: 0.875rem;
         display: flex;
-        align-items: flex-start;
+        align-items: center;
         gap: 0.45rem;
         line-height: 1.35;
         margin-bottom: 0.4rem;
@@ -403,6 +413,7 @@
     }
 
     .password-requirements-alert {
+        margin-top: 0.5rem;
         border-left: 4px solid rgba(13, 110, 253, 0.35);
         transition: border-color 0.2s ease, background-color 0.2s ease;
     }
@@ -437,147 +448,100 @@
 
 @section('scripts')
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const passwordInput = document.getElementById('password');
-            const passwordAdminInput = document.getElementById('password_admin');
+        $(document).ready(function () {
+            $('.toggle-password').click(function () {
+                let input = $(this).siblings('input');
+                let icon = $(this).find('i');
 
-            document.querySelectorAll('.toggle-password').forEach(function (button) {
-                button.addEventListener('click', function () {
-                    const input = this.closest('.input-group')?.querySelector('input');
-                    const icon = this.querySelector('i');
-
-                    if (!input || !icon) {
-                        return;
-                    }
-
-                    if (input.type === 'password') {
-                        input.type = 'text';
-                        icon.classList.remove('bi-eye');
-                        icon.classList.add('bi-eye-slash');
-                    } else {
-                        input.type = 'password';
-                        icon.classList.remove('bi-eye-slash');
-                        icon.classList.add('bi-eye');
-                    }
-                });
+                if (input.attr('type') === 'password') {
+                    input.attr('type', 'text');
+                    icon.removeClass('bi-eye').addClass('bi-eye-slash');
+                } else {
+                    input.attr('type', 'password');
+                    icon.removeClass('bi-eye-slash').addClass('bi-eye');
+                }
             });
 
-            // Requisiti per utenti normali
-            const requirements = {
-                length: document.getElementById('req-length'),
-                uppercase: document.getElementById('req-uppercase'),
-                lowercase: document.getElementById('req-lowercase'),
-                number: document.getElementById('req-number'),
-                symbol: document.getElementById('req-symbol')
-            };
+            function setupPasswordWidget(inputId, suffix) {
+                const input = $(inputId);
 
-            const requirementsUi = {
-                alert: document.getElementById('password-requirements-alert'),
-                details: document.getElementById('password-requirements-details'),
-                compact: document.getElementById('password-requirements-compact'),
-                progressBar: document.getElementById('password-requirements-progress'),
-                badge: document.getElementById('password-strength-badge')
-            };
-
-            // Requisiti per admin
-            const adminRequirements = {
-                length: document.getElementById('req-length-admin'),
-                uppercase: document.getElementById('req-uppercase-admin'),
-                lowercase: document.getElementById('req-lowercase-admin'),
-                number: document.getElementById('req-number-admin'),
-                symbol: document.getElementById('req-symbol-admin')
-            };
-
-            const adminRequirementsUi = {
-                alert: document.getElementById('password-requirements-alert-admin'),
-                details: document.getElementById('password-requirements-details-admin'),
-                compact: document.getElementById('password-requirements-compact-admin'),
-                progressBar: document.getElementById('password-requirements-progress-admin'),
-                badge: document.getElementById('password-strength-badge-admin')
-            };
-
-            function setupPasswordValidation(input, reqElements, uiElements) {
-                if (input) {
-                    const runValidation = function () {
-                        const password = this.value;
-                        let satisfiedRequirements = 0;
-
-                        // Lunghezza minima (8 caratteri)
-                        satisfiedRequirements += Number(updateRequirement(reqElements.length, password.length >= 8));
-
-                        // Lettera maiuscola
-                        satisfiedRequirements += Number(updateRequirement(reqElements.uppercase, /[A-Z]/.test(password)));
-
-                        // Lettera minuscola
-                        satisfiedRequirements += Number(updateRequirement(reqElements.lowercase, /[a-z]/.test(password)));
-
-                        // Numero
-                        satisfiedRequirements += Number(updateRequirement(reqElements.number, /\d/.test(password)));
-
-                        // Simbolo
-                        satisfiedRequirements += Number(updateRequirement(reqElements.symbol, /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~`]/.test(password)));
-
-                        updateRequirementsSummary(uiElements, satisfiedRequirements, 5);
-                    };
-
-                    input.addEventListener('input', runValidation);
-                    runValidation.call(input);
-                }
-            }
-
-            // Setup per entrambi i campi password
-            setupPasswordValidation(passwordInput, requirements, requirementsUi);
-            setupPasswordValidation(passwordAdminInput, adminRequirements, adminRequirementsUi);
-
-            function updateRequirement(element, isValid) {
-                if (element) {
-                    const icon = element.querySelector('i');
-                    if (isValid) {
-                        element.classList.add('text-success');
-                        element.classList.remove('text-danger');
-                        if (icon) {
-                            icon.className = 'bi bi-check-circle-fill';
-                        }
-                    } else {
-                        element.classList.add('text-danger');
-                        element.classList.remove('text-success');
-                        if (icon) {
-                            icon.className = 'bi bi-x-circle';
-                        }
-                    }
-                }
-
-                return isValid;
-            }
-
-            function updateRequirementsSummary(uiElements, satisfiedRequirements, totalRequirements) {
-                if (!uiElements.alert || !uiElements.details || !uiElements.compact || !uiElements.progressBar || !uiElements.badge) {
+                if (input.length === 0) {
                     return;
                 }
 
-                const progressPercentage = Math.round((satisfiedRequirements / totalRequirements) * 100);
-                const isComplete = satisfiedRequirements === totalRequirements;
+                input.on('input', function () {
+                    validatePasswordRequirements($(this).val(), suffix);
+                });
 
-                uiElements.badge.textContent = satisfiedRequirements + '/' + totalRequirements + ' soddisfatti';
-                uiElements.progressBar.style.width = progressPercentage + '%';
-                uiElements.progressBar.setAttribute('aria-valuenow', String(progressPercentage));
-                uiElements.progressBar.classList.remove('bg-danger', 'bg-warning', 'bg-success');
-                uiElements.progressBar.classList.add(progressPercentage < 40 ? 'bg-danger' : progressPercentage < 100 ? 'bg-warning' : 'bg-success');
+                validatePasswordRequirements(input.val() || '', suffix);
+            }
 
-                if (isComplete) {
-                    uiElements.badge.classList.remove('text-bg-light', 'border');
-                    uiElements.badge.classList.add('password-strength-badge-complete');
-                    uiElements.alert.classList.add('password-requirements-alert-complete');
-                    uiElements.details.classList.add('d-none');
-                    uiElements.compact.classList.remove('d-none');
+            function validatePasswordRequirements(password, suffix) {
+                updateRequirement('#req-length' + suffix, password.length >= 8);
+                updateRequirement('#req-uppercase' + suffix, /[A-Z]/.test(password));
+                updateRequirement('#req-lowercase' + suffix, /[a-z]/.test(password));
+                updateRequirement('#req-number' + suffix, /\d/.test(password));
+                updateRequirement('#req-symbol' + suffix, /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~`]/.test(password));
+
+                updateRequirementsSummary(suffix);
+            }
+
+            function updateRequirement(selector, isValid) {
+                const element = $(selector);
+                const icon = element.find('i');
+
+                if (isValid) {
+                    element.removeClass('text-danger').addClass('text-success');
+                    icon.removeClass('bi-x-circle').addClass('bi-check-circle-fill');
                 } else {
-                    uiElements.badge.classList.remove('password-strength-badge-complete');
-                    uiElements.badge.classList.add('text-bg-light', 'border');
-                    uiElements.alert.classList.remove('password-requirements-alert-complete');
-                    uiElements.details.classList.remove('d-none');
-                    uiElements.compact.classList.add('d-none');
+                    element.removeClass('text-success').addClass('text-danger');
+                    icon.removeClass('bi-check-circle-fill').addClass('bi-x-circle');
                 }
             }
+
+            function updateRequirementsSummary(suffix) {
+                const totalRequirements = 5;
+                const parentContainer = suffix === '-admin' ? $('#password-requirements-details-admin') : $('#password-requirements-details');
+                const satisfiedRequirements = parentContainer.find('.requirement-item.text-success').length;
+                const progressPercentage = Math.round((satisfiedRequirements / totalRequirements) * 100);
+                const progressBar = $('#password-requirements-progress' + suffix);
+                const strengthBadge = $('#password-strength-badge' + suffix);
+                const requirementsDetails = $('#password-requirements-details' + suffix);
+                const requirementsCompact = $('#password-requirements-compact' + suffix);
+                const requirementsAlert = strengthBadge.closest('.password-requirements-alert');
+                const isComplete = satisfiedRequirements === totalRequirements;
+
+                strengthBadge.text(satisfiedRequirements + '/' + totalRequirements + ' soddisfatti');
+
+                progressBar
+                    .css('width', progressPercentage + '%')
+                    .attr('aria-valuenow', progressPercentage)
+                    .removeClass('bg-danger bg-warning bg-success')
+                    .addClass(progressPercentage < 40 ? 'bg-danger' : progressPercentage < 100 ? 'bg-warning' : 'bg-success');
+
+                if (isComplete) {
+                    strengthBadge.removeClass('text-bg-light border').addClass('password-strength-badge-complete');
+                    requirementsAlert.addClass('password-requirements-alert-complete');
+
+                    if (requirementsDetails.is(':visible')) {
+                        requirementsDetails.stop(true, true).slideUp(180);
+                    }
+
+                    requirementsCompact.removeClass('d-none').hide().stop(true, true).fadeIn(160);
+                } else {
+                    strengthBadge.removeClass('password-strength-badge-complete').addClass('text-bg-light border');
+                    requirementsAlert.removeClass('password-requirements-alert-complete');
+
+                    if (!requirementsDetails.is(':visible')) {
+                        requirementsDetails.stop(true, true).slideDown(180);
+                    }
+
+                    requirementsCompact.stop(true, true).hide().addClass('d-none');
+                }
+            }
+
+            setupPasswordWidget('#password', '');
+            setupPasswordWidget('#password_admin', '-admin');
         });
     </script>
 @endsection
