@@ -316,14 +316,18 @@ class ProjectController extends Controller
     {
         $dl = new DataLayer();
         $project = $dl->findProjectByID($id);
+        $testimonials = collect();
 
         if ($project != null) {
             // Carica le testimonianze se il progetto è completato
             if ($project instanceof Project && $project->status === 'completed') {
                 $project->load(['testimonial.author']);
+                $testimonials = $project->testimonial ?? collect();
             }
 
-            return view('project.details')->with('project', $project);
+            return view('project.details')
+                ->with('project', $project)
+                ->with('testimonials', $testimonials);
         } else {
             $fallbackRoute = Auth::check() && (bool) Auth::user()->is_admin && \Illuminate\Support\Facades\Route::has('admin.projects.index')
                 ? 'admin.projects.index'

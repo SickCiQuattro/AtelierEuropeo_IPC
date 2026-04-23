@@ -18,6 +18,7 @@
         $userListLabel = $detailSource === 'portfolio' ? 'Archivio Progetti' : 'Progetti Disponibili';
         $isDraft = $project->status === \App\Models\Project::STATUS_DRAFT;
         $isCompleted = $project->status === \App\Models\Project::STATUS_COMPLETED;
+        $projectTestimonials = $testimonials ?? collect();
         $openDeleteModal = request()->boolean('openDeleteModal');
 
         $formatHumanDate = function ($value) {
@@ -303,49 +304,66 @@
                         </div>
 
                         {{-- CTA Candidatura --}}
-                        @if(!$isAdminContext && !$isCompleted)
-                            @php
-                                $alreadyApplied = auth()->check()
-                                    ? \App\Models\Application::where('user_id', auth()->id())
-                                        ->where('project_id', $project->id)
-                                        ->exists()
-                                    : false;
-                            @endphp
+                        @if(!$isAdminContext)
+                            @if(!$isCompleted)
+                                @php
+                                    $alreadyApplied = auth()->check()
+                                        ? \App\Models\Application::where('user_id', auth()->id())
+                                            ->where('project_id', $project->id)
+                                            ->exists()
+                                        : false;
+                                @endphp
 
-                            <div class="bg-white border p-4 shadow-sm mb-4" style="border-radius: 1.25rem;">
-                                <h3 class="h6 fw-bold mb-2 text-muted text-uppercase">
-                                    <i class="bi bi-send me-2"></i>Candidatura
-                                </h3>
+                                <div class="bg-white border p-4 shadow-sm mb-4" style="border-radius: 1.25rem;">
+                                    <h3 class="h6 fw-bold mb-2 text-muted text-uppercase">
+                                        <i class="bi bi-send me-2"></i>Candidatura
+                                    </h3>
 
-                                @guest
-                                    <p class="text-muted small mb-3">
-                                        Accedi per candidarti a questo progetto.
-                                    </p>
-                                    <a href="{{ route('login') }}" class="btn btn-ae btn-ae-primary w-100 rounded-pill">
-                                        <i class="bi bi-box-arrow-in-right me-2"></i>Accedi per candidarti
-                                    </a>
-                                @endguest
-
-                                @auth
-                                    @if($alreadyApplied)
+                                    @guest
                                         <p class="text-muted small mb-3">
-                                            Hai già inviato una candidatura per questo progetto.
+                                            Accedi per candidarti a questo progetto.
                                         </p>
-                                        <a href="{{ route('applications.index') }}"
-                                            class="btn btn-ae btn-ae-outline-primary w-100 rounded-pill">
-                                            <i class="bi bi-file-earmark-text me-2"></i>Le Mie Candidature
+                                        <a href="{{ route('login') }}" class="btn btn-ae btn-ae-primary w-100 rounded-pill">
+                                            <i class="bi bi-box-arrow-in-right me-2"></i>Accedi per candidarti
                                         </a>
-                                    @else
-                                        <p class="text-muted small mb-3">
-                                            Invia la tua candidatura per partecipare a questo progetto.
-                                        </p>
-                                        <a href="{{ route('applications.create', $project->id) }}"
-                                            class="btn btn-ae btn-ae-primary w-100 rounded-pill">
-                                            <i class="bi bi-send me-2"></i>Candidati ora
-                                        </a>
-                                    @endif
-                                @endauth
-                            </div>
+                                    @endguest
+
+                                    @auth
+                                        @if($alreadyApplied)
+                                            <p class="text-muted small mb-3">
+                                                Hai già inviato una candidatura per questo progetto.
+                                            </p>
+                                            <a href="{{ route('applications.index') }}"
+                                                class="btn btn-ae btn-ae-outline-primary w-100 rounded-pill">
+                                                <i class="bi bi-file-earmark-text me-2"></i>Le Mie Candidature
+                                            </a>
+                                        @else
+                                            <p class="text-muted small mb-3">
+                                                Invia la tua candidatura per partecipare a questo progetto.
+                                            </p>
+                                            <a href="{{ route('applications.create', $project->id) }}"
+                                                class="btn btn-ae btn-ae-primary w-100 rounded-pill">
+                                                <i class="bi bi-send me-2"></i>Candidati ora
+                                            </a>
+                                        @endif
+                                    @endauth
+                                </div>
+                            @else
+                                <div class="bg-white border p-4 shadow-sm mb-4" style="border-radius: 1.25rem;">
+                                    <div class="d-flex align-items-start gap-3">
+
+                                        <div>
+                                            <h3 class="h6 fw-bold mb-3 text-uppercase text-muted"><i
+                                                    class="bi bi-archive-fill me-2"></i>
+                                                Progetto Completato
+                                            </h3>
+                                            <p class="text-secondary small mb-0" style="line-height: 1.6;">
+                                                Le candidature sono chiuse. Trovi le testimonianze dei partecipanti più in basso.
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endif
                         @endif
 
                         <div class="bg-light border p-4 shadow-sm sticky-top" style="border-radius: 1.25rem; top: 110px;">
@@ -361,6 +379,41 @@
             </div>
         </div>
     </div>
+
+    @if ($isCompleted && $projectTestimonials->count() > 0)
+        <section id="testimonianze" class="py-5 mt-4 border-top" style="scroll-margin-top: 100px;">
+            <div class="container px-3 px-md-4">
+
+                <div class="text-center mb-5">
+                    <h2 class="section-title text-dark">Testimonianze</h2>
+                    <p class="section-subtitle">
+                        I racconti di chi ha vissuto questo progetto.
+                    </p>
+                </div>
+
+                <div class="row g-4 justify-content-center">
+                    @foreach ($projectTestimonials as $testimonial)
+                        <div class="col-12 col-md-6 col-lg-4">
+                            <div class="testimonial-card h-100 d-flex flex-column">
+                                <div class="quote"><i class="bi bi-quote"></i></div>
+                                <p class="author">{{ $testimonial->author->name ?? 'Partecipante' }}</p>
+                                <p class="project">{{ $project->title }}</p>
+                                <p class="text flex-grow-1">{{ $testimonial->content }}</p>
+
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+
+                <div class="text-center mt-5">
+                    <a href="{{ route('project.index') }}" class="btn btn-ae btn-ae-pill btn-ae-outline-primary px-4 py-2">
+                        Vedi tutti i progetti disponibili <i class="bi bi-arrow-right ms-2" aria-hidden="true"></i>
+                    </a>
+                </div>
+
+            </div>
+        </section>
+    @endif
 
     @if ($isAdminContext)
         <div class="modal fade" id="deleteProjectModal" tabindex="-1" aria-hidden="true">
