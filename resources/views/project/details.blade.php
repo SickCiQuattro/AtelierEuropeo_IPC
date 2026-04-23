@@ -178,9 +178,7 @@
                                 <div class="mt-4 d-flex flex-wrap gap-2">
                                     @guest
                                         @if ($isCompleted)
-                                            <a href="#testimonianze" class="btn btn-ae btn-ae-outline-secondary rounded-pill px-4 py-2">
-                                                <i class="bi bi-archive-fill me-2"></i>Progetto Completato
-                                            </a>
+
                                         @else
                                             <a href="{{ $loginRedirectUrl }}" class="btn btn-ae btn-ae-primary rounded-pill px-4 py-2">
                                                 <i class="bi bi-box-arrow-in-right me-2"></i>Accedi per candidarti
@@ -190,9 +188,7 @@
 
                                     @auth
                                         @if ($isCompleted)
-                                            <a href="#testimonianze" class="btn btn-ae btn-ae-outline-secondary rounded-pill px-4 py-2">
-                                                <i class="bi bi-archive-fill me-2"></i>Progetto Completato
-                                            </a>
+
                                         @elseif ($alreadyApplied)
                                             <a href="{{ route('applications.index') }}"
                                                 class="btn btn-ae btn-ae-outline-primary rounded-pill px-4 py-2">
