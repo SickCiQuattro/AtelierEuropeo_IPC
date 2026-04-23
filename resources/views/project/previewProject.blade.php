@@ -29,6 +29,9 @@
 
         $previewCardProject = clone $previewProject;
         $previewCardProject->status = 'published';
+        $fullDescriptionHtml = \App\Helpers\RichTextHelper::sanitize($previewProject->full_description);
+        $requirementsHtml = \App\Helpers\RichTextHelper::sanitize($previewProject->requirements);
+        $travelConditionsHtml = \App\Helpers\RichTextHelper::sanitize($previewProject->travel_conditions);
     @endphp
 
     <style>
@@ -54,10 +57,34 @@
         .project-preview-card-shell .btn-favorite {
             pointer-events: none;
         }
+
+        .rich-text-content p,
+        .rich-text-content ul {
+            margin-bottom: 0.85rem;
+        }
+
+        .rich-text-content p:last-child,
+        .rich-text-content ul:last-child {
+            margin-bottom: 0;
+        }
+
+        .rich-text-content ul {
+            padding-left: 1.25rem;
+        }
+
+        .rich-text-content li {
+            margin-bottom: 0.35rem;
+        }
+
+        .rich-text-content a {
+            color: var(--bs-primary);
+            text-decoration: underline;
+        }
     </style>
 
     <div class="project-preview-banner bg-warning border-bottom border-warning-subtle shadow-sm">
-        <div class="container-fluid px-3 px-md-4 py-3 d-flex flex-column flex-lg-row align-items-lg-center justify-content-between gap-2">
+        <div
+            class="container-fluid px-3 px-md-4 py-3 d-flex flex-column flex-lg-row align-items-lg-center justify-content-between gap-2">
             <p class="mb-0 fw-semibold text-dark">
                 Modalità Anteprima: stai visualizzando una simulazione. I dati non sono ancora salvati o pubblicati.
             </p>
@@ -94,15 +121,19 @@
                             </span>
 
                             <span class="d-inline-block position-relative z-3" tabindex="0" data-bs-toggle="tooltip"
-                                data-bs-placement="top" title="Info sul programma {{ $previewProject->category->name ?? 'Programma' }}">
+                                data-bs-placement="top"
+                                title="Info sul programma {{ $previewProject->category->name ?? 'Programma' }}">
                                 <button type="button" class="{{ $categoryBadgeClass }} border-0 shadow-sm px-3 py-1 mt-1"
-                                    data-bs-toggle="modal" data-bs-target="#infoModal-{{ $tag }}" style="font-size: 0.9rem;">
+                                    data-bs-toggle="modal" data-bs-target="#infoModal-{{ $tag }}"
+                                    style="font-size: 0.9rem;">
                                     {{ $tag }} <i class="bi bi-info-circle ms-1"></i>
                                 </button>
                             </span>
                         </div>
 
-                        <h1 class="display-5 fw-bold mb-3 text-primary" style="line-height: 1.1;">{{ $previewProject->title }}</h1>
+                        <h1 class="display-5 fw-bold mb-3 text-primary" style="line-height: 1.1;">
+                            {{ $previewProject->title }}
+                        </h1>
 
                         <p class="lead text-secondary mb-0"
                             style="display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden;">
@@ -120,28 +151,33 @@
             <section class="mb-5">
                 <div class="row g-3 g-md-4">
                     <div class="col-6 col-md-3">
-                        <div class="bg-white border p-4 text-center h-100 shadow-sm transition-hover" style="border-radius: 1.25rem;">
+                        <div class="bg-white border p-4 text-center h-100 shadow-sm transition-hover"
+                            style="border-radius: 1.25rem;">
                             <i class="bi bi-person-badge-fill fs-2 mb-2 d-block text-primary"></i>
-                            <span class="d-block fw-bold fs-5">{{ $previewProject->requested_people !== null ? $previewProject->requested_people : 'Da definire' }}</span>
+                            <span
+                                class="d-block fw-bold fs-5">{{ $previewProject->requested_people !== null ? $previewProject->requested_people : 'Da definire' }}</span>
                             <span class="small text-secondary fw-semibold">Richiesti</span>
                         </div>
                     </div>
                     <div class="col-6 col-md-3">
-                        <div class="bg-white border p-4 text-center h-100 shadow-sm transition-hover" style="border-radius: 1.25rem;">
+                        <div class="bg-white border p-4 text-center h-100 shadow-sm transition-hover"
+                            style="border-radius: 1.25rem;">
                             <i class="bi bi-geo-alt-fill fs-2 mb-2 d-block text-primary"></i>
                             <span class="d-block fw-bold fs-6">{{ $previewProject->location }}</span>
                             <span class="small text-secondary fw-semibold">Luogo</span>
                         </div>
                     </div>
                     <div class="col-6 col-md-3">
-                        <div class="bg-white border p-4 text-center h-100 shadow-sm transition-hover" style="border-radius: 1.25rem;">
+                        <div class="bg-white border p-4 text-center h-100 shadow-sm transition-hover"
+                            style="border-radius: 1.25rem;">
                             <i class="bi bi-calendar2-week-fill fs-2 mb-2 d-block text-primary"></i>
                             <span class="d-block fw-bold fs-6">{{ $formatHumanDate($previewProject->start_date) }}</span>
                             <span class="small text-secondary fw-semibold">Inizio Previsto</span>
                         </div>
                     </div>
                     <div class="col-6 col-md-3">
-                        <div class="bg-white border p-4 text-center h-100 shadow-sm transition-hover" style="border-radius: 1.25rem;">
+                        <div class="bg-white border p-4 text-center h-100 shadow-sm transition-hover"
+                            style="border-radius: 1.25rem;">
                             <i class="bi bi-calendar-check-fill fs-2 mb-2 d-block text-primary"></i>
                             <span class="d-block fw-bold fs-6">{{ $formatHumanDate($previewProject->expire_date) }}</span>
                             <span class="small text-secondary fw-semibold">Scadenza Iscrizioni</span>
@@ -153,26 +189,42 @@
             <div class="row g-4 mb-5">
                 <div class="col-lg-8">
                     <section class="mb-5">
-                        <h3 class="h4 fw-bold mb-4 text-primary"><i class="bi bi-journal-text me-2"></i>Il viaggio in pillole</h3>
-                        <p class="text-secondary fs-6 mb-0" style="white-space: pre-line; line-height: 1.85;">{{ $previewProject->full_description }}</p>
+                        <h3 class="h4 fw-bold mb-4 text-primary"><i class="bi bi-journal-text me-2"></i>Il viaggio in
+                            pillole</h3>
+                        <div class="text-secondary fs-6 mb-0 rich-text-content" style="line-height: 1.85;">
+                            {!! $fullDescriptionHtml !!}
+                        </div>
                     </section>
 
                     <section>
-                        <h3 class="h4 fw-bold mb-4 text-primary"><i class="bi bi-list-check me-2"></i>Requisiti di partecipazione</h3>
-                        <p class="text-secondary fs-6 mb-0" style="white-space: pre-line; line-height: 1.85;">{{ $previewProject->requirements }}</p>
+                        <h3 class="h4 fw-bold mb-4 text-primary"><i class="bi bi-list-check me-2"></i>Requisiti di
+                            partecipazione</h3>
+                        <div class="text-secondary fs-6 mb-0 rich-text-content" style="line-height: 1.85;">
+                            {!! $requirementsHtml !!}
+                        </div>
                     </section>
                 </div>
 
                 <div class="col-lg-4">
                     <div class="bg-white border p-4 shadow-sm mb-4" style="border-radius: 1.25rem;">
-                        <h3 class="h6 fw-bold mb-3 text-muted text-uppercase"><i class="bi bi-wallet2 me-2"></i>Condizioni Economiche</h3>
-                        <p class="text-secondary small mb-0" style="white-space: pre-line; line-height: 1.6;">{{ $previewProject->travel_conditions }}</p>
+                        <h3 class="h6 fw-bold mb-3 text-muted text-uppercase"><i class="bi bi-wallet2 me-2"></i>Condizioni
+                            Economiche
+                        </h3>
+                        <div class="text-secondary small mb-0 rich-text-content" style="line-height: 1.6;">
+                            {!! $travelConditionsHtml !!}
+                        </div>
                     </div>
 
                     <div class="bg-light border p-4 shadow-sm" style="border-radius: 1.25rem;">
-                        <h3 class="h6 fw-bold mb-3 text-muted text-uppercase"><i class="bi bi-building me-2"></i>L'Associazione</h3>
-                        <h4 class="h5 fw-bold mb-2 text-primary">{{ $previewProject->association->name ?? 'Associazione da definire' }}</h4>
-                        <p class="text-secondary small mb-0" style="line-height: 1.6;">{{ $previewProject->association->description ?? 'Descrizione non disponibile in anteprima.' }}</p>
+                        <h3 class="h6 fw-bold mb-3 text-muted text-uppercase">
+                            <i class="bi bi-building me-2"></i>L'Associazione
+                        </h3>
+                        <h4 class="h5 fw-bold mb-2 text-primary">
+                            {{ $previewProject->association->name ?? 'Associazione da definire' }}
+                        </h4>
+                        <p class="text-secondary small mb-0" style="line-height: 1.6;">
+                            {{ $previewProject->association->description ?? 'Descrizione non disponibile in anteprima.' }}
+                        </p>
                     </div>
                 </div>
             </div>

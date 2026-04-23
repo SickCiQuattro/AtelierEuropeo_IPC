@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\RichTextHelper;
 use App\Models\DataLayer;
 use App\Http\Requests\ProjectRequest;
 use App\Models\Category;
@@ -192,9 +193,15 @@ class ProjectController extends Controller
         $previewProject->location = trim((string) $request->input('location', 'Da definire')) ?: 'Da definire';
         $previewProject->requested_people = $requestedPeople;
         $previewProject->sum_description = trim((string) $request->input('sum_description', 'Descrizione breve non disponibile.')) ?: 'Descrizione breve non disponibile.';
-        $previewProject->full_description = trim((string) $request->input('full_description', 'Descrizione completa non disponibile.')) ?: 'Descrizione completa non disponibile.';
-        $previewProject->requirements = trim((string) $request->input('requirements', 'Requisiti non disponibili.')) ?: 'Requisiti non disponibili.';
-        $previewProject->travel_conditions = trim((string) $request->input('travel_conditions', 'Condizioni economiche non disponibili.')) ?: 'Condizioni economiche non disponibili.';
+        $previewProject->full_description = RichTextHelper::sanitize(
+            trim((string) $request->input('full_description', 'Descrizione completa non disponibile.')) ?: 'Descrizione completa non disponibile.'
+        );
+        $previewProject->requirements = RichTextHelper::sanitize(
+            trim((string) $request->input('requirements', 'Requisiti non disponibili.')) ?: 'Requisiti non disponibili.'
+        );
+        $previewProject->travel_conditions = RichTextHelper::sanitize(
+            trim((string) $request->input('travel_conditions', 'Condizioni economiche non disponibili.')) ?: 'Condizioni economiche non disponibili.'
+        );
         $previewProject->start_date = $startDate;
         $previewProject->end_date = $endDate;
         $previewProject->expire_date = $expireDate;
@@ -270,6 +277,8 @@ class ProjectController extends Controller
         if ($isDraftMode) {
             $data = $this->applyDraftDefaults($data);
         }
+
+        $data = $this->sanitizeRichTextFields($data);
 
         if (empty($data['category_id']) || empty($data['association_id'])) {
             return redirect()->back()->withInput()->with('error', 'Impossibile salvare la bozza: serve almeno una categoria e un\'associazione configurate.');
@@ -374,6 +383,8 @@ class ProjectController extends Controller
                 $data = $this->applyDraftDefaults($data, $project);
             }
 
+            $data = $this->sanitizeRichTextFields($data);
+
             $requestedStatus = strtolower((string) ($data['status'] ?? $project->status));
             if ($requestedStatus !== strtolower((string) $project->status)) {
                 $nextStatus = Project::nextStatusTransition($project->status);
@@ -443,6 +454,26 @@ class ProjectController extends Controller
         } else {
             return redirect()->route('admin.projects.index')->with('error', 'Progetto non trovato. Impossibile aggiornare.');
         }
+    }
+
+    /**
+     * Sanifica i campi rich text consentendo solo markup sicuro.
+     */
+    private function sanitizeRichTextFields(array $data): array
+    {
+        if (array_key_exists('full_description', $data)) {
+            $data['full_description'] = RichTextHelper::sanitize((string) $data['full_description']);
+        }
+
+        if (array_key_exists('requirements', $data)) {
+            $data['requirements'] = RichTextHelper::sanitize((string) $data['requirements']);
+        }
+
+        if (array_key_exists('travel_conditions', $data)) {
+            $data['travel_conditions'] = RichTextHelper::sanitize((string) $data['travel_conditions']);
+        }
+
+        return $data;
     }
 
     /**

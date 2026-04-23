@@ -80,7 +80,36 @@
                 $durationText = $durationDays . ' ' . ($durationDays === 1 ? 'Giorno' : 'Giorni');
             }
         }
+
+        $fullDescriptionHtml = \App\Helpers\RichTextHelper::sanitize($project->full_description);
+        $requirementsHtml = \App\Helpers\RichTextHelper::sanitize($project->requirements);
+        $travelConditionsHtml = \App\Helpers\RichTextHelper::sanitize($project->travel_conditions);
     @endphp
+
+    <style>
+        .rich-text-content p,
+        .rich-text-content ul {
+            margin-bottom: 0.85rem;
+        }
+
+        .rich-text-content p:last-child,
+        .rich-text-content ul:last-child {
+            margin-bottom: 0;
+        }
+
+        .rich-text-content ul {
+            padding-left: 1.25rem;
+        }
+
+        .rich-text-content li {
+            margin-bottom: 0.35rem;
+        }
+
+        .rich-text-content a {
+            color: var(--bs-primary);
+            text-decoration: underline;
+        }
+    </style>
 
     <div class="container-fluid px-3 px-md-4 py-4">
         <div class="row justify-content-center">
@@ -250,17 +279,17 @@
                         <section class="mb-5">
                             <h3 class="h4 fw-bold mb-4 text-primary"><i class="bi bi-journal-text me-2"></i>Il viaggio in
                                 pillole</h3>
-                            <p class="text-secondary fs-6 mb-0" style="white-space: pre-line; line-height: 1.85;">
-                                {{ $project->full_description }}
-                            </p>
+                            <div class="text-secondary fs-6 mb-0 rich-text-content" style="line-height: 1.85;">
+                                {!! $fullDescriptionHtml !!}
+                            </div>
                         </section>
 
                         <section>
                             <h3 class="h4 fw-bold mb-4 text-primary"><i class="bi bi-list-check me-2"></i>Requisiti di
                                 partecipazione</h3>
-                            <p class="text-secondary fs-6 mb-0" style="white-space: pre-line; line-height: 1.85;">
-                                {{ $project->requirements }}
-                            </p>
+                            <div class="text-secondary fs-6 mb-0 rich-text-content" style="line-height: 1.85;">
+                                {!! $requirementsHtml !!}
+                            </div>
                         </section>
                     </div>
 
@@ -268,9 +297,9 @@
                         <div class="bg-white border p-4 shadow-sm mb-4" style="border-radius: 1.25rem;">
                             <h3 class="h6 fw-bold mb-3 text-muted text-uppercase"><i
                                     class="bi bi-wallet2 me-2"></i>Condizioni Economiche</h3>
-                            <p class="text-secondary small mb-0" style="white-space: pre-line; line-height: 1.6;">
-                                {{ $project->travel_conditions }}
-                            </p>
+                            <div class="text-secondary small mb-0 rich-text-content" style="line-height: 1.6;">
+                                {!! $travelConditionsHtml !!}
+                            </div>
                         </div>
 
                         {{-- CTA Candidatura --}}

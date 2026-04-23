@@ -39,7 +39,7 @@ class ProjectRequest extends FormRequest
             $draftTitleRules = [
                 'nullable',
                 'string',
-                'max:255',
+                'max:80',
             ];
 
             if ($incomingTitle !== '' && $isTitleChanged) {
@@ -53,7 +53,7 @@ class ProjectRequest extends FormRequest
                 'user_id' => 'required|exists:users,id',
                 'requested_people' => 'nullable|integer|min:0|max:999',
                 'location' => 'nullable|string|max:255',
-                'sum_description' => 'nullable|string|max:500',
+                'sum_description' => 'nullable|string|max:150',
                 'full_description' => 'nullable|string',
                 'requirements' => 'nullable|string',
                 'travel_conditions' => 'nullable|string',
@@ -73,7 +73,7 @@ class ProjectRequest extends FormRequest
             'required',
             'string',
             'min:5',
-            'max:255',
+            'max:80',
         ];
 
         if ($isTitleChanged) {
@@ -87,7 +87,7 @@ class ProjectRequest extends FormRequest
             'user_id' => 'required|exists:users,id',
             'requested_people' => 'required|integer|min:1|max:999',
             'location' => 'required|string|min:2|max:255',
-            'sum_description' => 'required|string|min:20|max:500',
+            'sum_description' => 'required|string|min:20|max:150',
             'full_description' => 'required|string|min:50',
             'requirements' => 'required|string|min:10',
             'travel_conditions' => 'required|string|min:10',
@@ -129,7 +129,7 @@ class ProjectRequest extends FormRequest
         return [
             'title.required' => 'Il titolo è obbligatorio.',
             'title.min' => 'Il titolo deve essere di almeno 5 caratteri.',
-            'title.max' => 'Il titolo non può superare i 255 caratteri.',
+            'title.max' => 'Il titolo non può superare gli 80 caratteri.',
             'title.unique' => 'Esiste già un progetto con questo titolo. Scegli un titolo diverso.',
             
             'category_id.required' => 'La categoria è obbligatoria.',
@@ -173,7 +173,7 @@ class ProjectRequest extends FormRequest
             
             'sum_description.required' => 'La descrizione riassuntiva è obbligatoria.',
             'sum_description.min' => 'La descrizione riassuntiva deve essere di almeno 20 caratteri.',
-            'sum_description.max' => 'La descrizione riassuntiva non può superare i 500 caratteri.',
+            'sum_description.max' => 'La descrizione riassuntiva non può superare i 150 caratteri.',
             
             'full_description.required' => 'La descrizione completa è obbligatoria.',
             'full_description.min' => 'La descrizione completa deve essere di almeno 50 caratteri.',

@@ -27,7 +27,7 @@
 
         $openCompletionModal = request()->boolean('openCompletionModal');
         $defaultBackUrl = route('admin.projects.index');
-        
+
         $currentUrl = url()->current();
         $previousUrl = url()->previous();
         $previousPath = parse_url($previousUrl, PHP_URL_PATH) ?? '';
@@ -38,6 +38,9 @@
             || $isShowcaseOrLegacyProjects;
 
         $backUrl = $isUnsafeBackTarget ? $defaultBackUrl : $previousUrl;
+        $initialFullDescriptionHtml = \App\Helpers\RichTextHelper::sanitize(old('full_description', $project->full_description ?? ''));
+        $initialRequirementsHtml = \App\Helpers\RichTextHelper::sanitize(old('requirements', $project->requirements ?? ''));
+        $initialTravelConditionsHtml = \App\Helpers\RichTextHelper::sanitize(old('travel_conditions', $project->travel_conditions ?? ''));
     @endphp
 
     <style>
@@ -75,6 +78,87 @@
             min-width: max-content;
         }
 
+        .file-select-trigger {
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .file-select-display {
+            cursor: pointer;
+        }
+
+        .rich-text-editor {
+            border: 1px solid transparent;
+            border-radius: 0.75rem;
+            background-color: var(--bs-light);
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .rich-text-editor:focus-within {
+            border-color: rgba(var(--bs-primary-rgb), 0.45);
+            box-shadow: 0 0 0 0.2rem rgba(var(--bs-primary-rgb), 0.12);
+        }
+
+        .rich-text-toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.4rem;
+            padding: 0.75rem 0.75rem 0;
+        }
+
+        .rich-text-toolbar .btn {
+            width: 2.1rem;
+            height: 2.1rem;
+            border-radius: 0.6rem;
+            border: 1px solid rgba(var(--bs-secondary-rgb), 0.2);
+            color: var(--bs-secondary-color);
+            background-color: var(--bs-white);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+        }
+
+        .rich-text-toolbar .btn:hover,
+        .rich-text-toolbar .btn:focus {
+            border-color: rgba(var(--bs-primary-rgb), 0.35);
+            color: var(--bs-primary);
+            background-color: rgba(var(--bs-primary-rgb), 0.07);
+        }
+
+        .rich-text-surface {
+            min-height: 180px;
+            max-height: 360px;
+            overflow-y: auto;
+            padding: 0.85rem 0.95rem;
+            border: 0;
+            border-radius: 0.75rem;
+            outline: none;
+            background: transparent;
+            line-height: 1.75;
+            white-space: pre-wrap;
+        }
+
+        .rich-text-surface p,
+        .rich-text-surface ul {
+            margin-bottom: 0.7rem;
+        }
+
+        .rich-text-surface ul {
+            padding-left: 1.25rem;
+        }
+
+        .rich-text-surface p:last-child,
+        .rich-text-surface ul:last-child {
+            margin-bottom: 0;
+        }
+
+        #project-form .rich-text-editor.ae-invalid-wrapper {
+            border: 2px solid var(--bs-danger) !important;
+            background-color: #fff5f5 !important;
+            box-shadow: none !important;
+        }
+
         @media (min-width: 1200px) {
             .project-form-actions {
                 overflow-x: visible;
@@ -85,9 +169,10 @@
     <div class="container-fluid px-3 px-md-4 py-4">
         <div class="row justify-content-center">
             <div class="col-12 col-lg-10 col-xl-8">
-                
+
                 <div class="d-md-none mb-3">
-                    <button type="button" class="btn btn-ae btn-ae-light border shadow-sm rounded-pill px-3 py-2 text-secondary fw-semibold transition-hover js-cancel-process"
+                    <button type="button"
+                        class="btn btn-ae btn-ae-light border shadow-sm rounded-pill px-3 py-2 text-secondary fw-semibold transition-hover js-cancel-process"
                         data-cancel-url="{{ $backUrl }}">
                         <i class="bi bi-arrow-left me-2"></i>Indietro
                     </button>
@@ -96,7 +181,9 @@
                 <div class="d-none d-md-block">
                     <x-breadcrumb>
                         <li class="breadcrumb-item"><a href="{{ route('admin.projects.index') }}">Progetti</a></li>
-                        <li class="breadcrumb-item active" aria-current="page">{{ $isEditMode ? 'Modifica Progetto' : 'Nuovo Progetto' }}</li>
+                        <li class="breadcrumb-item active" aria-current="page">
+                            {{ $isEditMode ? 'Modifica Progetto' : 'Nuovo Progetto' }}
+                        </li>
                     </x-breadcrumb>
                 </div>
 
@@ -110,35 +197,47 @@
                     </div>
                 </div>
 
-                <div class="card border-0 shadow-sm mb-5" style="border-radius: 1.25rem; background-color: var(--project-card-bg);">
+                <div class="card border-0 shadow-sm mb-5"
+                    style="border-radius: 1.25rem; background-color: var(--project-card-bg);">
                     <div class="card-body p-4 p-md-5">
-                        
-                        <form id="project-form" class="needs-validation" method="post" enctype="multipart/form-data" novalidate
-                              action="{{ $isEditMode ? route('project.update', ['id' => $project->id]) : route('project.store') }}">
+
+                        <form id="project-form" class="needs-validation" method="post" enctype="multipart/form-data"
+                            novalidate
+                            action="{{ $isEditMode ? route('project.update', ['id' => $project->id]) : route('project.store') }}">
                             @if ($isEditMode) @method('PUT') @endif
                             @csrf
                             <input type="hidden" name="form_submit_mode" id="form_submit_mode" value="publish">
                             <input type="hidden" name="completion_confirmed" id="completion_confirmed" value="0">
-                            <input type="hidden" name="user_id" value="{{ $isEditMode ? $project->user_id : auth()->id() }}" />
-                            <input type="hidden" name="preview_existing_image_url" value="{{ $isEditMode ? $project->image_url : asset('img/projects/default.png') }}" />
+                            <input type="hidden" name="user_id"
+                                value="{{ $isEditMode ? $project->user_id : auth()->id() }}" />
+                            <input type="hidden" name="preview_existing_image_url"
+                                value="{{ $isEditMode ? $project->image_url : asset('img/projects/default.png') }}" />
 
                             <div id="project-validation-summary"
                                 class="alert alert-danger d-flex align-items-start gap-2 mb-4 {{ $errors->any() ? '' : 'd-none' }}"
                                 role="alert" aria-live="assertive" aria-hidden="{{ $errors->any() ? 'false' : 'true' }}">
                                 <i class="bi bi-exclamation-triangle-fill mt-1"></i>
-                                <div>Attenzione: alcuni campi obbligatori non sono stati compilati. Controlla i campi evidenziati in rosso.</div>
+                                <div>Attenzione: alcuni campi obbligatori non sono stati compilati. Controlla i campi
+                                    evidenziati in rosso.</div>
                             </div>
 
                             <div class="mb-5">
-                                <h5 class="fw-bold text-primary mb-4 pb-2 border-bottom"><i class="bi bi-info-circle-fill me-2"></i>Informazioni Base</h5>
+                                <h5 class="fw-bold text-primary mb-4 pb-2 border-bottom"><i
+                                        class="bi bi-info-circle-fill me-2"></i>Informazioni Base</h5>
                                 <div class="row g-4">
                                     <div class="col-12">
-                                        <label class="form-label fw-semibold">Titolo del Progetto <span class="text-danger">*</span></label>
-                                        <input class="form-control bg-light border-0 py-2" style="border-radius: 0.75rem;" type="text" name="title" value="{{ old('title', $project->title ?? '') }}" required />
+                                        <label class="form-label fw-semibold">Titolo del Progetto <span
+                                                class="text-danger">*</span></label>
+                                        <input class="form-control bg-light border-0 py-2" style="border-radius: 0.75rem;"
+                                            type="text" name="title" value="{{ old('title', $project->title ?? '') }}"
+                                            maxlength="30" required />
+                                        <small class="text-muted">Massimo 30 caratteri.</small>
                                     </div>
                                     <div class="col-md-6">
-                                        <label class="form-label fw-semibold">Categoria <span class="text-danger">*</span></label>
-                                        <select class="form-select bg-light border-0 py-2" style="border-radius: 0.75rem;" name="category_id" required>
+                                        <label class="form-label fw-semibold">Categoria <span
+                                                class="text-danger">*</span></label>
+                                        <select class="form-select bg-light border-0 py-2" style="border-radius: 0.75rem;"
+                                            name="category_id" required>
                                             <option value="">Seleziona categoria...</option>
                                             @foreach ($categories as $category)
                                                 <option value="{{ $category->id }}" @if(old('category_id', $project->category_id ?? '') == $category->id) selected @endif>{{ $category->tag }}</option>
@@ -146,82 +245,215 @@
                                         </select>
                                     </div>
                                     <div class="col-md-6">
-                                        <label class="form-label fw-semibold">Associazione <span class="text-danger">*</span></label>
-                                        <select class="form-select bg-light border-0 py-2" style="border-radius: 0.75rem;" name="association_id" required>
+                                        <label class="form-label fw-semibold">Associazione <span
+                                                class="text-danger">*</span></label>
+                                        <select class="form-select bg-light border-0 py-2" style="border-radius: 0.75rem;"
+                                            name="association_id" required>
                                             <option value="">Seleziona associazione...</option>
                                             @foreach ($associations as $association)
-                                                <option value="{{ $association->id }}" @if(old('association_id', $project->association_id ?? '') == $association->id) selected @endif>{{ $association->name }}</option>
+                                                <option value="{{ $association->id }}" @if(old('association_id', $project->association_id ?? '') == $association->id) selected @endif>
+                                                    {{ $association->name }}
+                                                </option>
                                             @endforeach
                                         </select>
                                     </div>
                                     <div class="col-12">
-                                        <label class="form-label fw-semibold">Immagine Copertina 
+                                        <label class="form-label fw-semibold">Immagine Copertina
                                             @if(!$isEditMode)<span class="text-danger">*</span>@endif
                                         </label>
-                                        <input class="form-control bg-light border-0 py-2" style="border-radius: 0.75rem;" type="file" name="image_path" accept="image/*" @if(!$isEditMode) required @endif />
+                                        <div class="input-group">
+                                            <span class="input-group-text bg-light border-0"
+                                                style="border-top-left-radius: 0.75rem; border-bottom-left-radius: 0.75rem;">
+                                                <label for="image_path" class="mb-0 file-select-trigger">Scegli file</label>
+                                            </span>
+                                            <input class="form-control bg-light border-0 py-2 d-none"
+                                                style="border-radius: 0;" type="file" id="image_path" name="image_path"
+                                                accept="image/*" @if(!$isEditMode) required @endif />
+                                            <input type="text" id="image_path_display"
+                                                class="form-control bg-light border-0 py-2 file-select-display"
+                                                style="border-top-right-radius: 0.75rem; border-bottom-right-radius: 0.75rem;"
+                                                value="Nessun file selezionato" readonly aria-label="File selezionato">
+                                        </div>
                                     </div>
                                 </div>
                             </div>
 
                             <div class="mb-5">
-                                <h5 class="fw-bold text-primary mb-4 pb-2 border-bottom"><i class="bi bi-calendar2-week-fill me-2"></i>Date e Organizzazione</h5>
+                                <h5 class="fw-bold text-primary mb-4 pb-2 border-bottom"><i
+                                        class="bi bi-calendar2-week-fill me-2"></i>Date e Organizzazione</h5>
                                 <div class="row g-4">
                                     <div class="col-md-6">
-                                        <label class="form-label fw-semibold">Luogo <span class="text-danger">*</span></label>
+                                        <label class="form-label fw-semibold">Luogo <span
+                                                class="text-danger">*</span></label>
                                         <div class="input-group">
-                                            <span class="input-group-text bg-light border-0 text-warning" style="border-top-left-radius: 0.75rem; border-bottom-left-radius: 0.75rem;"><i class="bi bi-geo-alt-fill"></i></span>
-                                            <input class="form-control bg-light border-0 py-2" style="border-top-right-radius: 0.75rem; border-bottom-right-radius: 0.75rem;" type="text" name="location" value="{{ old('location', $project->location ?? '') }}" required />
+                                            <span class="input-group-text bg-light border-0 text-warning"
+                                                style="border-top-left-radius: 0.75rem; border-bottom-left-radius: 0.75rem;"><i
+                                                    class="bi bi-geo-alt-fill"></i></span>
+                                            <input class="form-control bg-light border-0 py-2"
+                                                style="border-top-right-radius: 0.75rem; border-bottom-right-radius: 0.75rem;"
+                                                type="text" name="location"
+                                                value="{{ old('location', $project->location ?? '') }}" required />
                                         </div>
                                     </div>
                                     <div class="col-md-6">
-                                        <label class="form-label fw-semibold">Posti Disponibili <span class="text-danger">*</span></label>
+                                        <label class="form-label fw-semibold">Posti Disponibili <span
+                                                class="text-danger">*</span></label>
                                         <div class="input-group">
-                                            <span class="input-group-text bg-light border-0 text-primary" style="border-top-left-radius: 0.75rem; border-bottom-left-radius: 0.75rem;"><i class="bi bi-people-fill"></i></span>
-                                            <input class="form-control bg-light border-0 py-2" style="border-top-right-radius: 0.75rem; border-bottom-right-radius: 0.75rem;" type="number" name="requested_people" value="{{ old('requested_people', $project->requested_people ?? '') }}" required />
+                                            <span class="input-group-text bg-light border-0 text-primary"
+                                                style="border-top-left-radius: 0.75rem; border-bottom-left-radius: 0.75rem;"><i
+                                                    class="bi bi-people-fill"></i></span>
+                                            <input class="form-control bg-light border-0 py-2"
+                                                style="border-top-right-radius: 0.75rem; border-bottom-right-radius: 0.75rem;"
+                                                type="number" name="requested_people"
+                                                value="{{ old('requested_people', $project->requested_people ?? '') }}"
+                                                required />
                                         </div>
                                     </div>
                                     <div class="col-md-4">
-                                        <label class="form-label fw-semibold">Data Inizio <span class="text-danger">*</span></label>
-                                        <input class="form-control bg-light border-0 py-2" style="border-radius: 0.75rem;" type="date" name="start_date" value="{{ old('start_date', ($isEditMode && $project->start_date) ? $project->start_date->format('Y-m-d') : '') }}" required />
+                                        <label class="form-label fw-semibold">Data Inizio <span
+                                                class="text-danger">*</span></label>
+                                        <input class="form-control bg-light border-0 py-2" style="border-radius: 0.75rem;"
+                                            type="date" name="start_date"
+                                            value="{{ old('start_date', ($isEditMode && $project->start_date) ? $project->start_date->format('Y-m-d') : '') }}"
+                                            required />
                                     </div>
                                     <div class="col-md-4">
-                                        <label class="form-label fw-semibold">Data Fine <span class="text-danger">*</span></label>
-                                        <input class="form-control bg-light border-0 py-2" style="border-radius: 0.75rem;" type="date" name="end_date" value="{{ old('end_date', ($isEditMode && $project->end_date) ? $project->end_date->format('Y-m-d') : '') }}" required />
+                                        <label class="form-label fw-semibold">Data Fine <span
+                                                class="text-danger">*</span></label>
+                                        <input class="form-control bg-light border-0 py-2" style="border-radius: 0.75rem;"
+                                            type="date" name="end_date"
+                                            value="{{ old('end_date', ($isEditMode && $project->end_date) ? $project->end_date->format('Y-m-d') : '') }}"
+                                            required />
                                     </div>
                                     <div class="col-md-4">
-                                        <label class="form-label fw-semibold">Scadenza Iscrizioni <span class="text-danger">*</span></label>
-                                        <input class="form-control bg-light border-0 py-2" style="border-radius: 0.75rem;" type="date" name="expire_date" value="{{ old('expire_date', ($isEditMode && $project->expire_date) ? $project->expire_date->format('Y-m-d') : '') }}" required />
+                                        <label class="form-label fw-semibold">Scadenza Iscrizioni <span
+                                                class="text-danger">*</span></label>
+                                        <input class="form-control bg-light border-0 py-2" style="border-radius: 0.75rem;"
+                                            type="date" name="expire_date"
+                                            value="{{ old('expire_date', ($isEditMode && $project->expire_date) ? $project->expire_date->format('Y-m-d') : '') }}"
+                                            required />
                                     </div>
                                 </div>
                             </div>
 
                             <div class="mb-5">
-                                <h5 class="fw-bold text-primary mb-4 pb-2 border-bottom"><i class="bi bi-file-earmark-text-fill me-2"></i>Contenuti Testuali</h5>
+                                <h5 class="fw-bold text-primary mb-4 pb-2 border-bottom"><i
+                                        class="bi bi-file-earmark-text-fill me-2"></i>Contenuti Testuali</h5>
                                 <div class="row g-4">
                                     <div class="col-12">
-                                        <label class="form-label fw-semibold">Descrizione Breve (Per le Card) <span class="text-danger">*</span></label>
-                                        <textarea class="form-control bg-light border-0" style="border-radius: 0.75rem;" name="sum_description" rows="2" required>{{ old('sum_description', $project->sum_description ?? '') }}</textarea>
+                                        <label class="form-label fw-semibold">Descrizione Breve (Per le Card) <span
+                                                class="text-danger">*</span></label>
+                                        <textarea class="form-control bg-light border-0" style="border-radius: 0.75rem;"
+                                            name="sum_description" rows="2" maxlength="100"
+                                            required>{{ old('sum_description', $project->sum_description ?? '') }}</textarea>
+                                        <div class="d-flex justify-content-between align-items-center mt-1">
+                                            <small class="text-muted">Testo sintetico per la card pubblica.</small>
+                                            <small id="sum-description-counter" class="text-muted">0 / 100</small>
+                                        </div>
                                     </div>
                                     <div class="col-12">
-                                        <label class="form-label fw-semibold">Il Viaggio in Pillole (Completa) <span class="text-danger">*</span></label>
-                                        <textarea class="form-control bg-light border-0" style="border-radius: 0.75rem;" name="full_description" rows="5" required>{{ old('full_description', $project->full_description ?? '') }}</textarea>
+                                        <label class="form-label fw-semibold">Il Viaggio in Pillole (Completa) <span
+                                                class="text-danger">*</span></label>
+                                        <div class="rich-text-editor" data-rich-editor-wrapper>
+                                            <div class="rich-text-toolbar" id="full-description-toolbar">
+                                                <button type="button" class="btn" data-rich-command="bold" title="Grassetto"
+                                                    aria-label="Grassetto">
+                                                    <i class="bi bi-type-bold"></i>
+                                                </button>
+                                                <button type="button" class="btn" data-rich-command="italic" title="Corsivo"
+                                                    aria-label="Corsivo">
+                                                    <i class="bi bi-type-italic"></i>
+                                                </button>
+                                                <button type="button" class="btn" data-rich-command="createLink"
+                                                    title="Inserisci Link" aria-label="Inserisci Link">
+                                                    <i class="bi bi-link-45deg"></i>
+                                                </button>
+                                                <button type="button" class="btn" data-rich-command="insertUnorderedList"
+                                                    title="Elenco Puntato" aria-label="Elenco Puntato">
+                                                    <i class="bi bi-list-ul"></i>
+                                                </button>
+                                            </div>
+
+                                            <div id="full-description-editor" class="rich-text-surface"
+                                                contenteditable="true" role="textbox" aria-multiline="true">
+                                                {!! $initialFullDescriptionHtml !!}
+                                            </div>
+                                        </div>
+                                        <textarea class="d-none" name="full_description" id="full_description" rows="5"
+                                            required>{{ old('full_description', $project->full_description ?? '') }}</textarea>
                                     </div>
                                     <div class="col-md-6">
-                                        <label class="form-label fw-semibold">Requisiti <span class="text-danger">*</span></label>
-                                        <textarea class="form-control bg-light border-0" style="border-radius: 0.75rem;" name="requirements" rows="4" required>{{ old('requirements', $project->requirements ?? '') }}</textarea>
+                                        <label class="form-label fw-semibold">Requisiti <span
+                                                class="text-danger">*</span></label>
+                                        <div class="rich-text-editor" data-rich-editor-wrapper>
+                                            <div class="rich-text-toolbar" id="requirements-toolbar">
+                                                <button type="button" class="btn" data-rich-command="bold" title="Grassetto"
+                                                    aria-label="Grassetto">
+                                                    <i class="bi bi-type-bold"></i>
+                                                </button>
+                                                <button type="button" class="btn" data-rich-command="italic" title="Corsivo"
+                                                    aria-label="Corsivo">
+                                                    <i class="bi bi-type-italic"></i>
+                                                </button>
+                                                <button type="button" class="btn" data-rich-command="insertUnorderedList"
+                                                    title="Elenco Puntato" aria-label="Elenco Puntato">
+                                                    <i class="bi bi-list-ul"></i>
+                                                </button>
+                                            </div>
+
+                                            <div id="requirements-editor" class="rich-text-surface" contenteditable="true"
+                                                role="textbox" aria-multiline="true">{!! $initialRequirementsHtml !!}</div>
+                                        </div>
+                                        <textarea class="form-control bg-light border-0 d-none"
+                                            style="border-radius: 0.75rem;" name="requirements" rows="4" id="requirements"
+                                            required>{{ old('requirements', $project->requirements ?? '') }}</textarea>
+                                        <small class="text-muted">Suggerimento: un requisito per riga migliora la
+                                            lettura.</small>
                                     </div>
                                     <div class="col-md-6">
-                                        <label class="form-label fw-semibold">Condizioni Economiche <span class="text-danger">*</span></label>
-                                        <textarea class="form-control bg-light border-0" style="border-radius: 0.75rem;" name="travel_conditions" rows="4" required>{{ old('travel_conditions', $project->travel_conditions ?? '') }}</textarea>
+                                        <label class="form-label fw-semibold">Condizioni Economiche <span
+                                                class="text-danger">*</span></label>
+                                        <div class="rich-text-editor" data-rich-editor-wrapper>
+                                            <div class="rich-text-toolbar" id="travel-conditions-toolbar">
+                                                <button type="button" class="btn" data-rich-command="bold" title="Grassetto"
+                                                    aria-label="Grassetto">
+                                                    <i class="bi bi-type-bold"></i>
+                                                </button>
+                                                <button type="button" class="btn" data-rich-command="italic" title="Corsivo"
+                                                    aria-label="Corsivo">
+                                                    <i class="bi bi-type-italic"></i>
+                                                </button>
+                                                <button type="button" class="btn" data-rich-command="insertUnorderedList"
+                                                    title="Elenco Puntato" aria-label="Elenco Puntato">
+                                                    <i class="bi bi-list-ul"></i>
+                                                </button>
+                                            </div>
+
+                                            <div id="travel-conditions-editor" class="rich-text-surface"
+                                                contenteditable="true" role="textbox" aria-multiline="true">
+                                                {!! $initialTravelConditionsHtml !!}
+                                            </div>
+                                        </div>
+                                        <textarea class="form-control bg-light border-0 d-none"
+                                            style="border-radius: 0.75rem;" name="travel_conditions" rows="4"
+                                            id="travel_conditions"
+                                            required>{{ old('travel_conditions', $project->travel_conditions ?? '') }}</textarea>
+                                        <small class="text-muted">Usa elenchi per separare incluso, escluso e
+                                            scadenze.</small>
                                     </div>
                                 </div>
                             </div>
 
-                            <div class="border-top pt-4 mt-5 d-flex flex-column flex-xl-row align-items-xl-center justify-content-between gap-4">
-                                
+                            <div
+                                class="border-top pt-4 mt-5 d-flex flex-column flex-xl-row align-items-xl-center justify-content-between gap-4">
+
                                 <div class="d-flex align-items-center gap-3">
-                                    <label class="form-label text-secondary fw-medium mb-0 text-nowrap">Stato del progetto:</label>
-                                    <select class="form-select bg-light border-0 fw-semibold text-primary py-2 px-3 shadow-none" style="border-radius: 0.75rem; width: auto; min-width: 180px; cursor: pointer;" name="status" id="status">
+                                    <label class="form-label text-secondary fw-medium mb-0 text-nowrap">Stato del
+                                        progetto:</label>
+                                    <select
+                                        class="form-select bg-light border-0 fw-semibold text-primary py-2 px-3 shadow-none"
+                                        style="border-radius: 0.75rem; width: auto; min-width: 180px; cursor: pointer;"
+                                        name="status" id="status">
                                         @foreach ($allowedStatuses as $statusOption)
                                             <option value="{{ $statusOption }}" @selected($selectedStatus === $statusOption)>
                                                 {{ $statusLabels[$statusOption] ?? ucfirst($statusOption) }}
@@ -229,27 +461,34 @@
                                         @endforeach
                                     </select>
                                 </div>
-                                
+
                                 <div class="project-form-actions d-flex justify-content-start justify-content-xl-end">
                                     <div class="project-form-actions-inner">
-                                    
-                                        <button type="button" class="btn btn-link text-secondary text-decoration-none fw-medium px-2 py-2 text-nowrap transition-hover js-cancel-process" data-cancel-url="{{ $backUrl }}">
+
+                                        <button type="button"
+                                            class="btn btn-link text-secondary text-decoration-none fw-medium px-2 py-2 text-nowrap transition-hover js-cancel-process"
+                                            data-cancel-url="{{ $backUrl }}">
                                             Annulla
                                         </button>
 
-                                        <button type="button" formnovalidate class="btn btn-ae btn-ae-outline-secondary rounded-pill px-4 py-2 text-nowrap fw-semibold" id="preview-project-btn">
+                                        <button type="button" formnovalidate
+                                            class="btn btn-ae btn-ae-outline-secondary rounded-pill px-4 py-2 text-nowrap fw-semibold"
+                                            id="preview-project-btn">
                                             <i class="bi bi-eye me-2"></i>Anteprima
                                         </button>
 
-                                        <button type="submit" class="btn btn-ae btn-ae-primary rounded-pill px-4 py-2 shadow-sm text-nowrap fw-bold" id="submit-btn">
-                                            <i class="bi bi-check-circle-fill me-2" id="submit-btn-icon"></i><span id="submit-btn-label">{{ $isEditMode ? 'Aggiorna Progetto' : 'Pubblica Progetto' }}</span>
+                                        <button type="submit"
+                                            class="btn btn-ae btn-ae-primary rounded-pill px-4 py-2 shadow-sm text-nowrap fw-bold"
+                                            id="submit-btn">
+                                            <i class="bi bi-check-circle-fill me-2" id="submit-btn-icon"></i><span
+                                                id="submit-btn-label">{{ $isEditMode ? 'Aggiorna Progetto' : 'Pubblica Progetto' }}</span>
                                         </button>
 
                                     </div>
 
                                 </div>
                             </div>
-                            
+
                         </form>
 
                         <div class="modal fade" id="cancelProjectProcessModal" tabindex="-1" aria-hidden="true">
@@ -257,14 +496,19 @@
                                 <div class="modal-content border-0 shadow-lg" style="border-radius: 1.25rem;">
                                     <div class="modal-body p-4 p-md-5">
                                         <div class="text-center mb-4">
-                                            <i class="bi bi-exclamation-triangle-fill text-warning display-5 d-block mb-3"></i>
+                                            <i
+                                                class="bi bi-exclamation-triangle-fill text-warning display-5 d-block mb-3"></i>
                                             <h4 class="fw-bold mb-2">Vuoi abbandonare la pagina?</h4>
-                                            <p class="text-secondary mb-0">Le modifiche inserite non sono state salvate. Se esci ora, i dati andranno persi.</p>
+                                            <p class="text-secondary mb-0">Le modifiche inserite non sono state salvate. Se
+                                                esci ora, i dati andranno persi.</p>
                                         </div>
 
                                         <div class="d-flex flex-column flex-sm-row gap-2 justify-content-center">
-                                            <button type="button" class="btn btn-ae btn-ae-outline-secondary px-4 fw-semibold" data-bs-dismiss="modal">Resta qui</button>
-                                            <a href="{{ $backUrl }}" id="confirm-cancel-process-link" class="btn btn-ae btn-ae-danger px-4 fw-semibold">Sì, esci senza salvare</a>
+                                            <button type="button"
+                                                class="btn btn-ae btn-ae-outline-secondary px-4 fw-semibold"
+                                                data-bs-dismiss="modal">Resta qui</button>
+                                            <a href="{{ $backUrl }}" id="confirm-cancel-process-link"
+                                                class="btn btn-ae btn-ae-danger px-4 fw-semibold">Sì, esci senza salvare</a>
                                         </div>
                                     </div>
                                 </div>
@@ -276,16 +520,24 @@
                                 <div class="modal-content border-0 shadow-lg" style="border-radius: 1.25rem;">
                                     <div class="modal-body p-4 p-md-5">
                                         <div class="text-center mb-4">
-                                            <div class="d-inline-flex align-items-center justify-content-center bg-light rounded-circle mb-3" style="width: 80px; height: 80px;">
+                                            <div class="d-inline-flex align-items-center justify-content-center bg-light rounded-circle mb-3"
+                                                style="width: 80px; height: 80px;">
                                                 <i class="bi bi-archive-fill text-dark display-5"></i>
                                             </div>
                                             <h4 class="fw-bold mb-2">Vuoi archiviare questo progetto?</h4>
-                                            <p class="text-secondary mb-0">Modificando lo stato in <strong>Completato</strong>, il progetto verrà chiuso e <strong>non potrà più essere modificato</strong> in futuro. Le candidature rimarranno intatte.</p>
+                                            <p class="text-secondary mb-0">Modificando lo stato in
+                                                <strong>Completato</strong>, il progetto verrà chiuso e <strong>non potrà
+                                                    più essere modificato</strong> in futuro. Le candidature rimarranno
+                                                intatte.
+                                            </p>
                                         </div>
 
                                         <div class="d-flex flex-column flex-sm-row gap-2 justify-content-center">
-                                            <button type="button" class="btn btn-ae btn-ae-outline-secondary px-4 fw-semibold" data-bs-dismiss="modal">Annulla</button>
-                                            <button type="button" id="confirm-completion-submit" class="btn btn-ae btn-ae-dark px-4 fw-semibold">
+                                            <button type="button"
+                                                class="btn btn-ae btn-ae-outline-secondary px-4 fw-semibold"
+                                                data-bs-dismiss="modal">Annulla</button>
+                                            <button type="button" id="confirm-completion-submit"
+                                                class="btn btn-ae btn-ae-dark px-4 fw-semibold">
                                                 <i class="bi bi-archive-fill me-2"></i>Archivia definitivamente
                                             </button>
                                         </div>
@@ -298,24 +550,33 @@
                             <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
                                 <div class="modal-content border-0 shadow-lg" style="border-radius: 1.25rem;">
                                     <div class="modal-header border-0 pb-0 px-4 px-md-5 pt-4">
-                                        <h4 class="fw-bold mb-0 text-primary"><i class="bi bi-eye-fill me-2"></i>Anteprima progetto</h4>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Chiudi"></button>
+                                        <h4 class="fw-bold mb-0 text-primary"><i class="bi bi-eye-fill me-2"></i>Anteprima
+                                            progetto</h4>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                            aria-label="Chiudi"></button>
                                     </div>
                                     <div class="modal-body px-4 px-md-5 pb-4">
-                                        <p class="text-secondary small mb-4">Così è come apparirà la card e il riepilogo nella vetrina pubblica.</p>
+                                        <p class="text-secondary small mb-4">Così è come apparirà la card e il riepilogo
+                                            nella vetrina pubblica.</p>
 
                                         <div class="row g-4">
                                             <div class="col-12 col-lg-5">
-                                                <article class="card border-0 shadow-sm h-100" style="border-radius: 1.25rem; overflow: hidden; border: 1px solid var(--project-card-border);">
-                                                    <img id="preview-image" src="{{ $isEditMode ? $project->image_url : asset('img/projects/default.png') }}"
-                                                        alt="Anteprima" class="w-100 object-fit-cover" style="height: 220px;">
+                                                <article class="card border-0 shadow-sm h-100"
+                                                    style="border-radius: 1.25rem; overflow: hidden; border: 1px solid var(--project-card-border);">
+                                                    <img id="preview-image"
+                                                        src="{{ $isEditMode ? $project->image_url : asset('img/projects/default.png') }}"
+                                                        alt="Anteprima" class="w-100 object-fit-cover"
+                                                        style="height: 220px;">
                                                     <div class="card-body p-4">
                                                         <div class="d-flex flex-wrap gap-2 mb-3">
-                                                            <span id="preview-category" class="badge bg-light text-dark border px-2 py-1">Categoria</span>
-                                                            <span id="preview-status" class="badge bg-primary px-2 py-1">Stato</span>
+                                                            <span id="preview-category"
+                                                                class="badge bg-light text-dark border px-2 py-1">Categoria</span>
+                                                            <span id="preview-status"
+                                                                class="badge bg-primary px-2 py-1">Stato</span>
                                                         </div>
                                                         <h5 id="preview-title" class="fw-bold mb-2">Titolo progetto</h5>
-                                                        <p id="preview-summary" class="text-secondary mb-0 small">Descrizione breve del progetto...</p>
+                                                        <p id="preview-summary" class="text-secondary mb-0 small">
+                                                            Descrizione breve del progetto...</p>
                                                     </div>
                                                 </article>
                                             </div>
@@ -352,14 +613,18 @@
                                                 </div>
 
                                                 <div class="bg-white border p-4" style="border-radius: 1rem;">
-                                                    <h6 class="fw-bold text-primary mb-2">Descrizione completa (estratto)</h6>
-                                                    <p id="preview-description" class="text-secondary mb-0 small" style="white-space: pre-line; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden;">Contenuto descrizione...</p>
+                                                    <h6 class="fw-bold text-primary mb-2">Descrizione completa (estratto)
+                                                    </h6>
+                                                    <p id="preview-description" class="text-secondary mb-0 small"
+                                                        style="white-space: pre-line; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden;">
+                                                        Contenuto descrizione...</p>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="modal-footer border-0 px-4 px-md-5 pb-4 pt-0">
-                                        <button type="button" class="btn btn-ae btn-ae-outline-secondary fw-semibold" data-bs-dismiss="modal">Chiudi anteprima</button>
+                                        <button type="button" class="btn btn-ae btn-ae-outline-secondary fw-semibold"
+                                            data-bs-dismiss="modal">Chiudi anteprima</button>
                                     </div>
                                 </div>
                             </div>
@@ -374,7 +639,7 @@
 
 @section('scripts')
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const form = document.getElementById('project-form');
             const submitModeInput = document.getElementById('form_submit_mode');
             const completionConfirmedInput = document.getElementById('completion_confirmed');
@@ -387,6 +652,19 @@
             const completionModalEl = document.getElementById('confirmCompletionModal');
             const confirmCompletionSubmitButton = document.getElementById('confirm-completion-submit');
             const previewButton = document.getElementById('preview-project-btn');
+            const fullDescriptionInput = document.getElementById('full_description');
+            const fullDescriptionEditor = document.getElementById('full-description-editor');
+            const fullDescriptionToolbar = document.getElementById('full-description-toolbar');
+            const requirementsInput = document.getElementById('requirements');
+            const requirementsEditor = document.getElementById('requirements-editor');
+            const requirementsToolbar = document.getElementById('requirements-toolbar');
+            const travelConditionsInput = document.getElementById('travel_conditions');
+            const travelConditionsEditor = document.getElementById('travel-conditions-editor');
+            const travelConditionsToolbar = document.getElementById('travel-conditions-toolbar');
+            const imagePathInput = document.getElementById('image_path');
+            const imagePathDisplay = document.getElementById('image_path_display');
+            const sumDescriptionField = form ? form.querySelector('[name="sum_description"]') : null;
+            const sumDescriptionCounter = document.getElementById('sum-description-counter');
             const validationSummary = document.getElementById('project-validation-summary');
             const serverErrorFields = @json($errors->keys());
             const previewEndpoint = @json(route('project.preview'));
@@ -407,6 +685,23 @@
             const currentProjectStatus = @json($currentProjectStatus);
             const nextAllowedStatus = @json($nextAllowedStatus);
             const shouldOpenCompletionModalOnLoad = @json($openCompletionModal);
+            const richEditorMap = {
+                full_description: {
+                    input: fullDescriptionInput,
+                    editor: fullDescriptionEditor,
+                    toolbar: fullDescriptionToolbar,
+                },
+                requirements: {
+                    input: requirementsInput,
+                    editor: requirementsEditor,
+                    toolbar: requirementsToolbar,
+                },
+                travel_conditions: {
+                    input: travelConditionsInput,
+                    editor: travelConditionsEditor,
+                    toolbar: travelConditionsToolbar,
+                },
+            };
 
             function getPrimaryActionConfig(status) {
                 switch (status) {
@@ -461,6 +756,199 @@
                 }
             }
 
+            function normalizeRichEditorContent(html) {
+                if (typeof html !== 'string') {
+                    return '';
+                }
+
+                const normalized = html
+                    .replace(/<div><br><\/div>/gi, '<br>')
+                    .replace(/<div>/gi, '<p>')
+                    .replace(/<\/div>/gi, '</p>')
+                    .replace(/&nbsp;/gi, ' ')
+                    .trim();
+
+                const plainTextProbe = normalized
+                    .replace(/<br\s*\/?>(\s*)/gi, '')
+                    .replace(/<[^>]+>/g, '')
+                    .trim();
+
+                return plainTextProbe === '' ? '' : normalized;
+            }
+
+            function syncSingleRichEditorToInput(inputField, editorField) {
+                if (!inputField || !editorField) {
+                    return;
+                }
+
+                inputField.value = normalizeRichEditorContent(editorField.innerHTML);
+            }
+
+            function syncAllRichEditorsToInput() {
+                Object.values(richEditorMap).forEach(function (entry) {
+                    syncSingleRichEditorToInput(entry.input, entry.editor);
+                });
+            }
+
+            function normalizeRichLink(url) {
+                const candidate = String(url || '').trim();
+                if (!candidate) {
+                    return null;
+                }
+
+                if (candidate.startsWith('/') || candidate.startsWith('#')) {
+                    return candidate;
+                }
+
+                if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(candidate)) {
+                    return `mailto:${candidate}`;
+                }
+
+                if (/^www\./i.test(candidate)) {
+                    return `https://${candidate}`;
+                }
+
+                if (/^mailto:/i.test(candidate)) {
+                    return candidate;
+                }
+
+                if (/^https?:\/\//i.test(candidate)) {
+                    return candidate;
+                }
+
+                return null;
+            }
+
+            function runRichTextCommand(editorField, inputField, command) {
+                if (!editorField) {
+                    return;
+                }
+
+                editorField.focus();
+
+                if (command === 'createLink') {
+                    const linkInput = window.prompt('Inserisci un link (https://...) oppure una email:', 'https://');
+                    if (linkInput === null) {
+                        return;
+                    }
+
+                    const normalizedLink = normalizeRichLink(linkInput);
+                    if (!normalizedLink) {
+                        window.alert('Link non valido. Inserisci un URL completo o una email valida.');
+                        return;
+                    }
+
+                    document.execCommand('createLink', false, normalizedLink);
+                } else {
+                    document.execCommand(command, false, null);
+                }
+
+                syncSingleRichEditorToInput(inputField, editorField);
+            }
+
+            function initSingleRichTextEditor(inputField, editorField, toolbarField) {
+                if (!inputField || !editorField || !toolbarField) {
+                    return;
+                }
+                let initialHtml = editorField.innerHTML;
+                // Rimuove <br>, spazi, e paragrafi vuoti all'inizio
+                initialHtml = initialHtml.replace(/^(<br\s*\/?>|\s|&nbsp;|<p><br\s*\/?>\s*<\/p>)+/gi, '');
+                // Applica il testo pulito
+                editorField.innerHTML = initialHtml;
+
+                toolbarField.querySelectorAll('[data-rich-command]').forEach(function (button) {
+                    button.addEventListener('mousedown', function (event) {
+                        event.preventDefault();
+                    });
+
+                    button.addEventListener('click', function () {
+                        runRichTextCommand(editorField, inputField, button.getAttribute('data-rich-command'));
+
+                        if (hasNonEmptyValue(inputField)) {
+                            setFieldInvalidState(inputField, false);
+                        }
+                    });
+                });
+
+                editorField.addEventListener('input', function () {
+                    syncSingleRichEditorToInput(inputField, editorField);
+
+                    if (hasNonEmptyValue(inputField)) {
+                        setFieldInvalidState(inputField, false);
+                    }
+                });
+
+                editorField.addEventListener('blur', function () {
+                    syncSingleRichEditorToInput(inputField, editorField);
+                });
+
+                editorField.addEventListener('paste', function (event) {
+                    event.preventDefault();
+
+                    const clipboardData = event.clipboardData || window.clipboardData;
+                    const pastedText = clipboardData ? clipboardData.getData('text/plain') : '';
+
+                    document.execCommand('insertText', false, pastedText);
+                });
+
+                syncSingleRichEditorToInput(inputField, editorField);
+            }
+
+            function initRichTextEditors() {
+                Object.values(richEditorMap).forEach(function (entry) {
+                    initSingleRichTextEditor(entry.input, entry.editor, entry.toolbar);
+                });
+            }
+
+            function updateImagePathDisplay() {
+                if (!imagePathInput || !imagePathDisplay) {
+                    return;
+                }
+
+                const selectedFileName = imagePathInput.files && imagePathInput.files.length > 0
+                    ? imagePathInput.files[0].name
+                    : 'Nessun file selezionato';
+
+                imagePathDisplay.value = selectedFileName;
+            }
+
+            function initImagePathField() {
+                if (!imagePathInput || !imagePathDisplay) {
+                    return;
+                }
+
+                imagePathDisplay.addEventListener('click', function () {
+                    imagePathInput.click();
+                });
+
+                imagePathDisplay.addEventListener('keydown', function (event) {
+                    if (event.key === 'Enter' || event.key === ' ') {
+                        event.preventDefault();
+                        imagePathInput.click();
+                    }
+                });
+
+                imagePathInput.addEventListener('change', function () {
+                    updateImagePathDisplay();
+
+                    if (hasNonEmptyValue(imagePathInput)) {
+                        setFieldInvalidState(imagePathInput, false);
+                    }
+                });
+
+                updateImagePathDisplay();
+            }
+
+            function updateSumDescriptionCounter() {
+                if (!sumDescriptionField || !sumDescriptionCounter) {
+                    return;
+                }
+
+                const maxLength = Number(sumDescriptionField.getAttribute('maxlength')) || 150;
+                const currentLength = sumDescriptionField.value.length;
+                sumDescriptionCounter.textContent = `${currentLength} / ${maxLength}`;
+            }
+
             function hasNonEmptyValue(field) {
                 if (!field) {
                     return true;
@@ -500,6 +988,16 @@
                     field.removeAttribute('aria-invalid');
                 }
 
+                const richEditorConfig = field.name ? richEditorMap[field.name] : null;
+                if (richEditorConfig && richEditorConfig.editor) {
+                    const richEditorWrapper = richEditorConfig.editor.closest('[data-rich-editor-wrapper]');
+                    richEditorConfig.editor.classList.toggle('ae-invalid-field', invalid);
+
+                    if (richEditorWrapper) {
+                        richEditorWrapper.classList.toggle('ae-invalid-wrapper', invalid);
+                    }
+                }
+
                 const inputGroup = field.closest('.input-group');
                 if (!inputGroup) {
                     return;
@@ -526,7 +1024,7 @@
                     return;
                 }
 
-                serverErrorFields.forEach(function(name) {
+                serverErrorFields.forEach(function (name) {
                     const field = getFieldByName(name);
                     setFieldInvalidState(field, true);
                 });
@@ -542,7 +1040,7 @@
                 const requiredFields = form.querySelectorAll('input[required], select[required], textarea[required]');
                 let isValid = true;
 
-                requiredFields.forEach(function(field) {
+                requiredFields.forEach(function (field) {
                     const fieldHasValue = hasNonEmptyValue(field);
                     setFieldInvalidState(field, !fieldHasValue);
 
@@ -561,10 +1059,10 @@
                 }
 
                 const requiredFields = form.querySelectorAll('input[required], select[required], textarea[required]');
-                requiredFields.forEach(function(field) {
+                requiredFields.forEach(function (field) {
                     const eventName = field.tagName === 'SELECT' || field.type === 'file' ? 'change' : 'input';
 
-                    field.addEventListener(eventName, function() {
+                    field.addEventListener(eventName, function () {
                         if (hasNonEmptyValue(field)) {
                             setFieldInvalidState(field, false);
                         }
@@ -582,15 +1080,35 @@
                     return;
                 }
 
-                form.querySelectorAll('.ae-invalid-field').forEach(function(field) {
+                form.querySelectorAll('.ae-invalid-field').forEach(function (field) {
                     setFieldInvalidState(field, false);
+                });
+
+                Object.values(richEditorMap).forEach(function (entry) {
+                    if (!entry.editor) {
+                        return;
+                    }
+
+                    const richEditorWrapper = entry.editor.closest('[data-rich-editor-wrapper]');
+                    entry.editor.classList.remove('ae-invalid-field');
+
+                    if (richEditorWrapper) {
+                        richEditorWrapper.classList.remove('ae-invalid-wrapper');
+                    }
                 });
 
                 setValidationSummaryVisible(false);
             }
 
+            initRichTextEditors();
+            initImagePathField();
+            updateSumDescriptionCounter();
             applyServerValidationState();
             bindInlineValidationReset();
+
+            if (sumDescriptionField) {
+                sumDescriptionField.addEventListener('input', updateSumDescriptionCounter);
+            }
 
             async function openProjectPreviewInNewTab(event) {
                 event.preventDefault();
@@ -600,6 +1118,7 @@
                     return;
                 }
 
+                syncAllRichEditorsToInput();
                 clearValidationState();
 
                 const previousSubmitMode = submitModeInput ? submitModeInput.value : 'publish';
@@ -662,8 +1181,8 @@
                 }
             }
 
-            document.querySelectorAll('.js-cancel-process').forEach(function(button) {
-                button.addEventListener('click', function() {
+            document.querySelectorAll('.js-cancel-process').forEach(function (button) {
+                button.addEventListener('click', function () {
                     const targetUrl = button.getAttribute('data-cancel-url') || '{{ $backUrl }}';
 
                     if (confirmCancelLink) {
@@ -679,7 +1198,7 @@
             });
 
             if (submitButton) {
-                submitButton.addEventListener('click', function() {
+                submitButton.addEventListener('click', function () {
                     updatePrimaryActionFromStatus();
 
                     if (completionConfirmedInput) {
@@ -689,7 +1208,7 @@
             }
 
             if (statusSelect) {
-                statusSelect.addEventListener('change', function() {
+                statusSelect.addEventListener('change', function () {
                     if (completionConfirmedInput && statusSelect.value !== 'completed') {
                         completionConfirmedInput.value = '0';
                     }
@@ -703,7 +1222,7 @@
             }
 
             if (confirmCompletionSubmitButton) {
-                confirmCompletionSubmitButton.addEventListener('click', function() {
+                confirmCompletionSubmitButton.addEventListener('click', function () {
                     if (completionConfirmedInput) {
                         completionConfirmedInput.value = '1';
                     }
@@ -719,7 +1238,9 @@
             }
 
             if (form) {
-                form.addEventListener('submit', function(event) {
+                form.addEventListener('submit', function (event) {
+                    syncAllRichEditorsToInput();
+
                     const submitMode = submitModeInput ? submitModeInput.value : 'publish';
 
                     if (submitMode === 'preview') {
