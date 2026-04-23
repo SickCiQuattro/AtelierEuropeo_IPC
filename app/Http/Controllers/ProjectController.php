@@ -373,6 +373,24 @@ class ProjectController extends Controller
             if ($isDraftMode) {
                 $data = $this->applyDraftDefaults($data, $project);
             }
+
+            $requestedStatus = strtolower((string) ($data['status'] ?? $project->status));
+            if ($requestedStatus !== strtolower((string) $project->status)) {
+                $nextStatus = Project::nextStatusTransition($project->status);
+
+                if ($nextStatus === null || $requestedStatus !== $nextStatus) {
+                    $transitionMessages = [
+                        Project::STATUS_DRAFT => 'Una bozza può essere solo pubblicata.',
+                        Project::STATUS_PUBLISHED => 'Un progetto pubblicato può essere solo completato.',
+                        Project::STATUS_COMPLETED => 'Un progetto completato non può più cambiare stato.',
+                    ];
+
+                    return redirect()->back()->withInput()->with(
+                        'warning',
+                        $transitionMessages[strtolower((string) $project->status)] ?? 'Stato non consentito da questo progetto.'
+                    );
+                }
+            }
             
             // Il completamento richiede conferma esplicita dal modale nella pagina di modifica
             if (
@@ -487,10 +505,14 @@ class ProjectController extends Controller
             return redirect()->route('admin.projects.index')->with('error', 'Progetto non trovato. Impossibile completare.');
         }
 
-        // Controlla se il progetto è già completato
         if ($project->status === 'completed') {
             return redirect()->route('project.show', $id)
                 ->with('info', 'Questo progetto è già stato completato.');
+        }
+
+        if ($project->status !== 'published') {
+            return redirect()->route('project.edit', ['id' => $id])
+                ->with('warning', 'Solo un progetto pubblicato può essere completato. Prima pubblica il progetto.');
         }
 
         return redirect()->route('project.edit', [
@@ -511,10 +533,14 @@ class ProjectController extends Controller
             return redirect()->route('admin.projects.index')->with('error', 'Progetto non trovato. Impossibile completare.');
         }
 
-        // Controlla se il progetto è già completato
         if ($project->status === 'completed') {
             return redirect()->route('project.show', $id)
                 ->with('info', 'Questo progetto è già stato completato.');
+        }
+
+        if ($project->status !== 'published') {
+            return redirect()->route('project.edit', $id)
+                ->with('warning', 'Solo un progetto pubblicato può essere completato. Prima pubblica il progetto.');
         }
 
         $updatedProject = $dl->editProject($id, ['status' => 'completed']);

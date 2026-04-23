@@ -123,14 +123,54 @@ class AdminProjectController extends Controller
             ->values()
             ->all();
 
-        $updatedCount = Project::whereIn('id', $projectIds)
-            ->update(['status' => $validated['status']]);
+        $projects = Project::query()
+            ->whereIn('id', $projectIds)
+            ->get(['id', 'status']);
+
+        if ($projects->count() !== count($projectIds)) {
+            return redirect()->back()->with('error', 'Uno o più progetti selezionati non sono più disponibili. Riprova.');
+        }
 
         $statusLabels = [
-            'draft' => 'Bozza',
-            'published' => 'Pubblicato',
-            'completed' => 'Completato',
+            Project::STATUS_DRAFT => 'Bozza',
+            Project::STATUS_PUBLISHED => 'Pubblicato',
+            Project::STATUS_COMPLETED => 'Completato',
         ];
+
+        $selectedStatuses = $projects
+            ->pluck('status')
+            ->map(fn ($status) => strtolower((string) $status))
+            ->unique()
+            ->values();
+
+        if ($selectedStatuses->count() > 1) {
+            $statusList = $selectedStatuses->map(fn ($status) => $statusLabels[$status] ?? ucfirst($status))->implode(', ');
+
+            return redirect()->back()->with(
+                'warning',
+                'Hai selezionato progetti con stati diversi (' . $statusList . '). Seleziona solo progetti con lo stesso stato per l\'aggiornamento in blocco.'
+            );
+        }
+
+        $currentStatus = $selectedStatuses->first();
+        $nextStatus = Project::nextStatusTransition($currentStatus);
+
+        if ($nextStatus === null) {
+            return redirect()->back()->with(
+                'warning',
+                'I progetti completati non possono cambiare stato.'
+            );
+        }
+
+        if ($validated['status'] !== $nextStatus) {
+            return redirect()->back()->with(
+                'warning',
+                'Stato non consentito per i progetti selezionati. Da ' . ($statusLabels[$currentStatus] ?? ucfirst((string) $currentStatus)) . ' è possibile passare solo a ' . ($statusLabels[$nextStatus] ?? ucfirst((string) $nextStatus)) . '.'
+            );
+        }
+
+        $updatedCount = Project::whereIn('id', $projectIds)
+            ->update(['status' => $validated['status']]);
 
         return redirect()->back()->with(
             'success',

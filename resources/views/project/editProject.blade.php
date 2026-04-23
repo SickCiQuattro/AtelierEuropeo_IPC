@@ -8,6 +8,23 @@
     @php
         $isEditMode = isset($project);
         $currentProjectStatus = $isEditMode ? ($project->status ?? 'draft') : 'draft';
+        $statusLabels = [
+            \App\Models\Project::STATUS_DRAFT => 'Bozza',
+            \App\Models\Project::STATUS_PUBLISHED => 'Pubblicato',
+            \App\Models\Project::STATUS_COMPLETED => 'Completato',
+        ];
+        $allowedStatuses = $isEditMode
+            ? \App\Models\Project::allowedStatusTransitions($currentProjectStatus)
+            : [\App\Models\Project::STATUS_DRAFT, \App\Models\Project::STATUS_PUBLISHED];
+        $nextAllowedStatus = \App\Models\Project::nextStatusTransition($currentProjectStatus);
+        $selectedStatus = strtolower((string) old('status', $currentProjectStatus));
+
+        if (!in_array($selectedStatus, $allowedStatuses, true)) {
+            $selectedStatus = in_array($currentProjectStatus, $allowedStatuses, true)
+                ? $currentProjectStatus
+                : ($allowedStatuses[0] ?? \App\Models\Project::STATUS_DRAFT);
+        }
+
         $openCompletionModal = request()->boolean('openCompletionModal');
         $defaultBackUrl = route('admin.projects.index');
         
@@ -205,13 +222,22 @@
                                 <div class="d-flex align-items-center gap-3">
                                     <label class="form-label text-secondary fw-medium mb-0 text-nowrap">Stato del progetto:</label>
                                     <select class="form-select bg-light border-0 fw-semibold text-primary py-2 px-3 shadow-none" style="border-radius: 0.75rem; width: auto; min-width: 180px; cursor: pointer;" name="status" id="status">
-                                        <option value="draft" @if(old('status', $project->status ?? 'draft') == 'draft') selected @endif>Bozza</option>
-                                        <option value="published" @if(old('status', $project->status ?? '') == 'published') selected @endif>Pubblicato</option>
-                                        @if($isEditMode) 
-                                            <option value="completed" @if(old('status', $project->status ?? '') == 'completed') selected @endif>Completato</option> 
-                                        @endif
+                                        @foreach ($allowedStatuses as $statusOption)
+                                            <option value="{{ $statusOption }}" @selected($selectedStatus === $statusOption)>
+                                                {{ $statusLabels[$statusOption] ?? ucfirst($statusOption) }}
+                                            </option>
+                                        @endforeach
                                     </select>
                                 </div>
+
+                                <p class="mb-0 small text-secondary">
+                                    @if ($nextAllowedStatus)
+                                        Transizione consentita: <strong>{{ $statusLabels[$nextAllowedStatus] ?? ucfirst($nextAllowedStatus) }}</strong>.
+                                        Puoi anche mantenere lo stato attuale.
+                                    @else
+                                        Il progetto è nello stato finale e non può cambiare stato.
+                                    @endif
+                                </p>
                                 
                                 <div class="project-form-actions d-flex justify-content-start justify-content-xl-end">
                                     <div class="project-form-actions-inner">
@@ -388,6 +414,7 @@
 
             const isEditMode = @json($isEditMode);
             const currentProjectStatus = @json($currentProjectStatus);
+            const nextAllowedStatus = @json($nextAllowedStatus);
             const shouldOpenCompletionModalOnLoad = @json($openCompletionModal);
 
             function getPrimaryActionConfig(status) {
@@ -402,14 +429,16 @@
                     case 'completed':
                         return {
                             label: 'Segna come Completato',
-                            icon: 'bi-check2-circle',
+                            icon: 'bi-archive-fill',
                             submitMode: 'publish',
-                            buttonClass: 'btn-ae-warning',
+                            buttonClass: 'btn-ae-dark',
                         };
                     case 'published':
                     default:
+                        const isDraftToPublished = isEditMode && currentProjectStatus === 'draft' && status === 'published';
+
                         return {
-                            label: isEditMode ? 'Aggiorna Progetto' : 'Pubblica Progetto',
+                            label: !isEditMode || isDraftToPublished ? 'Pubblica Progetto' : 'Aggiorna Progetto',
                             icon: 'bi-check-circle-fill',
                             submitMode: 'publish',
                             buttonClass: 'btn-ae-primary',
@@ -433,7 +462,7 @@
                     submitButtonIcon.className = `bi ${actionConfig.icon} me-2`;
                 }
 
-                submitButton.classList.remove('btn-ae-primary', 'btn-ae-secondary', 'btn-ae-danger');
+                submitButton.classList.remove('btn-ae-primary', 'btn-ae-secondary', 'btn-ae-danger', 'btn-ae-warning', 'btn-ae-dark');
                 submitButton.classList.add(actionConfig.buttonClass);
 
                 if (submitModeInput) {
@@ -750,6 +779,7 @@
                 && statusSelect
                 && isEditMode
                 && currentProjectStatus !== 'completed'
+                && nextAllowedStatus === 'completed'
             ) {
                 statusSelect.value = 'completed';
                 if (submitModeInput) {

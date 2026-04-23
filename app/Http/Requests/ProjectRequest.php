@@ -29,6 +29,11 @@ class ProjectRequest extends FormRequest
         $incomingTitle = trim((string) $this->input('title', ''));
         $existingTitle = trim((string) ($existingProject?->title ?? ''));
         $isTitleChanged = !$isUpdate || $incomingTitle !== $existingTitle;
+        $existingStatus = strtolower((string) ($existingProject?->status ?? Project::STATUS_DRAFT));
+        $allowedStatusTransitions = $isUpdate
+            ? Project::allowedStatusTransitions($existingStatus)
+            : [Project::STATUS_DRAFT, Project::STATUS_PUBLISHED];
+        $statusRules = 'required|in:' . implode(',', $allowedStatusTransitions);
 
         if ($isDraftMode) {
             $draftTitleRules = [
@@ -58,13 +63,8 @@ class ProjectRequest extends FormRequest
                 'image_path' => 'nullable|image|mimes:jpeg,jpg,png,gif,webp|max:2048',
                 'form_submit_mode' => 'nullable|in:publish,draft',
                 'completion_confirmed' => 'nullable|boolean',
+                'status' => $statusRules,
             ];
-
-            if ($isUpdate) {
-                $draftRules['status'] = 'nullable|in:draft,published,completed';
-            } else {
-                $draftRules['status'] = 'nullable|in:draft,published';
-            }
 
             return $draftRules;
         }
@@ -93,6 +93,7 @@ class ProjectRequest extends FormRequest
             'travel_conditions' => 'required|string|min:10',
             'form_submit_mode' => 'nullable|in:publish,draft',
             'completion_confirmed' => 'nullable|boolean',
+            'status' => $statusRules,
         ];
 
         // Regole per le date - bilanciate tra usabilità e correttezza
@@ -112,13 +113,9 @@ class ProjectRequest extends FormRequest
         if ($isUpdate) {
             // Durante l'aggiornamento, l'immagine è opzionale
             $rules['image_path'] = 'nullable|image|mimes:jpeg,jpg,png,gif,webp|max:2048';
-            // Durante l'aggiornamento, tutti gli stati sono permessi
-            $rules['status'] = 'required|in:draft,published,completed';
         } else {
             // Durante la creazione, l'immagine è obbligatoria
             $rules['image_path'] = 'required|image|mimes:jpeg,jpg,png,gif,webp|max:2048';
-            // Durante la creazione, solo draft e published sono permessi
-            $rules['status'] = 'required|in:draft,published';
         }
 
         return $rules;

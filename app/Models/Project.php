@@ -11,6 +11,10 @@ class Project extends Model
     use HasFactory;
     protected $table = 'projects';
 
+    public const STATUS_DRAFT = 'draft';
+    public const STATUS_PUBLISHED = 'published';
+    public const STATUS_COMPLETED = 'completed';
+
     protected $fillable = [
         'title',
         'user_id',
@@ -34,6 +38,30 @@ class Project extends Model
         'end_date' => 'date',
         'expire_date' => 'date',
     ];
+
+    public static function allowedStatusTransitions(?string $currentStatus): array
+    {
+        return match (strtolower((string) $currentStatus)) {
+            self::STATUS_DRAFT => [self::STATUS_DRAFT, self::STATUS_PUBLISHED],
+            self::STATUS_PUBLISHED => [self::STATUS_PUBLISHED, self::STATUS_COMPLETED],
+            self::STATUS_COMPLETED => [self::STATUS_COMPLETED],
+            default => [self::STATUS_DRAFT, self::STATUS_PUBLISHED],
+        };
+    }
+
+    public static function nextStatusTransition(?string $currentStatus): ?string
+    {
+        return match (strtolower((string) $currentStatus)) {
+            self::STATUS_DRAFT => self::STATUS_PUBLISHED,
+            self::STATUS_PUBLISHED => self::STATUS_COMPLETED,
+            default => null,
+        };
+    }
+
+    public static function canTransitionStatus(?string $currentStatus, string $targetStatus): bool
+    {
+        return in_array(strtolower($targetStatus), self::allowedStatusTransitions($currentStatus), true);
+    }
 
     /**
      * Get the correct image URL for this project
