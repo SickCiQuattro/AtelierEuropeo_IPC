@@ -16,7 +16,8 @@
 
         $userListRoute = $detailSource === 'portfolio' ? 'project.portfolio' : 'project.index';
         $userListLabel = $detailSource === 'portfolio' ? 'Archivio Progetti' : 'Progetti Disponibili';
-        $isCompleted = $project->status === 'completed';
+        $isDraft = $project->status === \App\Models\Project::STATUS_DRAFT;
+        $isCompleted = $project->status === \App\Models\Project::STATUS_COMPLETED;
         $openDeleteModal = request()->boolean('openDeleteModal');
 
         $formatHumanDate = function ($value) {
@@ -177,10 +178,12 @@
                                 <i class="bi bi-trash-fill me-2"></i>Elimina
                             </button>
 
-                            <a href="{{ route('admin.applications.index', $project->id) }}"
-                                class="btn btn-ae btn-ae-outline-secondary rounded-pill px-4">
-                                <i class="bi bi-people-fill me-2"></i>Candidature
-                            </a>
+                            @if (!$isDraft)
+                                <a href="{{ route('admin.applications.index', $project->id) }}"
+                                    class="btn btn-ae btn-ae-outline-secondary rounded-pill px-4">
+                                    <i class="bi bi-people-fill me-2"></i>Candidature
+                                </a>
+                            @endif
 
                             @if (!$isCompleted)
                                 <a href="{{ route('project.edit', ['id' => $project->id, 'adminContext' => $isAdminContext ? 1 : null]) }}"
