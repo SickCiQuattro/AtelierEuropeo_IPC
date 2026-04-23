@@ -20,6 +20,12 @@
         $isCompleted = $project->status === \App\Models\Project::STATUS_COMPLETED;
         $projectTestimonials = $testimonials ?? collect();
         $openDeleteModal = request()->boolean('openDeleteModal');
+        $loginRedirectUrl = route('login', ['redirect' => request()->fullUrl()]);
+        $alreadyApplied = auth()->check()
+            ? \App\Models\Application::where('user_id', auth()->id())
+                ->where('project_id', $project->id)
+                ->exists()
+            : false;
 
         $formatHumanDate = function ($value) {
             if (empty($value))
@@ -167,6 +173,40 @@
                                 style="display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden;">
                                 {{ $project->sum_description }}
                             </p>
+
+                            @if (!$isAdminContext)
+                                <div class="mt-4 d-flex flex-wrap gap-2">
+                                    @guest
+                                        @if ($isCompleted)
+                                            <a href="#testimonianze" class="btn btn-ae btn-ae-outline-secondary rounded-pill px-4 py-2">
+                                                <i class="bi bi-archive-fill me-2"></i>Progetto Completato
+                                            </a>
+                                        @else
+                                            <a href="{{ $loginRedirectUrl }}" class="btn btn-ae btn-ae-primary rounded-pill px-4 py-2">
+                                                <i class="bi bi-box-arrow-in-right me-2"></i>Accedi per candidarti
+                                            </a>
+                                        @endif
+                                    @endguest
+
+                                    @auth
+                                        @if ($isCompleted)
+                                            <a href="#testimonianze" class="btn btn-ae btn-ae-outline-secondary rounded-pill px-4 py-2">
+                                                <i class="bi bi-archive-fill me-2"></i>Progetto Completato
+                                            </a>
+                                        @elseif ($alreadyApplied)
+                                            <a href="{{ route('applications.index') }}"
+                                                class="btn btn-ae btn-ae-outline-primary rounded-pill px-4 py-2">
+                                                <i class="bi bi-file-earmark-text me-2"></i>Le Mie Candidature
+                                            </a>
+                                        @else
+                                            <a href="{{ route('applications.create', $project->id) }}"
+                                                class="btn btn-ae btn-ae-primary rounded-pill px-4 py-2 shadow-sm">
+                                                <i class="bi bi-send me-2"></i>Candidati ora
+                                            </a>
+                                        @endif
+                                    @endauth
+                                </div>
+                            @endif
                         </div>
 
                         <div class="col-lg-6 position-relative">
@@ -303,18 +343,20 @@
                             </div>
                         </div>
 
+                        <div class="bg-white border p-4 shadow-sm mb-4" style="border-radius: 1.25rem;">
+                            <h3 class="h6 fw-bold mb-3 text-muted text-uppercase"><i
+                                    class="bi bi-building me-2"></i>L'Associazione</h3>
+                            <h4 class="h5 fw-bold mb-2 text-primary">{{ $project->association->name }}</h4>
+                            <p class="text-secondary small mb-0" style="line-height: 1.6;">
+                                {{ $project->association->description }}
+                            </p>
+                        </div>
+
                         {{-- CTA Candidatura --}}
                         @if(!$isAdminContext)
                             @if(!$isCompleted)
-                                @php
-                                    $alreadyApplied = auth()->check()
-                                        ? \App\Models\Application::where('user_id', auth()->id())
-                                            ->where('project_id', $project->id)
-                                            ->exists()
-                                        : false;
-                                @endphp
-
-                                <div class="bg-white border p-4 shadow-sm mb-4" style="border-radius: 1.25rem;">
+                                <div class="bg-light border p-4 shadow-sm mb-4 sticky-top"
+                                    style="border-radius: 1.25rem; top: 110px;">
                                     <h3 class="h6 fw-bold mb-2 text-muted text-uppercase">
                                         <i class="bi bi-send me-2"></i>Candidatura
                                     </h3>
@@ -323,7 +365,7 @@
                                         <p class="text-muted small mb-3">
                                             Accedi per candidarti a questo progetto.
                                         </p>
-                                        <a href="{{ route('login') }}" class="btn btn-ae btn-ae-primary w-100 rounded-pill">
+                                        <a href="{{ $loginRedirectUrl }}" class="btn btn-ae btn-ae-primary w-100 rounded-pill">
                                             <i class="bi bi-box-arrow-in-right me-2"></i>Accedi per candidarti
                                         </a>
                                     @endguest
@@ -349,7 +391,8 @@
                                     @endauth
                                 </div>
                             @else
-                                <div class="bg-white border p-4 shadow-sm mb-4" style="border-radius: 1.25rem;">
+                                <div class="bg-light border p-4 shadow-sm mb-4 sticky-top"
+                                    style="border-radius: 1.25rem; top: 110px;">
                                     <div class="d-flex align-items-start gap-3">
 
                                         <div>
@@ -365,15 +408,6 @@
                                 </div>
                             @endif
                         @endif
-
-                        <div class="bg-light border p-4 shadow-sm sticky-top" style="border-radius: 1.25rem; top: 110px;">
-                            <h3 class="h6 fw-bold mb-3 text-muted text-uppercase"><i
-                                    class="bi bi-building me-2"></i>L'Associazione</h3>
-                            <h4 class="h5 fw-bold mb-2 text-primary">{{ $project->association->name }}</h4>
-                            <p class="text-secondary small mb-0" style="line-height: 1.6;">
-                                {{ $project->association->description }}
-                            </p>
-                        </div>
                     </div>
                 </div>
             </div>

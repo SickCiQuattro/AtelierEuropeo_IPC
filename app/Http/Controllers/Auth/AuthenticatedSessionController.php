@@ -20,12 +20,60 @@ class AuthenticatedSessionController extends Controller
      */
     public function create(): View
     {
-        // Memorizza l'URL di provenienza se non è già la pagina di login
-        if (!request()->session()->has('url.intended') && url()->previous() !== url()->current()) {
-            request()->session()->put('url.intended', url()->previous());
+        $session = request()->session();
+        $redirect = request()->query('redirect');
+
+        // Se arriva un redirect esplicito dal link login, ha priorita' sulla provenienza.
+        if (is_string($redirect) && $this->isSafeRedirectTarget($redirect)) {
+            $session->put('url.intended', $redirect);
+        }
+
+        // Fallback: memorizza la pagina di provenienza se non c'e' ancora un intended valido.
+        if (!$session->has('url.intended') && url()->previous() !== url()->current()) {
+            $session->put('url.intended', url()->previous());
         }
         
         return view('auth.authLogin');
+    }
+
+    /**
+     * Valida che il redirect resti interno all'applicazione.
+     */
+    private function isSafeRedirectTarget(string $url): bool
+    {
+        $url = trim($url);
+        if ($url === '') {
+            return false;
+        }
+
+        if (str_starts_with($url, '/')) {
+            return true;
+        }
+
+        $targetHost = parse_url($url, PHP_URL_HOST);
+        $targetScheme = parse_url($url, PHP_URL_SCHEME);
+
+        if (!is_string($targetHost) || $targetHost === '') {
+            return false;
+        }
+
+        $appUrl = (string) config('app.url', '');
+        $appHost = parse_url($appUrl, PHP_URL_HOST);
+        $appScheme = parse_url($appUrl, PHP_URL_SCHEME);
+
+        if (!is_string($appHost) || $appHost === '') {
+            return false;
+        }
+
+        if (strcasecmp($targetHost, $appHost) !== 0) {
+            return false;
+        }
+
+        if (is_string($targetScheme) && is_string($appScheme) && $targetScheme !== '' && $appScheme !== '') {
+            return strcasecmp($targetScheme, $appScheme) === 0;
+        }
+
+        return true;
     }
     
     /**

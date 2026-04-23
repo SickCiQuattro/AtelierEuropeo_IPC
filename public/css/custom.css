@@ -284,6 +284,9 @@ p {
 .app-toast-container {
     z-index: 1120;
     max-width: min(92vw, 420px);
+    top: 102px !important;
+    margin-top: 0 !important;
+    padding-top: 0 !important;
 }
 
 .app-toast-container .app-toast {
@@ -300,12 +303,19 @@ p {
     line-height: 1.38;
 }
 
+@media (max-width: 991.98px) {
+    .app-toast-container {
+        top: 72px !important;
+    }
+}
+
 @media (max-width: 575.98px) {
     .app-toast-container {
+        top: 62px !important;
         left: 0.75rem !important;
         right: 0.75rem !important;
         padding-right: 0 !important;
-        margin-top: 4.5rem !important;
+        margin-top: 0 !important;
     }
 
     .app-toast-container .app-toast {

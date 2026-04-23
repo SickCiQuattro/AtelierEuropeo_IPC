@@ -86,7 +86,7 @@
     }
 @endphp
 
-<div class="toast-container app-toast-container position-fixed top-0 end-0 mt-5 pt-3 pe-3">
+<div class="toast-container app-toast-container position-fixed end-0 pe-3">
     <div id="favoriteToast" class="toast app-toast align-items-center border-0 text-bg-success" role="status"
         aria-live="polite" aria-atomic="true" data-bs-delay="2600" data-bs-autohide="true">
         <div class="d-flex">
