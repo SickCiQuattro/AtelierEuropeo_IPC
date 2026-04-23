@@ -138,17 +138,9 @@
                     </div>
 
                     <div class="text-end mt-auto pt-3 border-top">
-                        @php
-                            // TODO: abilita la route dedicata quando sara creata (es. admin.applications.list)
-                            $allApplicationsRouteName = 'admin.applications.list';
-                            $hasAllApplicationsPage = \Illuminate\Support\Facades\Route::has($allApplicationsRouteName);
-                        @endphp
-                        <a href="{{ $hasAllApplicationsPage ? route($allApplicationsRouteName) : '#' }}"
-                            class="admin-list-link fw-semibold text-decoration-none d-inline-flex align-items-center gap-1 {{ $hasAllApplicationsPage ? '' : 'disabled opacity-50 pe-none' }}"
-                            @if (!$hasAllApplicationsPage) aria-disabled="true" tabindex="-1" title="Pagina in arrivo"
-                            @endif>
-                            Vedi tutte le candidature <i class="bi bi-arrow-right"></i>
-                        </a>
+                        <a href="{{ route('admin.applications.all') }}"
+                            class="admin-list-link fw-semibold text-decoration-none d-inline-flex align-items-center gap-1">Vedi
+                            tutte le candidature <i class="bi bi-arrow-right"></i></a>
                     </div>
                 </div>
             </div>
