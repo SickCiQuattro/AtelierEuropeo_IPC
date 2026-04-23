@@ -112,10 +112,7 @@
 
                         <ul class="info-program-modal-list mb-0">
                             @foreach ($info['listItems'] as $item)
-                                <li>
-                                    <i class="bi bi-check2-circle" aria-hidden="true"></i>
-                                    <span>{!! $item !!}</span>
-                                </li>
+                                <li>{!! $item !!}</li>
                             @endforeach
                         </ul>
                     </section>

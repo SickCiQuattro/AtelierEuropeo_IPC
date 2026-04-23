@@ -24,10 +24,64 @@
         selectedCount: 0,
         selectAll: false,
         selectedProjectIds: [],
-        bulkStatus: 'published',
+        selectedStatuses: [],
+        bulkStatus: '',
+        bulkWarningMessage: '',
+        statusLabels: {
+            draft: 'Bozza',
+            published: 'Pubblicato',
+            completed: 'Completato',
+        },
         getActiveRowCheckboxes() {
             const rowCheckboxes = Array.from(this.$root.querySelectorAll('.project-row-checkbox:not([disabled])'));
             return rowCheckboxes.filter((checkbox) => checkbox.offsetParent !== null);
+        },
+        getSelectedStatuses(checkedRows) {
+            return Array.from(new Set(
+                checkedRows
+                    .map((checkbox) => String(checkbox.dataset.status || '').toLowerCase())
+                    .filter((status) => status !== '')
+            ));
+        },
+        getStatusLabel(status) {
+            return this.statusLabels[status] || status;
+        },
+        getNextStatusForSelection() {
+            if (this.selectedStatuses.length !== 1) {
+                return null;
+            }
+
+            const currentStatus = this.selectedStatuses[0];
+            if (currentStatus === 'draft') {
+                return 'published';
+            }
+
+            if (currentStatus === 'published') {
+                return 'completed';
+            }
+
+            return null;
+        },
+        syncBulkStatusContext(checkedRows) {
+            this.selectedStatuses = this.getSelectedStatuses(checkedRows);
+
+            if (this.selectedStatuses.length > 1) {
+                const labels = this.selectedStatuses.map((status) => this.getStatusLabel(status)).join(', ');
+                this.bulkWarningMessage = `Hai selezionato progetti con stati diversi (${labels}). Seleziona solo progetti con lo stesso stato per l'aggiornamento in blocco.`;
+                this.bulkStatus = '';
+                return;
+            }
+
+            const nextStatus = this.getNextStatusForSelection();
+
+            if (this.selectedStatuses.length === 1 && nextStatus === null) {
+                this.bulkWarningMessage = 'I progetti completati non possono cambiare stato.';
+                this.bulkStatus = '';
+                return;
+            }
+
+            this.bulkWarningMessage = '';
+            this.bulkStatus = nextStatus || '';
         },
         toggleAll(event) {
             this.selectAll = event.target.checked;
@@ -43,6 +97,7 @@
             this.selectedProjectIds = checkedRows.map((checkbox) => checkbox.value);
             this.selectedCount = this.selectedProjectIds.length;
             this.selectAll = rowCheckboxes.length > 0 && this.selectedCount === rowCheckboxes.length;
+            this.syncBulkStatusContext(checkedRows);
 
             const masterCheckbox = this.$root.querySelector('#projects-select-all');
             if (masterCheckbox) {
@@ -57,6 +112,9 @@
             this.selectedCount = 0;
             this.selectAll = false;
             this.selectedProjectIds = [];
+            this.selectedStatuses = [];
+            this.bulkStatus = '';
+            this.bulkWarningMessage = '';
 
             const masterCheckbox = this.$root.querySelector('#projects-select-all');
             if (masterCheckbox) {
@@ -193,7 +251,7 @@
                             <tr>
                                 <td class="ps-3">
                                     <input type="checkbox" class="form-check-input project-row-checkbox"
-                                        value="{{ $projectId }}" @change="updateCount" @disabled(!$projectId)
+                                        value="{{ $projectId }}" data-status="{{ $status }}" @change="updateCount" @disabled(!$projectId)
                                         aria-label="Seleziona progetto">
                                 </td>
                                 <td class="fw-semibold">{{ $projectTitle }}</td>
@@ -272,9 +330,8 @@
 
                         $categoryTag = strtoupper((string) data_get($project, 'category.tag', data_get($project, 'category_tag', 'CES')));
                         $categoryConfig = $categoryMap[$categoryTag] ?? [
-                            'icon' => 'tag-fill',
                             'label' => $categoryTag ?: 'N/D',
-                            'class' => 'text-secondary',
+                            'badge' => 'badge-prog-ces',
                         ];
 
                         $applicationsCount = data_get($project, 'approved_applications_count', data_get($project, 'applications_count', 0));
@@ -299,7 +356,7 @@
                         <div class="d-flex align-items-start justify-content-between gap-2 mb-2 admin-mobile-project-head">
                             <div class="d-flex align-items-center gap-2 admin-mobile-project-title-wrap">
                                 <input type="checkbox" class="form-check-input project-row-checkbox"
-                                    value="{{ $projectId }}" @change="updateCount" @disabled(!$projectId)
+                                    value="{{ $projectId }}" data-status="{{ $status }}" @change="updateCount" @disabled(!$projectId)
                                     aria-label="Seleziona progetto">
                                 <h3 class="h6 fw-bold mb-0 admin-mobile-title">{{ $projectTitle }}</h3>
                             </div>
@@ -394,20 +451,32 @@
                     </div>
 
                     <form method="POST" action="{{ route('admin.projects.bulk-status') }}"
-                        @submit="if (selectedProjectIds.length === 0) { $event.preventDefault(); }">
+                        @submit="if (selectedProjectIds.length === 0 || selectedStatuses.length !== 1 || !bulkStatus) { $event.preventDefault(); }">
                         @csrf
                         <div class="modal-body pt-2">
                             <p class="text-body-secondary mb-3">
                                 Selezionati: <strong x-text="selectedCount"></strong> progetti
                             </p>
 
-                            <label for="bulk-status-select" class="form-label fw-semibold">Nuovo stato</label>
+                            <p class="small text-body-secondary mb-3" x-show="selectedStatuses.length === 1">
+                                Stato attuale selezione: <strong x-text="getStatusLabel(selectedStatuses[0])"></strong>
+                            </p>
+
+                            <div class="alert alert-warning py-2 px-3 small mb-3" x-show="bulkWarningMessage" x-text="bulkWarningMessage"></div>
+
+                            <label for="bulk-status-select" class="form-label fw-semibold">Nuovo stato consentito</label>
                             <select id="bulk-status-select" name="status" x-model="bulkStatus"
-                                class="form-select admin-bulk-status-select" aria-label="Nuovo stato progetti">
-                                <option value="published">Pubblicato</option>
-                                <option value="draft">Bozza</option>
-                                <option value="completed">Completato</option>
+                                class="form-select admin-bulk-status-select" aria-label="Nuovo stato progetti"
+                                :disabled="selectedStatuses.length !== 1 || !bulkStatus" required>
+                                <option value="" disabled>Seleziona stato</option>
+                                <option value="published" :disabled="selectedStatuses.length !== 1 || selectedStatuses[0] !== 'draft'">Pubblicato</option>
+                                <option value="completed" :disabled="selectedStatuses.length !== 1 || selectedStatuses[0] !== 'published'">Completato</option>
                             </select>
+
+                            <p class="small text-body-secondary mt-2 mb-0" x-show="selectedStatuses.length === 1 && bulkStatus">
+                                Transizione consentita: <strong x-text="getStatusLabel(selectedStatuses[0])"></strong> -&gt;
+                                <strong x-text="getStatusLabel(bulkStatus)"></strong>
+                            </p>
 
                             <template x-for="id in selectedProjectIds" :key="'modal-bulk-status-' + id">
                                 <input type="hidden" name="project_ids[]" :value="id">
@@ -417,7 +486,8 @@
                         <div class="modal-footer border-0 pt-0">
                             <button type="button" class="btn btn-ae btn-ae-square btn-ae-outline-secondary"
                                 data-bs-dismiss="modal">Annulla</button>
-                            <button type="submit" class="btn btn-ae btn-ae-square btn-ae-primary">Conferma</button>
+                            <button type="submit" class="btn btn-ae btn-ae-square btn-ae-primary"
+                                :disabled="selectedProjectIds.length === 0 || selectedStatuses.length !== 1 || !bulkStatus">Conferma</button>
                         </div>
                     </form>
                 </div>
