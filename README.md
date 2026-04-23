@@ -17,11 +17,11 @@ The platform provides a seamless onboarding experience for users to browse, save
 > **Public Catalog**
 > ![Public Catalog](assets/screenshot_catalog.png)
 >
-> **User Dashboard & Application Status**
-> ![User Dashboard](assets/screenshot_user.png)
+> **User Panel & Application Status**
+> ![User Panel](assets/screenshot_user.png)
 >
-> **Admin Panel**
-> ![Admin Panel](assets/screenshot_admin.png)
+> **Admin Dashboard**
+> ![Admin Dashboard](assets/screenshot_admin.png)
 
 ## Key Features
 
@@ -81,8 +81,8 @@ Follow these instructions to set up the project locally.
 4. Configure and run the database:
 
     ```bash
-    touch database/database.sqlite
-    # Make sure DB_CONNECTION=sqlite in your .env file
+    touch database/database.mysql
+    # Make sure DB_CONNECTION=mysql in your .env file
     php artisan migrate --seed
     ```
 
@@ -110,5 +110,3 @@ To build assets for production:
 npm run build
 
 ```
-
----
