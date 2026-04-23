@@ -229,15 +229,6 @@
                                         @endforeach
                                     </select>
                                 </div>
-
-                                <p class="mb-0 small text-secondary">
-                                    @if ($nextAllowedStatus)
-                                        Transizione consentita: <strong>{{ $statusLabels[$nextAllowedStatus] ?? ucfirst($nextAllowedStatus) }}</strong>.
-                                        Puoi anche mantenere lo stato attuale.
-                                    @else
-                                        Il progetto è nello stato finale e non può cambiare stato.
-                                    @endif
-                                </p>
                                 
                                 <div class="project-form-actions d-flex justify-content-start justify-content-xl-end">
                                     <div class="project-form-actions-inner">
