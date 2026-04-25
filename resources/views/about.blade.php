@@ -37,9 +37,10 @@
                             e l'impegno nella costruzione di un futuro comune.
                         </p>
                     </div>
-                    <div class="col-lg-6">
+                    <div class="col-lg-6 about-hero-image-col">
                         <img src="{{ asset('img/hero-background.jpg') }}" alt="Foto di gruppo Atelier Europeo"
-                            class="img-fluid rounded-4" style="object-fit: cover; height: 100%; min-height: 400px;">
+                            class="img-fluid rounded-4 about-hero-image"
+                            style="object-fit: cover; height: 100%; min-height: 400px;">
                     </div>
                 </div>
             </div>

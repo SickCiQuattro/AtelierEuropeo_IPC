@@ -9,13 +9,11 @@
 
         <div class="row g-0">
             <div class="col-12">
-                <div class="row mb-5">
-                    <div class="col-12 text-center">
-                        <h1 class="display-4 fw-bold text-dark mb-3">Archivio Progetti</h1>
-                        <p class="lead text-body-secondary col-md-8 mx-auto">
-                            Scopri i progetti che abbiamo concluso con successo e l'impatto che abbiamo generato in Europa.
-                        </p>
-                    </div>
+                <div class="text-center mb-5">
+                    <h1 class="display-4 fw-bold text-dark mb-3">Archivio Progetti</h1>
+                    <p class="lead text-body-secondary col-md-8 mx-auto">
+                        Scopri i progetti che abbiamo concluso con successo e l'impatto che abbiamo generato in Europa.
+                    </p>
                 </div>
 
                 @php
@@ -60,12 +58,12 @@
                             <input type="text" name="q" value="{{ request('q') }}" class="form-control"
                                 placeholder="Titolo, descrizione, paese..." aria-label="Ricerca progetti archivio"
                                 aria-describedby="portfolio-search-icon">
-                            <button type="submit" class="btn btn-ae-outline-secondary">Cerca</button>
+                            <button type="submit" class="btn btn-ae btn-ae-outline-secondary">Cerca</button>
                         </div>
                     </form>
 
                     <div class="d-flex justify-content-end mt-3">
-                        <button type="button" class="btn btn-ae-outline-secondary" data-bs-toggle="modal"
+                        <button type="button" class="btn btn-ae btn-ae-outline-secondary" data-bs-toggle="modal"
                             data-bs-target="#portfolioFiltersModal">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                                 class="bi bi-filter" viewBox="0 0 16 16">
