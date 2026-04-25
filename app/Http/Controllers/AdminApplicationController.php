@@ -59,27 +59,38 @@ class AdminApplicationController extends Controller
     /**
      * Mostra tutte le candidature per un progetto specifico
      */
-    public function index($projectId)
+    public function index($projectId, Request $request)
     {
-        // Verifica che l'utente sia admin
         if (!Auth::check() || Auth::user()->role !== 'admin') {
             abort(403, 'Accesso non autorizzato.');
         }
 
         $project = Project::findOrFail($projectId);
-        
-        // Statistiche per la dashboard
+
+        $query = Application::with(['user', 'project.category', 'updatedByAdmin'])
+            ->where('project_id', $projectId)
+            ->orderBy('created_at', 'desc');
+
+        if ($request->filled('status') && in_array($request->status, ['pending', 'approved', 'rejected'])) {
+            $query->where('status', $request->status);
+        }
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->whereHas('user', function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('email', 'like', "%{$search}%");
+            });
+        }
+
         $stats = [
-            'pending' => Application::where('project_id', $projectId)->where('status', 'pending')->count(),
+            'pending'  => Application::where('project_id', $projectId)->where('status', 'pending')->count(),
             'approved' => Application::where('project_id', $projectId)->where('status', 'approved')->count(),
             'rejected' => Application::where('project_id', $projectId)->where('status', 'rejected')->count(),
-            'total' => Application::where('project_id', $projectId)->count(),
+            'total'    => Application::where('project_id', $projectId)->count(),
         ];
-        
-        $applications = Application::with(['user', 'updatedByAdmin'])
-            ->where('project_id', $projectId)
-            ->orderBy('created_at', 'desc')
-            ->paginate(10);
+
+        $applications = $query->paginate(15)->withQueryString();
 
         return view('admin.applications.index', compact('project', 'applications', 'stats'));
     }
