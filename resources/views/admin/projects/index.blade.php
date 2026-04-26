@@ -10,12 +10,14 @@
         $availableCountriesCollection = $availableCountries ?? collect();
         $categoryMap = [
             'CES' => ['label' => 'CES', 'badge' => 'badge-prog-ces'],
-            'SG' => ['label' => 'SG', 'badge' => 'badge-prog-sg'],
-            'CF' => ['label' => 'CF', 'badge' => 'badge-prog-cf'],
+            'SG'  => ['label' => 'SG',  'badge' => 'badge-prog-sg'],
+            'CF'  => ['label' => 'CF',  'badge' => 'badge-prog-cf'],
         ];
+        
+        // Icone aggiornate in versione "outline" per coerenza visiva e leggerezza
         $statusMap = [
-            'completed' => ['label' => 'Completato', 'icon' => 'bi-archive-fill', 'class' => 'text-dark'],
-            'draft' => ['label' => 'Bozza', 'icon' => 'bi-pencil-square', 'class' => 'text-secondary'],
+            'completed' => ['label' => 'Completato', 'icon' => 'bi-archive', 'class' => 'text-dark'],
+            'draft'     => ['label' => 'Bozza',      'icon' => 'bi-pencil',  'class' => 'text-secondary'],
             'published' => ['label' => 'Pubblicato', 'icon' => 'bi-broadcast', 'class' => 'text-success'],
         ];
     @endphp
@@ -135,61 +137,135 @@
             </div>
         </div>
 
+        {{-- ── FILTRI (Ottimizzati UX/UI per Mobile) ──────────── --}}
         <div class="row mb-4">
             <div class="col-12">
                 <form method="GET" action="{{ route('admin.projects.index') }}" class="bg-white rounded-4 shadow-sm p-3">
                     <div class="row g-2 align-items-end">
-                        <div class="col-lg-4">
+                        
+                        {{-- Barra di Ricerca (Sempre visibile) --}}
+                        <div class="col-12 col-lg-3">
                             <label for="project-search" class="form-label small text-body-secondary fw-semibold mb-1">Cerca progetto</label>
                             <div class="input-group">
                                 <span class="input-group-text bg-light border-end-0">
                                     <i class="bi bi-search text-body-secondary"></i>
                                 </span>
                                 <input type="text" id="project-search" name="q" value="{{ request()->query('q', '') }}"
-                                    class="form-control border-start-0" placeholder="Titolo, paese, ...">
+                                    class="form-control border-start-0" placeholder="Titolo, paese..." onchange="this.form.requestSubmit()">
+                                
+                                {{-- Bottone Filtri (Visibile SOLO su Mobile) --}}
+                                <button class="btn btn-light border d-lg-none" type="button" 
+                                    data-bs-toggle="collapse" data-bs-target="#adminFilters" 
+                                    aria-expanded="false" aria-controls="adminFilters" 
+                                    aria-label="Mostra filtri avanzati">
+                                    <i class="bi bi-sliders text-body-secondary"></i>
+                                </button>
                             </div>
                         </div>
 
-                        <div class="col-sm-4 col-lg-2">
-                            <label for="project-country" class="form-label small text-body-secondary fw-semibold mb-1">Paese</label>
-                            <select id="project-country" name="country" class="form-select" onchange="this.form.requestSubmit()">
-                                <option value="">Tutti</option>
-                                @foreach ($availableCountriesCollection as $country)
-                                    <option value="{{ $country }}" @selected(request('country') === $country)>
-                                        {{ $country }}
-                                    </option>
-                                @endforeach
-                            </select>
+                        {{-- Dropdown Filtri (Collapse su Mobile, Inline su Desktop) --}}
+                        <div class="col-12 col-lg-9">
+                            <div class="collapse d-lg-block" id="adminFilters">
+                                <div class="row g-2 align-items-end mt-2 mt-lg-0">
+                                    
+                                    <div class="col-12 col-sm-4 col-lg-3">
+                                        <label for="project-country" class="form-label small text-body-secondary fw-semibold mb-1">Paese</label>
+                                        <select id="project-country" name="country" class="form-select" onchange="this.form.requestSubmit()">
+                                            <option value="">Tutti</option>
+                                            @foreach ($availableCountriesCollection as $country)
+                                                <option value="{{ $country }}" @selected(request('country') === $country)>
+                                                    {{ $country }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+
+                                    <div class="col-12 col-sm-4 col-lg-3">
+                                        <label for="project-deadline" class="form-label small text-body-secondary fw-semibold mb-1">Scadenza</label>
+                                        <select id="project-deadline" name="deadline" class="form-select" onchange="this.form.requestSubmit()">
+                                            <option value="">Tutte</option>
+                                            <option value="7" @selected(request('deadline') === '7')>Entro 7 giorni</option>
+                                            <option value="30" @selected(request('deadline') === '30')>Entro 30 giorni</option>
+                                            <option value="expired" @selected(request('deadline') === 'expired')>Già scaduti</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="col-12 col-sm-4 col-lg-3">
+                                        <label for="project-status" class="form-label small text-body-secondary fw-semibold mb-1">Stato</label>
+                                        <select id="project-status" name="status" class="form-select" onchange="this.form.requestSubmit()">
+                                            <option value="">Tutti</option>
+                                            <option value="published" @selected(request('status') === 'published')>Pubblicato</option>
+                                            <option value="draft" @selected(request('status') === 'draft')>Bozza</option>
+                                            <option value="completed" @selected(request('status') === 'completed')>Completato</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="col-12 col-lg-3 d-grid mt-3 mt-lg-0">
+                                        <a href="{{ route('admin.projects.index') }}"
+                                            class="btn btn-ae btn-ae-square btn-ae-outline-secondary d-inline-flex align-items-center justify-content-center">
+                                            Cancella Filtri
+                                        </a>
+                                    </div>
+
+                                </div>
+                            </div>
                         </div>
 
-                        <div class="col-sm-4 col-lg-2">
-                            <label for="project-deadline"
-                                class="form-label small text-body-secondary fw-semibold mb-1">Scadenza</label>
-                            <select id="project-deadline" name="deadline" class="form-select" onchange="this.form.requestSubmit()">
-                                <option value="">Tutte</option>
-                                <option value="7" @selected(request('deadline') === '7')>Entro 7 giorni</option>
-                                <option value="30" @selected(request('deadline') === '30')>Entro 30 giorni</option>
-                                <option value="expired" @selected(request('deadline') === 'expired')>Gia scaduti</option>
-                            </select>
-                        </div>
-
-                        <div class="col-sm-4 col-lg-2">
-                            <label for="project-status" class="form-label small text-body-secondary fw-semibold mb-1">Stato</label>
-                            <select id="project-status" name="status" class="form-select" onchange="this.form.requestSubmit()">
-                                <option value="">Tutti</option>
-                                <option value="published" @selected(request('status') === 'published')>Pubblicato</option>
-                                <option value="draft" @selected(request('status') === 'draft')>Bozza</option>
-                                <option value="completed" @selected(request('status') === 'completed')>Completato</option>
-                            </select>
-                        </div>
-
-                        <div class="col-12 col-lg-2 d-grid">
-                            <a href="{{ route('admin.projects.index') }}"
-                                class="btn btn-ae btn-ae-square btn-ae-outline-secondary d-inline-flex align-items-center">
-                                <i class="me-1"></i>Cancella Filtri
-                            </a>
-                        </div>
                     </div>
+
+                    {{-- Badge Filtri Attivi (Visibili SOLO su Mobile quando i filtri sono nascosti) --}}
+                    @php
+                        $hasHiddenFilters = request()->filled('country') || request()->filled('deadline') || request()->filled('status') || request()->filled('q');
+                    @endphp
+                    @if ($hasHiddenFilters)
+                        <div class="mt-3 pt-3 border-top d-lg-none">
+                            <div class="d-flex flex-wrap align-items-center gap-2">
+                                <span class="small fw-semibold text-body-secondary me-1">Filtri attivi:</span>
+
+                                @if (request()->filled('q'))
+                                    @php $removeQParams = request()->except('q', 'page'); @endphp
+                                    <span class="badge bg-light border text-dark rounded-pill py-2 px-3 d-inline-flex align-items-center gap-2 shadow-sm">
+                                        <span class="text-body-secondary fw-normal">Testo:</span> {{ request('q') }}
+                                        <a href="{{ route('admin.projects.index', $removeQParams) }}" class="text-dark opacity-50 text-decoration-none" aria-label="Rimuovi filtro"><i class="bi bi-x-circle-fill"></i></a>
+                                    </span>
+                                @endif
+
+                                @if (request()->filled('country'))
+                                    @php $removeCountryParams = request()->except('country', 'page'); @endphp
+                                    <span class="badge bg-light border text-dark rounded-pill py-2 px-3 d-inline-flex align-items-center gap-2 shadow-sm">
+                                        <span class="text-body-secondary fw-normal">Paese:</span> {{ request('country') }}
+                                        <a href="{{ route('admin.projects.index', $removeCountryParams) }}" class="text-dark opacity-50 text-decoration-none" aria-label="Rimuovi filtro"><i class="bi bi-x-circle-fill"></i></a>
+                                    </span>
+                                @endif
+
+                                @if (request()->filled('deadline'))
+                                    @php
+                                        $removeDeadlineParams = request()->except('deadline', 'page');
+                                        $dl = request('deadline');
+                                        $dlLabel = $dl == '7' ? 'Entro 7 gg' : ($dl == '30' ? 'Entro 30 gg' : 'Scaduti');
+                                    @endphp
+                                    <span class="badge bg-light border text-dark rounded-pill py-2 px-3 d-inline-flex align-items-center gap-2 shadow-sm">
+                                        <span class="text-body-secondary fw-normal">Scadenza:</span> {{ $dlLabel }}
+                                        <a href="{{ route('admin.projects.index', $removeDeadlineParams) }}" class="text-dark opacity-50 text-decoration-none" aria-label="Rimuovi filtro"><i class="bi bi-x-circle-fill"></i></a>
+                                    </span>
+                                @endif
+
+                                @if (request()->filled('status'))
+                                    @php
+                                        $removeStatusParams = request()->except('status', 'page');
+                                        $statusStr = request('status');
+                                        $statusLabel = $statusMap[$statusStr]['label'] ?? ucfirst($statusStr);
+                                    @endphp
+                                    <span class="badge bg-light border text-dark rounded-pill py-2 px-3 d-inline-flex align-items-center gap-2 shadow-sm">
+                                        <span class="text-body-secondary fw-normal">Stato:</span> {{ $statusLabel }}
+                                        <a href="{{ route('admin.projects.index', $removeStatusParams) }}" class="text-dark opacity-50 text-decoration-none" aria-label="Rimuovi filtro"><i class="bi bi-x-circle-fill"></i></a>
+                                    </span>
+                                @endif
+
+                                <a href="{{ route('admin.projects.index') }}" class="btn btn-link text-danger text-decoration-none btn-sm ms-auto py-0">Svuota</a>
+                            </div>
+                        </div>
+                    @endif
                 </form>
             </div>
         </div>
@@ -250,9 +326,7 @@
 
                             <tr>
                                 <td class="ps-3">
-                                    <input type="checkbox" class="form-check-input project-row-checkbox"
-                                        value="{{ $projectId }}" data-status="{{ $status }}" @change="updateCount" @disabled(!$projectId)
-                                        aria-label="Seleziona progetto">
+                                    <input type="checkbox" class="form-check-input project-row-checkbox" value="{{ $projectId }}" data-status="{{ $status }}" @change="updateCount" @disabled(!$projectId)aria-label="Seleziona progetto">
                                 </td>
                                 <td class="fw-semibold">{{ $projectTitle }}</td>
                                 <td class="text-center">
@@ -514,7 +588,7 @@
                         <div class="modal-body pt-2">
                             <p class="mb-2">Confermi l'eliminazione dei progetti selezionati?</p>
                             <p class="text-body-secondary mb-0">
-                                Questa azione rimuovera <strong x-text="selectedCount"></strong> progetti.
+                                Questa azione rimuoverà <strong x-text="selectedCount"></strong> progetti.
                             </p>
 
                             <template x-for="id in selectedProjectIds" :key="'modal-bulk-delete-' + id">
