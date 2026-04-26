@@ -111,8 +111,8 @@ class ProjectRequest extends FormRequest
 
         // Regole per il campo immagine
         if ($isUpdate) {
-            // Durante l'aggiornamento, l'immagine è opzionale
-            $rules['image_path'] = 'nullable|image|mimes:jpeg,jpg,png,gif,webp|max:2048';
+            // Durante l'aggiornamento, l'immagine è obbligatoria come in creazione
+            $rules['image_path'] = 'required|image|mimes:jpeg,jpg,png,gif,webp|max:2048';
         } else {
             // Durante la creazione, l'immagine è obbligatoria
             $rules['image_path'] = 'required|image|mimes:jpeg,jpg,png,gif,webp|max:2048';

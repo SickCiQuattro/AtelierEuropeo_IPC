@@ -170,7 +170,7 @@
                                                     <p class="author">{{ $testimonial->author->name }}</p>
                                                     <p class="project">{{ $testimonial->project->title }}</p>
                                                     <p class="text">{{ $testimonial->content }}</p>
-                                                    <a href="{{ route('project.show', ['project' => $testimonial->project_id]) . '#testimonianze' }}"
+                                                    <a href="{{ route('project.show', ['project' => $testimonial->project_id]) }}"
                                                         class="link">
                                                         Vai al progetto <i class="bi bi-arrow-right project-arrow"></i>
                                                     </a>
@@ -215,7 +215,7 @@
                                                 <p class="author">{{ $testimonial->author->name }}</p>
                                                 <p class="project">{{ $testimonial->project->title }}</p>
                                                 <p class="text">{{ $testimonial->content }}</p>
-                                                <a href="{{ route('project.show', ['project' => $testimonial->project_id]) . '#testimonianze' }}"
+                                                <a href="{{ route('project.show', ['project' => $testimonial->project_id]) }}"
                                                     class="link">
                                                     Vai al progetto <i class="bi bi-arrow-right project-arrow"></i>
                                                 </a>

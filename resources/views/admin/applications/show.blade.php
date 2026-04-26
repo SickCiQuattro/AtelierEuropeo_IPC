@@ -14,7 +14,7 @@
 
         // Configurazione Stati Candidatura
         $statusMap = [
-            'pending' => ['label' => 'In Attesa', 'icon' => 'bi-hourglass-split', 'class' => 'text-warning'],
+            'pending' => ['label' => 'In Attesa', 'icon' => 'bi-hourglass-split', 'class' => 'admin-kpi-icon-pending'],
             'approved' => ['label' => 'Approvata', 'icon' => 'bi-check-circle', 'class' => 'text-success'],
             'rejected' => ['label' => 'Rifiutata', 'icon' => 'bi-x-circle', 'class' => 'text-danger'],
         ];

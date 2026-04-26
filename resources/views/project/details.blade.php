@@ -130,14 +130,12 @@
                 </div>
 
                 <div class="d-none d-md-block mb-4">
-                    <div style="margin-bottom: 0.35rem;">
-                        <x-breadcrumb>
-                            <li class="breadcrumb-item">
-                                <a href="{{ $breadcrumbListUrl }}">{{ $breadcrumbListLabel }}</a>
-                            </li>
-                            <li class="breadcrumb-item active" aria-current="page">{{ $project->title }}</li>
-                        </x-breadcrumb>
-                    </div>
+                    <x-breadcrumb>
+                        <li class="breadcrumb-item">
+                            <a href="{{ $breadcrumbListUrl }}">{{ $breadcrumbListLabel }}</a>
+                        </li>
+                        <li class="breadcrumb-item active" aria-current="page">{{ $project->title }}</li>
+                    </x-breadcrumb>
                 </div>
 
                 <article class="card border-0 shadow-sm overflow-hidden mb-4" style="border-radius: 1.25rem;">
@@ -192,7 +190,7 @@
                                         @elseif ($alreadyApplied)
                                             <a href="{{ route('applications.index') }}"
                                                 class="btn btn-ae btn-ae-outline-primary rounded-pill px-4 py-2">
-                                                <i class="bi bi-file-earmark-text me-2"></i>Le Mie Candidature
+                                                <i class="bi bi-file-earmark-text me-2"></i>Vedi Dettaglio Candidatura
                                             </a>
                                         @else
                                             <a href="{{ route('applications.create', $project->id) }}"
@@ -373,7 +371,7 @@
                                             </p>
                                             <a href="{{ route('applications.index') }}"
                                                 class="btn btn-ae btn-ae-outline-primary w-100 rounded-pill">
-                                                <i class="bi bi-file-earmark-text me-2"></i>Le Mie Candidature
+                                                <i class="bi bi-file-earmark-text me-2"></i>Vedi Dettaglio Candidatura
                                             </a>
                                         @else
                                             <p class="text-muted small mb-3">
@@ -411,12 +409,12 @@
     </div>
 
     @if ($isCompleted && $projectTestimonials->count() > 0)
-        <section id="testimonianze" class="py-5 mt-4 border-top" style="scroll-margin-top: 100px;">
+        <section id="testimonianze" class="py-5 mt-5 bg-light" style="scroll-margin-top: 100px;">
             <div class="container px-3 px-md-4">
 
                 <div class="text-center mb-5">
-                    <h2 class="section-title text-dark">Testimonianze</h2>
-                    <p class="section-subtitle">
+                    <h2 class="display-6 fw-bold text-dark mb-2">Testimonianze</h2>
+                    <p class="text-secondary lead">
                         I racconti di chi ha vissuto questo progetto.
                     </p>
                 </div>
@@ -424,19 +422,37 @@
                 <div class="row g-4 justify-content-center">
                     @foreach ($projectTestimonials as $testimonial)
                         <div class="col-12 col-md-6 col-lg-4">
-                            <div class="testimonial-card h-100 d-flex flex-column">
-                                <div class="quote"><i class="bi bi-quote"></i></div>
-                                <p class="author">{{ $testimonial->author->name ?? 'Partecipante' }}</p>
-                                <p class="project">{{ $project->title }}</p>
-                                <p class="text flex-grow-1">{{ $testimonial->content }}</p>
+                            <div class="card border-0 shadow-sm h-100 rounded-4 position-relative overflow-hidden transition-hover"
+                                style="background-color: #fff;">
+                                {{-- Watermark quote --}}
+                                <i class="bi bi-quote position-absolute text-light"
+                                    style="font-size: 5rem; top: -15px; left: 10px; z-index: 0; opacity: 0.7;"></i>
 
+                                <div class="card-body p-4 d-flex flex-column position-relative z-1 mt-3">
+                                    <p class="text-dark fst-italic flex-grow-1 mb-4" style="line-height: 1.6; font-size: 1.05rem;">
+                                        "{{ $testimonial->content }}"
+                                    </p>
+
+                                    <div class="border-top pt-3 mt-auto d-flex align-items-center gap-3">
+                                        <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center fw-bold"
+                                            style="width: 40px; height: 40px; font-size: 1rem;">
+                                            {{ strtoupper(substr($testimonial->author->name ?? 'P', 0, 1)) }}
+                                        </div>
+                                        <div>
+                                            <h6 class="fw-bold mb-0 text-dark">{{ $testimonial->author->name ?? 'Partecipante' }}
+                                            </h6>
+                                            <small class="text-muted">Partecipante</small>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     @endforeach
                 </div>
 
-                <div class="text-center mt-5">
-                    <a href="{{ route('project.index') }}" class="btn btn-ae btn-ae-pill btn-ae-outline-primary px-4 py-2">
+                <div class="text-center mt-5 pt-3">
+                    <a href="{{ route('project.index') }}"
+                        class="btn btn-lg btn-ae btn-ae-outline-primary rounded-pill px-4 py-2 shadow-sm">
                         Vedi tutti i progetti disponibili <i class="bi bi-arrow-right ms-2" aria-hidden="true"></i>
                     </a>
                 </div>

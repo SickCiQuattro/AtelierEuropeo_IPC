@@ -13,7 +13,7 @@
         ];
 
         $statusMap = [
-            'pending' => ['label' => 'In Attesa', 'icon' => 'bi-hourglass-split', 'class' => 'text-warning'],
+            'pending' => ['label' => 'In Attesa', 'icon' => 'bi-hourglass-split', 'class' => 'admin-kpi-icon-pending'],
             'approved' => ['label' => 'Approvata', 'icon' => 'bi-check-circle', 'class' => 'text-success'],
             'rejected' => ['label' => 'Rifiutata', 'icon' => 'bi-x-circle', 'class' => 'text-danger'],
         ];
@@ -326,11 +326,97 @@
             <div class="card-footer bg-white border-0 border-top py-3">
                 <div class="d-flex justify-content-center">
                     @if (isset($applications) && method_exists($applications, 'links'))
-                        {{ $applications->links() }}
+                        @php
+                            $currentPage = $applications->currentPage();
+                            $lastPage = $applications->lastPage();
+
+                            // 1. Definiamo quali numeri VOGLIAMO mostrare
+                            $pagesToShow = [1, $lastPage]; // Sempre la prima e l'ultima
+
+                            // Aggiungiamo la corrente e i suoi vicini immediati (se esistono)
+                            if ($currentPage > 1) {
+                                $pagesToShow[] = $currentPage - 1;
+                            }
+                            $pagesToShow[] = $currentPage;
+                            if ($currentPage < $lastPage) {
+                                $pagesToShow[] = $currentPage + 1;
+                            }
+
+                            // 2. Rimuoviamo i doppioni e ordiniamo l'array dal più piccolo al più grande
+                            $pagesToShow = array_unique($pagesToShow);
+                            sort($pagesToShow);
+                        @endphp
+
+                        @if ($lastPage > 1)
+                            <nav aria-label="Paginazione candidature">
+                                <ul class="pagination pagination-sm flex-wrap justify-content-center mb-0 gap-2">
+
+                                    {{-- Bottone Precedente --}}
+                                    @if ($applications->onFirstPage())
+                                        <li aria-disabled="true" aria-label="Precedente">
+                                            <button class="btn btn-ae btn-ae-outline-primary" type="button" disabled aria-hidden="true">
+                                                <i class="bi bi-chevron-left"></i>
+                                            </button>
+                                        </li>
+                                    @else
+                                        <li>
+                                            <a class="btn btn-ae btn-ae-outline-primary" href="{{ $applications->previousPageUrl() }}"
+                                                rel="prev" aria-label="Precedente">
+                                                <i class="bi bi-chevron-left"></i>
+                                            </a>
+                                        </li>
+                                    @endif
+
+                                    {{-- Generazione Numeri e Puntini --}}
+                                    @php $previousPage = null; @endphp
+                                    @foreach ($pagesToShow as $page)
+
+                                        {{-- Se c'è un "salto" maggiore di 1 tra il numero precedente e quello attuale, stampiamo i
+                                        puntini --}}
+                                        @if ($previousPage !== null && $page - $previousPage > 1)
+                                            <li class="disabled" aria-disabled="true">
+                                                <span
+                                                    class="btn btn-ae btn-ae-outline-primary disabled border-0 text-muted fw-bold bg-transparent">...</span>
+                                            </li>
+                                        @endif
+
+                                        {{-- Stampa del numero --}}
+                                        @if ($page == $currentPage)
+                                            <li class="active" aria-current="page">
+                                                <span class="btn btn-ae btn-ae-primary">{{ $page }}</span>
+                                            </li>
+                                        @else
+                                            <li>
+                                                <a class="btn btn-ae btn-ae-outline-primary"
+                                                    href="{{ $applications->url($page) }}">{{ $page }}</a>
+                                            </li>
+                                        @endif
+
+                                        @php $previousPage = $page; @endphp
+                                    @endforeach
+
+                                    {{-- Bottone Successivo --}}
+                                    @if ($applications->hasMorePages())
+                                        <li>
+                                            <a class="btn btn-ae btn-ae-outline-primary" href="{{ $applications->nextPageUrl() }}"
+                                                rel="next" aria-label="Successiva">
+                                                <i class="bi bi-chevron-right"></i>
+                                            </a>
+                                        </li>
+                                    @else
+                                        <li aria-disabled="true" aria-label="Successiva">
+                                            <button class="btn btn-ae btn-ae-outline-primary" type="button" disabled aria-hidden="true">
+                                                <i class="bi bi-chevron-right"></i>
+                                            </button>
+                                        </li>
+                                    @endif
+
+                                </ul>
+                            </nav>
+                        @endif
                     @endif
                 </div>
             </div>
         </div>
-
     </div>
 @endsection

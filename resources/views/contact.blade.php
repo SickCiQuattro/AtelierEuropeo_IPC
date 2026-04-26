@@ -23,7 +23,8 @@
                         <h2 class="h5 fw-bold mb-0">Invia un Messaggio</h2>
                     </div>
 
-                    <p class="small text-body-secondary mb-4">I campi contrassegnati con l'asterisco (*) sono obbligatori.
+                    <p class="small text-body-secondary mb-4">I campi contrassegnati con l'asterisco <span
+                            class="text-danger fw-bold">*</span> sono obbligatori.
                     </p>
 
                     <form action="#" method="POST">
@@ -31,13 +32,15 @@
                         <div class="row g-3">
                             <div class="col-md-6">
                                 <label for="nome_cognome" class="form-label">
-                                    <i class="bi bi-person me-1"></i>Nome e Cognome *
+                                    <i class="bi bi-person me-1"></i>Nome e Cognome <span class="text-danger"
+                                        aria-hidden="true">*</span>
                                 </label>
                                 <input type="text" class="form-control" id="nome_cognome" name="nome_cognome" required>
                             </div>
                             <div class="col-md-6">
                                 <label for="email" class="form-label">
-                                    <i class="bi bi-envelope me-1"></i>Email *
+                                    <i class="bi bi-envelope me-1"></i>Email <span class="text-danger"
+                                        aria-hidden="true">*</span>
                                 </label>
                                 <input type="email" class="form-control" id="email" name="email" required>
                             </div>
@@ -45,7 +48,7 @@
 
                         <div class="mt-3">
                             <label for="oggetto" class="form-label">
-                                <i class="bi bi-tag me-1"></i>Oggetto *
+                                <i class="bi bi-tag me-1"></i>Oggetto <span class="text-danger" aria-hidden="true">*</span>
                             </label>
                             <select class="form-select" id="oggetto" name="oggetto" required>
                                 <option value="">Seleziona un oggetto...</option>
@@ -61,7 +64,8 @@
 
                         <div class="mt-3">
                             <label for="messaggio" class="form-label">
-                                <i class="bi bi-chat-text me-1"></i>Messaggio *
+                                <i class="bi bi-chat-text me-1"></i>Messaggio <span class="text-danger"
+                                    aria-hidden="true">*</span>
                             </label>
                             <textarea class="form-control" id="messaggio" name="messaggio" rows="5"
                                 placeholder="Scrivi qui il tuo messaggio..." required></textarea>
@@ -72,7 +76,8 @@
                                 <input class="form-check-input" type="checkbox" id="privacy" name="privacy" required>
                                 <label class="form-check-label" for="privacy">
                                     Accetto il trattamento dei dati personali secondo la
-                                    <a href="#" class="text-decoration-none">Privacy Policy</a> *
+                                    <a href="#" class="text-decoration-none">Privacy Policy</a> <span class="text-danger"
+                                        aria-hidden="true">*</span>
                                 </label>
                             </div>
                         </div>

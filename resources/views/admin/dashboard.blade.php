@@ -165,8 +165,8 @@
                             <tbody>
                                 @forelse ($expiringProjects as $project)
                                     <tr class="admin-clickable-row" role="link" tabindex="0"
-                                        onclick="window.location.href='{{ route('project.edit', ['id' => $project->id, 'adminContext' => 1]) }}'"
-                                        onkeydown="if(event.key === 'Enter' || event.key === ' '){ event.preventDefault(); window.location.href='{{ route('project.edit', ['id' => $project->id, 'adminContext' => 1]) }}'; }">
+                                        onclick="window.location.href='{{ route('project.show', ['project' => $project->id, 'adminContext' => 1]) }}'"
+                                        onkeydown="if(event.key === 'Enter' || event.key === ' '){ event.preventDefault(); window.location.href='{{ route('project.show', ['project' => $project->id, 'adminContext' => 1]) }}'; }">
                                         <td class="fw-semibold">{{ $project->title }}</td>
                                         <td>{{ $project->location ?? $project->country ?? 'N/D' }}</td>
                                         <td>
@@ -198,7 +198,7 @@
 
                     <div class="d-md-none flex-grow-1 admin-mobile-list">
                         @forelse ($expiringProjects as $project)
-                            <a href="{{ route('project.edit', ['id' => $project->id, 'adminContext' => 1]) }}"
+                            <a href="{{ route('project.show', ['project' => $project->id, 'adminContext' => 1]) }}"
                                 class="admin-mobile-item admin-mobile-item-link admin-mobile-item-project text-decoration-none text-reset d-block">
                                 <div class="d-flex align-items-start justify-content-between gap-2 mb-2">
                                     <span class="admin-mobile-kicker">Progetto</span>

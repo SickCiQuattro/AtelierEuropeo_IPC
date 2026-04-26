@@ -1859,3 +1859,44 @@ p {
     line-height: 1;
     margin-top: -2px; /* Bilanciamento ottico dell'icona */
 }
+
+/* Legacy breadcrumb normalization: keeps old nav/ol markup aligned with ae-breadcrumb height */
+nav[aria-label="breadcrumb"] .breadcrumb:not(.ae-breadcrumb) {
+    display: inline-flex;
+    align-items: center;
+    background-color: #ffffff;
+    border: 1px solid #f0f2f5;
+    padding: 0.45rem 1.25rem;
+    border-radius: 50rem;
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.04);
+    margin-bottom: 0;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+nav[aria-label="breadcrumb"] .breadcrumb:not(.ae-breadcrumb) .breadcrumb-item {
+    display: flex;
+    align-items: center;
+}
+
+nav[aria-label="breadcrumb"] .breadcrumb:not(.ae-breadcrumb) .breadcrumb-item + .breadcrumb-item::before {
+    margin-top: 1px;
+    padding-right: 0.5rem;
+}
+
+nav[aria-label="breadcrumb"] .breadcrumb:not(.ae-breadcrumb) a {
+    color: var(--bs-secondary);
+    text-decoration: none;
+    transition: color 0.2s ease, transform 0.2s ease;
+}
+
+nav[aria-label="breadcrumb"] .breadcrumb:not(.ae-breadcrumb) a:hover,
+nav[aria-label="breadcrumb"] .breadcrumb:not(.ae-breadcrumb) a:focus-visible {
+    color: var(--bs-primary);
+    transform: translateY(-1px);
+}
+
+nav[aria-label="breadcrumb"] .breadcrumb:not(.ae-breadcrumb) .breadcrumb-item.active {
+    color: var(--bs-primary);
+    font-weight: 700;
+}

@@ -258,9 +258,8 @@
                                         </select>
                                     </div>
                                     <div class="col-12">
-                                        <label class="form-label fw-semibold">Immagine Copertina
-                                            @if(!$isEditMode)<span class="text-danger">*</span>@endif
-                                        </label>
+                                        <label class="form-label fw-semibold">Immagine Copertina <span
+                                                class="text-danger">*</span></label>
                                         <div class="input-group">
                                             <span class="input-group-text bg-light border-0"
                                                 style="border-top-left-radius: 0.75rem; border-bottom-left-radius: 0.75rem;">
@@ -268,7 +267,7 @@
                                             </span>
                                             <input class="form-control bg-light border-0 py-2 d-none"
                                                 style="border-radius: 0;" type="file" id="image_path" name="image_path"
-                                                accept="image/*" @if(!$isEditMode) required @endif />
+                                                accept="image/*" required />
                                             <input type="text" id="image_path_display"
                                                 class="form-control bg-light border-0 py-2 file-select-display"
                                                 style="border-top-right-radius: 0.75rem; border-bottom-right-radius: 0.75rem;"

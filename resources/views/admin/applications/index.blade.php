@@ -14,7 +14,7 @@
 
         // Badge candidature allineati alle euristiche Nielsen
         $statusMap = [
-            'pending' => ['label' => 'In Attesa', 'icon' => 'bi-hourglass-split', 'class' => 'text-warning'],
+            'pending' => ['label' => 'In Attesa', 'icon' => 'bi-hourglass-split', 'class' => 'admin-kpi-icon-pending'],
             'approved' => ['label' => 'Approvata', 'icon' => 'bi-check-circle', 'class' => 'text-success'],
             'rejected' => ['label' => 'Rifiutata', 'icon' => 'bi-x-circle', 'class' => 'text-danger'],
         ];
@@ -29,7 +29,7 @@
         $pStatusConfig = $pStatusMap[$pStatusStr] ?? ['label' => ucfirst($pStatusStr), 'icon' => 'bi-question-circle', 'class' => 'text-secondary'];
     @endphp
 
-    <div class="container py-5">
+    <div class="container pt-4 pb-5">
 
         {{-- ── NAVIGAZIONE (Pulsante Mobile + Breadcrumb Desktop) ──────── --}}
         <div class="d-md-none mb-3">

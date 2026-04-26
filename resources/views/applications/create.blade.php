@@ -82,6 +82,7 @@
             <form action="{{ route('applications.store', $project->id) }}" method="POST"
                   enctype="multipart/form-data"
                   x-data="applicationForm()"
+                @submit="onSubmit($event)"
                   novalidate>
                 @csrf
 
@@ -200,8 +201,8 @@
                     <a href="{{ route('project.show', $project->id) }}" class="btn btn-ae btn-ae-outline-secondary">
                         <i class="bi bi-arrow-left me-1"></i>Annulla
                     </a>
-                    <button type="submit" class="btn btn-ae btn-ae-primary px-4"
-                            :disabled="submitting" @click="submitting = true">
+                        <button type="submit" class="btn btn-ae btn-ae-primary px-4"
+                            :disabled="submitting">
                         <span x-show="!submitting"><i class="bi bi-send me-1"></i>Invia candidatura</span>
                         <span x-show="submitting" x-cloak>
                             <span class="spinner-border spinner-border-sm me-1" role="status"></span>Invio in corso…
@@ -231,6 +232,29 @@
 function applicationForm() {
     return {
         fileName: null, fileSize: null, hasError: false, errorMsg: '', dragging: false, submitting: false,
+        onSubmit(evt) {
+            this.submitting = false;
+
+            const documentInput = document.getElementById('document');
+            const selectedFile = documentInput && documentInput.files ? documentInput.files[0] : null;
+
+            if (!selectedFile) {
+                evt.preventDefault();
+                this.hasError = true;
+                this.errorMsg = 'Allega un file PDF prima di inviare la candidatura.';
+                if (documentInput) {
+                    documentInput.focus();
+                }
+                return;
+            }
+
+            if (this.hasError) {
+                evt.preventDefault();
+                return;
+            }
+
+            this.submitting = true;
+        },
         onFileChange(evt) { this.handleFile(evt.target.files[0]); },
         onDrop(evt) {
             this.dragging = false;
@@ -238,7 +262,7 @@ function applicationForm() {
             if (file) { const dt = new DataTransfer(); dt.items.add(file); document.getElementById('document').files = dt.files; this.handleFile(file); }
         },
         handleFile(file) {
-            this.hasError = false; this.errorMsg = '';
+            this.hasError = false; this.errorMsg = ''; this.fileName = null; this.fileSize = null;
             if (!file) return;
             if (file.type !== 'application/pdf') { this.hasError = true; this.errorMsg = 'Sono accettati solo file PDF.'; document.getElementById('document').value = ''; return; }
             const sizeMB = file.size / 1024 / 1024;
