@@ -1,6 +1,6 @@
 @extends('layouts.master')
 
-@section('title', 'AE - Dettaglio Candidatura')
+@section('title', 'AE - Dettagli Candidatura')
 
 @section('body')
     @php
@@ -74,7 +74,7 @@
         {{-- ── HEADER ──────────── --}}
         <div class="row align-items-center g-3 mb-4">
             <div class="col-lg">
-                <h1 class="display-6 fw-bold text-dark mb-1">Dettaglio Candidatura</h1>
+                <h1 class="display-6 fw-bold text-dark mb-1">Dettagli Candidatura</h1>
                 <p class="text-muted mb-0">
                     <i class="bi bi-calendar3 me-1"></i>
                     Inviata il {{ $application->created_at->format('d/m/Y \a\l\l\e H:i') }}
@@ -127,7 +127,7 @@
 
                         <a href="{{ route('project.show', $application->project->id) }}"
                             class="btn btn-ae btn-ae-outline-secondary btn-sm btn-ae-square">
-                            <i class="bi bi-eye me-1"></i>Apri scheda progetto
+                            <i class="bi bi-folder me-1"></i>Progetto
                         </a>
                     </div>
                 </div>
@@ -178,30 +178,30 @@
                     <div class="card border-0 shadow-sm rounded-4 overflow-hidden mb-4">
                         <div class="card-header bg-light border-bottom py-3">
                             <h5 class="mb-0 fw-bold">
-                                <i class="bi bi-person me-2 text-primary"></i>
-                                Le tue informazioni
+                                <i class="bi bi-person-lines-fill me-2 text-primary"></i>
+                                Informazioni Personali
                             </h5>
                         </div>
                         <div class="card-body p-4">
 
                             <div class="mb-4">
-                                <div class="text-muted small fw-semibold mb-1 text-uppercase tracking-wide">Nome Completo
+                                <div class="text-muted small fw-semibold mb-1 tracking-wide">Nome Completo
                                 </div>
                                 <div class="text-dark fw-medium fs-6">{{ $application->user->name }}</div>
                             </div>
 
                             <div class="mb-4">
-                                <div class="text-muted small fw-semibold mb-1 text-uppercase tracking-wide">Email</div>
+                                <div class="text-muted small fw-semibold mb-1 tracking-wide">Email</div>
                                 <div class="text-dark">{{ $application->user->email }}</div>
                             </div>
 
                             <div class="mb-4">
-                                <div class="text-muted small fw-semibold mb-1 text-uppercase tracking-wide">Telefono</div>
+                                <div class="text-muted small fw-semibold mb-1 tracking-wide">Telefono</div>
                                 <div class="text-dark">{{ $application->phone ?? 'Non fornito' }}</div>
                             </div>
 
                             <div>
-                                <div class="text-muted small fw-semibold mb-2 text-uppercase tracking-wide">Curriculum Vitae
+                                <div class="text-muted small fw-semibold mb-2 tracking-wide">Curriculum Vitae
                                 </div>
                                 @if($application->document_path)
                                     <a href="{{ asset('storage/' . $application->document_path) }}" target="_blank"

@@ -236,22 +236,24 @@
                             <i class="bi bi-gear-fill me-2"></i>Pannello Operativo
                         </div>
 
-                        <div class="d-flex flex-wrap gap-2 justify-content-end">
-                            <button type="button" class="btn btn-ae btn-ae-outline-danger rounded-pill px-4"
+                        <div
+                            class="d-flex flex-column flex-md-row gap-2 justify-content-start justify-content-md-end w-100 w-md-auto">
+                            <button type="button"
+                                class="btn btn-ae btn-ae-outline-danger rounded-pill px-4 flex-grow-1 flex-md-grow-0"
                                 data-bs-toggle="modal" data-bs-target="#deleteProjectModal">
                                 <i class="bi bi-trash-fill me-2"></i>Elimina
                             </button>
 
                             @if (!$isDraft)
                                 <a href="{{ route('admin.applications.index', $project->id) }}"
-                                    class="btn btn-ae btn-ae-outline-secondary rounded-pill px-4">
+                                    class="btn btn-ae btn-ae-outline-secondary rounded-pill px-4 flex-grow-1 flex-md-grow-0">
                                     <i class="bi bi-people-fill me-2"></i>Candidature
                                 </a>
                             @endif
 
                             @if (!$isCompleted)
                                 <a href="{{ route('project.edit', ['id' => $project->id, 'adminContext' => $isAdminContext ? 1 : null]) }}"
-                                    class="btn btn-ae btn-ae-primary rounded-pill px-4 shadow-sm">
+                                    class="btn btn-ae btn-ae-primary rounded-pill px-4 shadow-sm flex-grow-1 flex-md-grow-0">
                                     <i class="bi bi-pencil-fill me-2"></i>Modifica Progetto
                                 </a>
                             @endif

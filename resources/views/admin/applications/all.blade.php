@@ -44,7 +44,7 @@
                                     <i class="bi bi-search text-body-secondary"></i>
                                 </span>
                                 <input type="text" id="app-search" name="search" value="{{ request('search') }}"
-                                    class="form-control border-start-0" placeholder="Nome o email..."
+                                    class="form-control border-start-0" placeholder="Candidato, Progetto..."
                                     onchange="this.form.requestSubmit()">
 
                                 {{-- Bottone Filtri (Visibile SOLO su Mobile) --}}

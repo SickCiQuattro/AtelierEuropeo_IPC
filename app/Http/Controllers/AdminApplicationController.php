@@ -32,12 +32,14 @@ class AdminApplicationController extends Controller
             $query->where('project_id', $request->project_id);
         }
 
-        // Ricerca per nome o email candidato
+        // Ricerca per nome o email candidato, o titolo progetto
         if ($request->filled('search')) {
             $search = $request->search;
             $query->whereHas('user', function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
                   ->orWhere('email', 'like', "%{$search}%");
+            })->orWhereHas('project', function ($q) use ($search) {
+                $q->where('title', 'like', "%{$search}%");
             });
         }
 

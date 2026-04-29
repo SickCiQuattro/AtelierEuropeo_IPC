@@ -170,7 +170,7 @@
                                                     <p class="author">{{ $testimonial->author->name }}</p>
                                                     <p class="project">{{ $testimonial->project->title }}</p>
                                                     <p class="text">{{ $testimonial->content }}</p>
-                                                    <a href="{{ route('project.show', ['project' => $testimonial->project_id]) }}"
+                                                    <a href="{{ route('project.show', ['project' => $testimonial->project_id, 'source' => 'portfolio']) }}"
                                                         class="link">
                                                         Vai al progetto <i class="bi bi-arrow-right project-arrow"></i>
                                                     </a>
@@ -211,11 +211,11 @@
                                     <div class="carousel-item {{ $index === 0 ? 'active' : '' }}">
                                         <div class="d-flex justify-content-center py-3">
                                             <div class="testimonial-card">
-                                                <div class="quote">""</div>
+                                                <div class="quote"><i class="bi bi-quote"></i></div>
                                                 <p class="author">{{ $testimonial->author->name }}</p>
                                                 <p class="project">{{ $testimonial->project->title }}</p>
                                                 <p class="text">{{ $testimonial->content }}</p>
-                                                <a href="{{ route('project.show', ['project' => $testimonial->project_id]) }}"
+                                                <a href="{{ route('project.show', ['project' => $testimonial->project_id, 'source' => 'portfolio']) }}"
                                                     class="link">
                                                     Vai al progetto <i class="bi bi-arrow-right project-arrow"></i>
                                                 </a>

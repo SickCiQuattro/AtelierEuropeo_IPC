@@ -103,17 +103,17 @@
                     </div>
                     <div class="card-body p-4">
                         <div class="mb-4">
-                            <div class="text-muted small fw-semibold mb-1 text-uppercase tracking-wide">Nome Completo</div>
+                            <div class="text-muted small fw-semibold mb-1 tracking-wide">Nome Completo</div>
                             <div class="text-dark fw-medium fs-5">{{ $application->user->name }}</div>
                         </div>
                         <div class="row g-3 mb-4">
                             <div class="col-md-6">
-                                <div class="text-muted small fw-semibold mb-1 text-uppercase tracking-wide">Email</div>
+                                <div class="text-muted small fw-semibold mb-1 tracking-wide">Email</div>
                                 <a href="mailto:{{ $application->user->email }}"
                                     class="text-decoration-none text-primary fw-medium">{{ $application->user->email }}</a>
                             </div>
                             <div class="col-md-6">
-                                <div class="text-muted small fw-semibold mb-1 text-uppercase tracking-wide">Telefono</div>
+                                <div class="text-muted small fw-semibold mb-1 tracking-wide">Telefono</div>
                                 @if($application->phone)
                                     <a href="tel:{{ $application->phone }}"
                                         class="text-decoration-none text-dark fw-medium">{{ $application->phone }}</a>
@@ -139,7 +139,7 @@
                             </a>
                         @else
                             <div>
-                                <div class="text-muted small fw-semibold mb-1 text-uppercase tracking-wide">Curriculum Vitae
+                                <div class="text-muted small fw-semibold mb-1 tracking-wide">Curriculum Vitae
                                 </div>
                                 <span class="text-muted small"><i class="bi bi-x-circle me-1"></i>Nessun documento allegato dal
                                     candidato.</span>
@@ -156,32 +156,46 @@
                         </h5>
                     </div>
                     <div class="card-body p-4">
-                        <h6 class="fw-bold text-dark fs-5 mb-3">{{ $application->project->title }}</h6>
+                        <h5 class="fw-bold text-primary mb-3">
+                            {{ $application->project->title }}
+                        </h5>
 
-                        <div class="d-flex flex-wrap align-items-center gap-2 mb-4">
+                        <div class="d-flex align-items-center flex-wrap gap-2 mb-3">
                             @if($application->project->category)
-                                <span
-                                    class="{{ $categoryConfig['badge'] }} shadow-sm d-inline-flex align-items-center justify-content-center px-3 py-1"
-                                    style="cursor: default;">
-                                    {{ $categoryConfig['label'] }}
+                                <span class="d-inline-block position-relative z-3" tabindex="0" data-bs-toggle="tooltip"
+                                    data-bs-placement="top" title="Info sul programma {{ $application->project->category->name }}">
+                                    <button type="button"
+                                        class="{{ $categoryConfig['badge'] }} border-0 shadow-sm px-3 py-1"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#infoModal-{{ $categoryConfig['label'] }}"
+                                        style="font-size: 0.9rem; cursor: pointer;">
+                                        {{ $categoryConfig['label'] }} <i class="bi bi-info-circle ms-1"></i>
+                                    </button>
                                 </span>
                             @endif
+
+                            <span class="badge rounded-pill bg-light border px-3 py-2 shadow-sm {{ $pStatusConfig['class'] }}"
+                                style="font-size:.82rem;">
+                                <i class="bi {{ $pStatusConfig['icon'] }} me-1"></i>
+                                {{ $pStatusConfig['label'] }}
+                            </span>
 
                             <span class="badge rounded-pill bg-light border px-3 py-2 shadow-sm text-muted"
                                 style="font-size:.82rem;">
                                 <i class="bi bi-calendar-event me-1"></i>Scadenza:
                                 {{ $application->project->expire_date ? $application->project->expire_date->format('d/m/Y') : 'N/D' }}
                             </span>
+                        </div>
 
-                            <span
-                                class="badge rounded-pill bg-light border px-3 py-2 shadow-sm {{ $pStatusConfig['class'] }}"
-                                style="font-size:.82rem;">
-                                <i class="bi {{ $pStatusConfig['icon'] }} me-1"></i>
-                                {{ $pStatusConfig['label'] }}
-                            </span>
+                        <p class="text-muted mb-4" style="line-height: 1.6;">
+                            {{ $application->project->sum_description }}
+                        </p>
+
+                        <div class="d-flex flex-wrap align-items-center gap-2">
+                            
                             <a href="{{ route('project.show', ['project' => $application->project, 'adminContext' => 1]) }}"
                                 class="btn btn-ae btn-ae-outline-secondary btn-sm btn-ae-square">
-                                <i class="bi bi-eye me-1"></i>Apri scheda progetto
+                                <i class="bi bi-folder me-1"></i>Progetto
                             </a>
                         </div>
 
@@ -204,7 +218,7 @@
 
                             {{-- Sezione Stato Corrente (Standardizzata) --}}
                             <div class="mb-4">
-                                <div class="text-muted small fw-semibold mb-2 text-uppercase tracking-wide">Stato Attuale
+                                <div class="text-muted small fw-semibold mb-2 tracking-wide">Stato Attuale
                                 </div>
                                 <div class="d-flex align-items-center gap-2">
                                     <i class="bi {{ $statusConfig['icon'] }} fs-4 {{ $statusConfig['class'] }}"></i>
@@ -220,7 +234,7 @@
                             {{-- Messaggio Admin (Visibile SOLO se non è in attesa) --}}
                             @if($application->status !== 'pending')
                                 <div class="mb-4">
-                                    <div class="text-muted small fw-semibold mb-2 text-uppercase tracking-wide">Messaggio
+                                    <div class="text-muted small fw-semibold mb-2 tracking-wide">Messaggio
                                         Inviato</div>
                                     @if($application->admin_message)
                                         <div class="p-3 rounded-3 bg-light border">
@@ -243,7 +257,7 @@
                                 <hr class="mb-4">
 
                                 @if($application->status === 'pending')
-                                    <div class="text-muted small fw-semibold mb-3 text-uppercase tracking-wide">Prendi una decisione
+                                    <div class="text-muted small fw-semibold mb-3 tracking-wide">Prendi una decisione
                                     </div>
                                     <div class="d-flex flex-column gap-2">
                                         <button type="button" class="btn btn-ae btn-ae-success btn-ae-square py-2 fw-bold shadow-sm"

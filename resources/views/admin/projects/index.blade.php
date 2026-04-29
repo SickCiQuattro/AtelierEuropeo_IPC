@@ -23,107 +23,107 @@
     @endphp
 
     <div class="container py-5" x-data="{
-            selectedCount: 0,
-            selectAll: false,
-            selectedProjectIds: [],
-            selectedStatuses: [],
-            bulkStatus: '',
-            bulkWarningMessage: '',
-            statusLabels: {
-                draft: 'Bozza',
-                published: 'Pubblicato',
-                completed: 'Completato',
-            },
-            getActiveRowCheckboxes() {
-                const rowCheckboxes = Array.from(this.$root.querySelectorAll('.project-row-checkbox:not([disabled])'));
-                return rowCheckboxes.filter((checkbox) => checkbox.offsetParent !== null);
-            },
-            getSelectedStatuses(checkedRows) {
-                return Array.from(new Set(
-                    checkedRows
-                        .map((checkbox) => String(checkbox.dataset.status || '').toLowerCase())
-                        .filter((status) => status !== '')
-                ));
-            },
-            getStatusLabel(status) {
-                return this.statusLabels[status] || status;
-            },
-            getNextStatusForSelection() {
-                if (this.selectedStatuses.length !== 1) {
-                    return null;
-                }
+                    selectedCount: 0,
+                    selectAll: false,
+                    selectedProjectIds: [],
+                    selectedStatuses: [],
+                    bulkStatus: '',
+                    bulkWarningMessage: '',
+                    statusLabels: {
+                        draft: 'Bozza',
+                        published: 'Pubblicato',
+                        completed: 'Completato',
+                    },
+                    getActiveRowCheckboxes() {
+                        const rowCheckboxes = Array.from(this.$root.querySelectorAll('.project-row-checkbox:not([disabled])'));
+                        return rowCheckboxes.filter((checkbox) => checkbox.offsetParent !== null);
+                    },
+                    getSelectedStatuses(checkedRows) {
+                        return Array.from(new Set(
+                            checkedRows
+                                .map((checkbox) => String(checkbox.dataset.status || '').toLowerCase())
+                                .filter((status) => status !== '')
+                        ));
+                    },
+                    getStatusLabel(status) {
+                        return this.statusLabels[status] || status;
+                    },
+                    getNextStatusForSelection() {
+                        if (this.selectedStatuses.length !== 1) {
+                            return null;
+                        }
 
-                const currentStatus = this.selectedStatuses[0];
-                if (currentStatus === 'draft') {
-                    return 'published';
-                }
+                        const currentStatus = this.selectedStatuses[0];
+                        if (currentStatus === 'draft') {
+                            return 'published';
+                        }
 
-                if (currentStatus === 'published') {
-                    return 'completed';
-                }
+                        if (currentStatus === 'published') {
+                            return 'completed';
+                        }
 
-                return null;
-            },
-            syncBulkStatusContext(checkedRows) {
-                this.selectedStatuses = this.getSelectedStatuses(checkedRows);
+                        return null;
+                    },
+                    syncBulkStatusContext(checkedRows) {
+                        this.selectedStatuses = this.getSelectedStatuses(checkedRows);
 
-                if (this.selectedStatuses.length > 1) {
-                    const labels = this.selectedStatuses.map((status) => this.getStatusLabel(status)).join(', ');
-                    this.bulkWarningMessage = `Hai selezionato progetti con stati diversi (${labels}). Seleziona solo progetti con lo stesso stato per l'aggiornamento in blocco.`;
-                    this.bulkStatus = '';
-                    return;
-                }
+                        if (this.selectedStatuses.length > 1) {
+                            const labels = this.selectedStatuses.map((status) => this.getStatusLabel(status)).join(', ');
+                            this.bulkWarningMessage = `Hai selezionato progetti con stati diversi (${labels}). Seleziona solo progetti con lo stesso stato per l'aggiornamento in blocco.`;
+                            this.bulkStatus = '';
+                            return;
+                        }
 
-                const nextStatus = this.getNextStatusForSelection();
+                        const nextStatus = this.getNextStatusForSelection();
 
-                if (this.selectedStatuses.length === 1 && nextStatus === null) {
-                    this.bulkWarningMessage = 'I progetti completati non possono cambiare stato.';
-                    this.bulkStatus = '';
-                    return;
-                }
+                        if (this.selectedStatuses.length === 1 && nextStatus === null) {
+                            this.bulkWarningMessage = 'I progetti completati non possono cambiare stato.';
+                            this.bulkStatus = '';
+                            return;
+                        }
 
-                this.bulkWarningMessage = '';
-                this.bulkStatus = nextStatus || '';
-            },
-            toggleAll(event) {
-                this.selectAll = event.target.checked;
-                const rowCheckboxes = this.getActiveRowCheckboxes();
-                rowCheckboxes.forEach((checkbox) => {
-                    checkbox.checked = this.selectAll;
-                });
-                this.updateCount();
-            },
-            updateCount() {
-                const rowCheckboxes = this.getActiveRowCheckboxes();
-                const checkedRows = Array.from(rowCheckboxes).filter((checkbox) => checkbox.checked);
-                this.selectedProjectIds = checkedRows.map((checkbox) => checkbox.value);
-                this.selectedCount = this.selectedProjectIds.length;
-                this.selectAll = rowCheckboxes.length > 0 && this.selectedCount === rowCheckboxes.length;
-                this.syncBulkStatusContext(checkedRows);
+                        this.bulkWarningMessage = '';
+                        this.bulkStatus = nextStatus || '';
+                    },
+                    toggleAll(event) {
+                        this.selectAll = event.target.checked;
+                        const rowCheckboxes = this.getActiveRowCheckboxes();
+                        rowCheckboxes.forEach((checkbox) => {
+                            checkbox.checked = this.selectAll;
+                        });
+                        this.updateCount();
+                    },
+                    updateCount() {
+                        const rowCheckboxes = this.getActiveRowCheckboxes();
+                        const checkedRows = Array.from(rowCheckboxes).filter((checkbox) => checkbox.checked);
+                        this.selectedProjectIds = checkedRows.map((checkbox) => checkbox.value);
+                        this.selectedCount = this.selectedProjectIds.length;
+                        this.selectAll = rowCheckboxes.length > 0 && this.selectedCount === rowCheckboxes.length;
+                        this.syncBulkStatusContext(checkedRows);
 
-                const masterCheckbox = this.$root.querySelector('#projects-select-all');
-                if (masterCheckbox) {
-                    masterCheckbox.indeterminate = this.selectedCount > 0 && this.selectedCount < rowCheckboxes.length;
-                }
-            },
-            clearSelection() {
-                const rowCheckboxes = this.getActiveRowCheckboxes();
-                rowCheckboxes.forEach((checkbox) => {
-                    checkbox.checked = false;
-                });
-                this.selectedCount = 0;
-                this.selectAll = false;
-                this.selectedProjectIds = [];
-                this.selectedStatuses = [];
-                this.bulkStatus = '';
-                this.bulkWarningMessage = '';
+                        const masterCheckbox = this.$root.querySelector('#projects-select-all');
+                        if (masterCheckbox) {
+                            masterCheckbox.indeterminate = this.selectedCount > 0 && this.selectedCount < rowCheckboxes.length;
+                        }
+                    },
+                    clearSelection() {
+                        const rowCheckboxes = this.getActiveRowCheckboxes();
+                        rowCheckboxes.forEach((checkbox) => {
+                            checkbox.checked = false;
+                        });
+                        this.selectedCount = 0;
+                        this.selectAll = false;
+                        this.selectedProjectIds = [];
+                        this.selectedStatuses = [];
+                        this.bulkStatus = '';
+                        this.bulkWarningMessage = '';
 
-                const masterCheckbox = this.$root.querySelector('#projects-select-all');
-                if (masterCheckbox) {
-                    masterCheckbox.indeterminate = false;
-                }
-            }
-        }" x-init="updateCount()">
+                        const masterCheckbox = this.$root.querySelector('#projects-select-all');
+                        if (masterCheckbox) {
+                            masterCheckbox.indeterminate = false;
+                        }
+                    }
+                }" x-init="updateCount()">
 
         <div class="row align-items-center g-3 mb-4">
             <div class="col-lg">
@@ -153,7 +153,7 @@
                                     <i class="bi bi-search text-body-secondary"></i>
                                 </span>
                                 <input type="text" id="project-search" name="q" value="{{ request()->query('q', '') }}"
-                                    class="form-control border-start-0" placeholder="Titolo, paese..."
+                                    class="form-control border-start-0" placeholder="Nome Progetto, Paese..."
                                     onchange="this.form.requestSubmit()">
 
                                 {{-- Bottone Filtri (Visibile SOLO su Mobile) --}}
@@ -257,33 +257,33 @@
                                 @endif
 
                                 @if (request()->filled('deadline'))
-                                                    @php
-                                                        $removeDeadlineParams = request()->except('deadline', 'page');
-                                                        $dl = request('deadline');
-                                                        $dlLabel = $dl == '7' ? 'Entro 7 gg' : ($dl == '30' ? 'Entro 30 gg' : 'Scaduti');
-                                                    @endphp
-                                     <span
-                                                        class="badge bg-light border text-dark rounded-pill py-2 px-3 d-inline-flex align-items-center gap-2 shadow-sm">
-                                                        <span class="text-body-secondary fw-normal">Scadenza:</span> {{ $dlLabel }}
-                                                        <a href="{{ route('admin.projects.index', $removeDeadlineParams) }}"
-                                                            class="text-dark opacity-50 text-decoration-none" aria-label="Rimuovi filtro"><i
-                                                                class="bi bi-x-circle-fill"></i></a>
-                                                    </span>
+                                    @php
+                                        $removeDeadlineParams = request()->except('deadline', 'page');
+                                        $dl = request('deadline');
+                                        $dlLabel = $dl == '7' ? 'Entro 7 gg' : ($dl == '30' ? 'Entro 30 gg' : 'Scaduti');
+                                    @endphp
+                                    <span
+                                        class="badge bg-light border text-dark rounded-pill py-2 px-3 d-inline-flex align-items-center gap-2 shadow-sm">
+                                        <span class="text-body-secondary fw-normal">Scadenza:</span> {{ $dlLabel }}
+                                        <a href="{{ route('admin.projects.index', $removeDeadlineParams) }}"
+                                            class="text-dark opacity-50 text-decoration-none" aria-label="Rimuovi filtro"><i
+                                                class="bi bi-x-circle-fill"></i></a>
+                                    </span>
                                 @endif
 
                                 @if (request()->filled('status'))
-                                                @php
-                                                    $removeStatusParams = request()->except('status', 'page');
-                                                    $statusStr = request('status');
-                                                    $statusLabel = $statusMap[$statusStr]['label'] ?? ucfirst($statusStr);
-                                                @endphp
+                                    @php
+                                        $removeStatusParams = request()->except('status', 'page');
+                                        $statusStr = request('status');
+                                        $statusLabel = $statusMap[$statusStr]['label'] ?? ucfirst($statusStr);
+                                    @endphp
                                     <span
-                                                    class="badge bg-light border text-dark rounded-pill py-2 px-3 d-inline-flex align-items-center gap-2 shadow-sm">
-                                                    <span class="text-body-secondary fw-normal">Stato:</span> {{ $statusLabel }}
-                                                    <a href="{{ route('admin.projects.index', $removeStatusParams) }}"
-                                                        class="text-dark opacity-50 text-decoration-none" aria-label="Rimuovi filtro"><i
-                                                            class="bi bi-x-circle-fill"></i></a>
-                                                </span>
+                                        class="badge bg-light border text-dark rounded-pill py-2 px-3 d-inline-flex align-items-center gap-2 shadow-sm">
+                                        <span class="text-body-secondary fw-normal">Stato:</span> {{ $statusLabel }}
+                                        <a href="{{ route('admin.projects.index', $removeStatusParams) }}"
+                                            class="text-dark opacity-50 text-decoration-none" aria-label="Rimuovi filtro"><i
+                                                class="bi bi-x-circle-fill"></i></a>
+                                    </span>
                                 @endif
 
                                 <a href="{{ route('admin.projects.index') }}"
@@ -381,25 +381,31 @@
                                     <div class="d-inline-flex align-items-center gap-1">
                                         <a href="{{ $showUrl }}"
                                             class="btn btn-sm btn-ae btn-ae-square admin-project-action-view"
-                                            title="Visualizza progetto" aria-label="Visualizza progetto">
+                                            data-bs-toggle="tooltip" data-bs-placement="top" title="Visualizza progetto"
+                                            aria-label="Visualizza progetto">
                                             <i class="bi bi-eye"></i>
                                         </a>
                                         @if ($isCompleted)
-                                            <button type="button"
-                                                class="btn btn-sm btn-ae btn-ae-square btn-ae-outline-secondary opacity-50" disabled
-                                                title="Progetto completato non modificabile" aria-label="Modifica non disponibile">
-                                                <i class="bi bi-pencil"></i>
-                                            </button>
+                                            <span class="d-inline-block" tabindex="0" data-bs-toggle="tooltip"
+                                                data-bs-placement="top" title="Progetto completato non modificabile">
+                                                <button type="button"
+                                                    class="btn btn-sm btn-ae btn-ae-square btn-ae-outline-secondary opacity-50"
+                                                    disabled aria-label="Modifica non disponibile">
+                                                    <i class="bi bi-pencil"></i>
+                                                </button>
+                                            </span>
                                         @else
                                             <a href="{{ $editUrl }}"
                                                 class="btn btn-sm btn-ae btn-ae-square admin-project-action-edit"
-                                                title="Modifica progetto" aria-label="Modifica progetto">
+                                                data-bs-toggle="tooltip" data-bs-placement="top" title="Modifica progetto"
+                                                aria-label="Modifica progetto">
                                                 <i class="bi bi-pencil"></i>
                                             </a>
                                         @endif
                                         <span class="vr admin-project-action-divider mx-1" aria-hidden="true"></span>
                                         <a href="{{ $deleteUrl }}" class="btn btn-sm btn-ae btn-ae-square btn-ae-outline-danger"
-                                            title="Elimina progetto" aria-label="Elimina progetto">
+                                            data-bs-toggle="tooltip" data-bs-placement="top" title="Elimina progetto"
+                                            aria-label="Elimina progetto">
                                             <i class="bi bi-trash"></i>
                                         </a>
                                     </div>
@@ -484,22 +490,29 @@
 
                         <div class="d-flex align-items-center gap-2 admin-mobile-project-actions">
                             <a href="{{ $showUrl }}" class="btn btn-sm btn-ae btn-ae-square admin-project-action-view"
-                                title="Visualizza progetto" aria-label="Visualizza progetto">
+                                data-bs-toggle="tooltip" data-bs-placement="top" title="Visualizza progetto"
+                                aria-label="Visualizza progetto">
                                 <i class="bi bi-eye"></i>
                             </a>
                             @if ($isCompleted)
-                                <button type="button" class="btn btn-sm btn-ae btn-ae-square btn-ae-outline-secondary opacity-50"
-                                    disabled title="Progetto completato non modificabile" aria-label="Modifica non disponibile">
-                                    <i class="bi bi-pencil"></i>
-                                </button>
+                                <span class="d-inline-block" tabindex="0" data-bs-toggle="tooltip" data-bs-placement="top"
+                                    title="Progetto completato non modificabile">
+                                    <button type="button"
+                                        class="btn btn-sm btn-ae btn-ae-square btn-ae-outline-secondary opacity-50" disabled
+                                        aria-label="Modifica non disponibile">
+                                        <i class="bi bi-pencil"></i>
+                                    </button>
+                                </span>
                             @else
                                 <a href="{{ $editUrl }}" class="btn btn-sm btn-ae btn-ae-square admin-project-action-edit"
-                                    title="Modifica progetto" aria-label="Modifica progetto">
+                                    data-bs-toggle="tooltip" data-bs-placement="top" title="Modifica progetto"
+                                    aria-label="Modifica progetto">
                                     <i class="bi bi-pencil"></i>
                                 </a>
                             @endif
                             <a href="{{ $deleteUrl }}" class="btn btn-sm btn-ae btn-ae-square btn-ae-outline-danger"
-                                title="Elimina progetto" aria-label="Elimina progetto">
+                                data-bs-toggle="tooltip" data-bs-placement="top" title="Elimina progetto"
+                                aria-label="Elimina progetto">
                                 <i class="bi bi-trash"></i>
                             </a>
                         </div>

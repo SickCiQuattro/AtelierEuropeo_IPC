@@ -38,6 +38,9 @@
             || $isShowcaseOrLegacyProjects;
 
         $backUrl = $isUnsafeBackTarget ? $defaultBackUrl : $previousUrl;
+        $fromDashboard = request()->boolean('fromDashboard');
+        $breadcrumbFirstLabel = $fromDashboard ? 'Dashboard' : 'Progetti';
+        $breadcrumbFirstUrl = $fromDashboard ? route('admin.dashboard') : route('admin.projects.index');
         $initialFullDescriptionHtml = \App\Helpers\RichTextHelper::sanitize(old('full_description', $project->full_description ?? ''));
         $initialRequirementsHtml = \App\Helpers\RichTextHelper::sanitize(old('requirements', $project->requirements ?? ''));
         $initialTravelConditionsHtml = \App\Helpers\RichTextHelper::sanitize(old('travel_conditions', $project->travel_conditions ?? ''));
@@ -180,7 +183,7 @@
 
                 <div class="d-none d-md-block">
                     <x-breadcrumb>
-                        <li class="breadcrumb-item"><a href="{{ route('admin.projects.index') }}">Progetti</a></li>
+                        <li class="breadcrumb-item"><a href="{{ $breadcrumbFirstUrl }}">{{ $breadcrumbFirstLabel }}</a></li>
                         <li class="breadcrumb-item active" aria-current="page">
                             {{ $isEditMode ? 'Modifica Progetto' : 'Nuovo Progetto' }}
                         </li>
@@ -342,8 +345,26 @@
                                     <div class="col-12">
                                         <label class="form-label fw-semibold">Descrizione Breve (Per le Card) <span
                                                 class="text-danger">*</span></label>
-                                        <textarea class="form-control bg-light border-0" style="border-radius: 0.75rem;"
-                                            name="sum_description" rows="2" maxlength="100"
+                                        <div class="rich-text-editor" data-rich-editor-wrapper>
+                                            <div class="rich-text-toolbar" id="sum-description-toolbar">
+                                                <button type="button" class="btn" data-rich-command="bold" title="Grassetto"
+                                                    aria-label="Grassetto">
+                                                    <i class="bi bi-type-bold"></i>
+                                                </button>
+                                                <button type="button" class="btn" data-rich-command="italic" title="Corsivo"
+                                                    aria-label="Corsivo">
+                                                    <i class="bi bi-type-italic"></i>
+                                                </button>
+                                            </div>
+
+                                            <div id="sum-description-editor" class="rich-text-surface"
+                                                contenteditable="true" role="textbox" aria-multiline="true"
+                                                style="min-height: 60px; max-height: 120px;">
+                                                {{ old('sum_description', $project->sum_description ?? '') }}
+                                            </div>
+                                        </div>
+                                        <textarea class="d-none" name="sum_description" id="sum_description" rows="2"
+                                            maxlength="100"
                                             required>{{ old('sum_description', $project->sum_description ?? '') }}</textarea>
                                         <div class="d-flex justify-content-between align-items-center mt-1">
                                             <small class="text-muted">Testo sintetico per la card pubblica.</small>
@@ -443,48 +464,49 @@
                                 </div>
                             </div>
 
-                            <div
-                                class="border-top pt-4 mt-5 d-flex flex-column flex-xl-row align-items-xl-center justify-content-between gap-4">
+                            {{-- Sezione Stato Progetto --}}
+                            <div class="border-top pt-4 mt-5 mb-4">
+                                <h6 class="fw-bold text-primary mb-4 d-flex align-items-center gap-2">
+                                    <i class="bi bi-info-circle-fill"></i>
+                                    Stato del Progetto
+                                </h6>
 
-                                <div class="d-flex align-items-center gap-3">
-                                    <label class="form-label text-secondary fw-medium mb-0 text-nowrap">Stato del
-                                        progetto:</label>
-                                    <select
-                                        class="form-select bg-light border-0 fw-semibold text-primary py-2 px-3 shadow-none"
-                                        style="border-radius: 0.75rem; width: auto; min-width: 180px; cursor: pointer;"
-                                        name="status" id="status">
-                                        @foreach ($allowedStatuses as $statusOption)
-                                            <option value="{{ $statusOption }}" @selected($selectedStatus === $statusOption)>
-                                                {{ $statusLabels[$statusOption] ?? ucfirst($statusOption) }}
-                                            </option>
-                                        @endforeach
-                                    </select>
+                                <div class="row g-3 align-items-center mb-4">
+                                    <div class="col-12 col-md-6">
+                                        <select
+                                            class="form-select bg-light border-0 fw-semibold text-primary py-2 px-3 shadow-none"
+                                            style="border-radius: 0.75rem; cursor: pointer;" name="status" id="status">
+                                            @foreach ($allowedStatuses as $statusOption)
+                                                <option value="{{ $statusOption }}" @selected($selectedStatus === $statusOption)>
+                                                    {{ $statusLabels[$statusOption] ?? ucfirst($statusOption) }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
                                 </div>
+                            </div>
 
-                                <div class="project-form-actions d-flex justify-content-start justify-content-xl-end">
-                                    <div class="project-form-actions-inner">
-
-                                        <button type="button"
-                                            class="btn btn-link text-secondary text-decoration-none fw-medium px-2 py-2 text-nowrap transition-hover js-cancel-process"
-                                            data-cancel-url="{{ $backUrl }}">
-                                            Annulla
-                                        </button>
-
+                            {{-- Sezione Azioni --}}
+                            <div class="border-top pt-4">
+                                <div class="d-flex flex-column flex-md-row gap-2 align-items-start align-items-md-center">
+                                    <button type="button"
+                                        class="btn btn-link text-secondary text-decoration-none fw-medium transition-hover js-cancel-process"
+                                        data-cancel-url="{{ $backUrl }}" style="text-align: start;">
+                                        Annulla
+                                    </button>
+                                    <div class="d-flex flex-column flex-md-row gap-2 w-100 w-md-auto ms-md-auto">
                                         <button type="button" formnovalidate
-                                            class="btn btn-ae btn-ae-outline-secondary rounded-pill px-4 py-2 text-nowrap fw-semibold"
+                                            class="btn btn-ae btn-ae-outline-secondary rounded-pill px-4 py-2 fw-semibold w-100"
                                             id="preview-project-btn">
                                             <i class="bi bi-eye me-2"></i>Anteprima
                                         </button>
-
                                         <button type="submit"
-                                            class="btn btn-ae btn-ae-primary rounded-pill px-4 py-2 shadow-sm text-nowrap fw-bold"
+                                            class="btn btn-ae btn-ae-primary rounded-pill px-4 py-2 shadow-sm fw-bold w-100"
                                             id="submit-btn">
                                             <i class="bi bi-check-circle-fill me-2" id="submit-btn-icon"></i><span
                                                 id="submit-btn-label">{{ $isEditMode ? 'Aggiorna Progetto' : 'Pubblica Progetto' }}</span>
                                         </button>
-
                                     </div>
-
                                 </div>
                             </div>
 
@@ -660,6 +682,9 @@
             const travelConditionsInput = document.getElementById('travel_conditions');
             const travelConditionsEditor = document.getElementById('travel-conditions-editor');
             const travelConditionsToolbar = document.getElementById('travel-conditions-toolbar');
+            const sumDescriptionInput = document.getElementById('sum_description');
+            const sumDescriptionEditor = document.getElementById('sum-description-editor');
+            const sumDescriptionToolbar = document.getElementById('sum-description-toolbar');
             const imagePathInput = document.getElementById('image_path');
             const imagePathDisplay = document.getElementById('image_path_display');
             const sumDescriptionField = form ? form.querySelector('[name="sum_description"]') : null;
@@ -685,6 +710,11 @@
             const nextAllowedStatus = @json($nextAllowedStatus);
             const shouldOpenCompletionModalOnLoad = @json($openCompletionModal);
             const richEditorMap = {
+                sum_description: {
+                    input: sumDescriptionInput,
+                    editor: sumDescriptionEditor,
+                    toolbar: sumDescriptionToolbar,
+                },
                 full_description: {
                     input: fullDescriptionInput,
                     editor: fullDescriptionEditor,

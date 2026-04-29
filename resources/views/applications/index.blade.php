@@ -45,7 +45,7 @@
                                         </div>
 
                                         <span
-                                            class="badge rounded-pill bg-light border px-3 py-2 {{ $statusConfig['class'] }} d-inline-flex align-items-center gap-1"
+                                            class="badge rounded-pill bg-light border px-3 py-2 {{ $statusConfig['class'] }} d-inline-flex align-items-center gap-1 align-self-start align-self-md-auto"
                                             style="font-size: 0.85rem;">
                                             <i class="bi {{ $statusConfig['icon'] }}"></i>
                                             {{ $statusConfig['label'] }}

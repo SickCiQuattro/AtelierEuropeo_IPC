@@ -13,7 +13,7 @@
                     <a href="#" class="btn btn-ae btn-ae-square btn-ae-outline-secondary px-4 py-2">
                         <i class="bi bi-download me-2"></i>Scarica Report Mensile
                     </a>
-                    <a href="{{ route('project.create', ['adminContext' => 1]) }}"
+                    <a href="{{ route('project.create', ['adminContext' => 1, 'fromDashboard' => 1]) }}"
                         class="btn btn-ae btn-ae-success btn-ae-square px-4 py-2">
                         <i class="bi bi-plus-lg me-2"></i>Crea Nuovo Progetto
                     </a>
@@ -22,7 +22,7 @@
         </div>
 
         <div class="row g-3 mb-5">
-            <div class="col-md-6 col-lg-3">
+            <div class="col-6 col-md-6 col-lg-3">
                 <div
                     class="card border-0 shadow-sm rounded-4 h-100 p-3 d-flex flex-row align-items-center gap-3 admin-kpi-card">
                     <i class="bi bi-folder-fill admin-kpi-icon-active fs-1"></i>
@@ -32,7 +32,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-6 col-lg-3">
+            <div class="col-6 col-md-6 col-lg-3">
                 <div
                     class="card border-0 shadow-sm rounded-4 h-100 p-3 d-flex flex-row align-items-center gap-3 admin-kpi-card">
                     <i class="bi bi-alarm-fill admin-kpi-icon-expiring fs-1"></i>
@@ -42,7 +42,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-6 col-lg-3">
+            <div class="col-6 col-md-6 col-lg-3">
                 <div
                     class="card border-0 shadow-sm rounded-4 h-100 p-3 d-flex flex-row align-items-center gap-3 admin-kpi-card">
                     <i class="bi bi-file-earmark-text text-secondary fs-1"></i>
@@ -52,7 +52,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-6 col-lg-3">
+            <div class="col-6 col-md-6 col-lg-3">
                 <div
                     class="card border-0 shadow-sm rounded-4 h-100 p-3 d-flex flex-row align-items-center gap-3 admin-kpi-card">
                     <i class="bi bi-file-earmark-person-fill admin-kpi-icon-pending fs-1"></i>
