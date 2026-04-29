@@ -5,12 +5,24 @@ namespace Database\Factories;
 use App\Models\User;
 use App\Models\Project;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Str;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Application>
  */
 class ApplicationFactory extends Factory
 {
+    /**
+     * Genera un document_path coerente
+     */
+    private function generateCvPath(string $userName = null, string $projectTitle = null): string
+    {
+        $userSlug = $userName ? Str::slug(str_replace(' ', '_', $userName)) : 'user_' . random_int(1000, 9999);
+        $projectSlug = $projectTitle ? Str::slug(substr($projectTitle, 0, 15)) : 'project_' . random_int(100, 999);
+        $uuid = Str::uuid();
+        return "documents/cv_{$userSlug}_{$projectSlug}_{$uuid}.pdf";
+    }
+
     /**
      * Define the model's default state.
      *
@@ -30,7 +42,7 @@ class ApplicationFactory extends Factory
             'user_id' => User::where('role', 'registered_user')->inRandomOrder()->first()?->id ?? User::factory()->create(['role' => 'registered_user'])->id,
             'project_id' => Project::inRandomOrder()->first()?->id ?? Project::factory()->create()->id,
             'phone' => '+39 ' . $this->faker->randomElement(['320','328','329','333','338','347','349','366','370','380','388','389','391','392']) . ' ' . $this->faker->numerify('### ####'),
-            'document_path' => null, // Per i dati di test non usiamo documenti reali
+            'document_path' => $this->generateCvPath(),  // ✓ Genera sempre un path valido
             'document_name' => $this->faker->randomElement($documentTypes) . '_' . $this->faker->lastName() . '.' . $this->faker->randomElement($documentExtensions),
             'admin_message' => $this->faker->optional(0.3)->sentence(),
             'status_updated_at' => $this->faker->optional(0.7)->dateTimeBetween($createdAt, 'now'),
@@ -77,6 +89,10 @@ class ApplicationFactory extends Factory
         
         return $this->state(fn (array $attributes) => [
             'project_id' => $project->id,
+            'document_path' => $this->generateCvPath(
+                User::find($attributes['user_id'])?->name,
+                $project->title
+            ),
             'created_at' => $createdAt,
             'updated_at' => $updatedAt,
             'status_updated_at' => $this->faker->optional(0.7)->dateTimeBetween($createdAt, $updatedAt),

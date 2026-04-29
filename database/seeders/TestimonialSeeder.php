@@ -91,8 +91,8 @@ class TestimonialSeeder extends Seeder
         
         // Crea testimonianze per ogni progetto completato
         foreach ($completedProjects as $project) {
-            // Crea da 1 a 3 testimonianze per progetto
-            $numTestimonials = rand(1, 3);
+            // Crea ESATTAMENTE 3 testimonianze per ogni progetto completato
+            $numTestimonials = 3;
             
             for ($i = 0; $i < $numTestimonials; $i++) {
                 // Seleziona una testimonianza casuale
