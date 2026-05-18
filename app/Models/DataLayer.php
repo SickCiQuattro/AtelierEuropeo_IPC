@@ -16,9 +16,10 @@ class DataLayer {
 
     public function getFeaturedProjects($limit = 6)
     {
-        // Recupera progetti pubblicati in ordine casuale
+        // Recupera gli ultimi progetti pubblicati
         return Project::where('status', 'published')
-                    ->inRandomOrder()
+                    ->orderByDesc('created_at')
+                    ->orderByDesc('id')
                     ->limit($limit)
                     ->get();
     }

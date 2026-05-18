@@ -78,6 +78,17 @@ class UserSeeder extends Seeder
             );
         }
 
+        // ---- Utente standard fisso ----
+        User::firstOrCreate(
+            ['email' => 'user@atelier.it'],
+            [
+                'name' => 'Luca Bonetti',
+                'password' => Hash::make('password'),
+                'role' => 'registered_user',
+                'email_verified_at' => now(),
+            ]
+        );
+
         // ---- 50 Utenti registrati coerenti (nomi italiani, email uniche) ----
         $existingRegistered = User::where('role', 'registered_user')->count();
         $usersNeeded = 50 - $existingRegistered;

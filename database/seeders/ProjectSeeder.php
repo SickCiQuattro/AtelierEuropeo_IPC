@@ -12,7 +12,7 @@ use Carbon\Carbon;
 class ProjectSeeder extends Seeder
 {
     /**
-     * 26 progetti strutturati e coerenti
+     * 27 progetti strutturati e coerenti
      * Data di riferimento: 5 Giugno 2026
      * Published: expire_date > 2026-06-05
      * Completed: end_date < 2026-06-05
@@ -411,6 +411,21 @@ class ProjectSeeder extends Seeder
                 'requirements' => 'Età 16-25 anni. Cerchiamo ragazzi appassionati di attualità, che amano discutere e che vogliono migliorare le proprie capacità logiche e dialettiche. È richiesta una conoscenza base della lingua inglese e molta voglia di confrontarsi con opinioni diverse dalla propria.',
                 'travel_conditions' => 'Viaggio rimborsato entro massimali Erasmus+ (275€). Alloggio in guest house.',
             ],
+            [
+                'title' => 'VITALITY',
+                'category' => 'CES',
+                'location' => 'Palermo, Italia',
+                'requested_people' => 4,
+                'image_path' => 'img/projects/default27.jpg',
+                'status' => 'draft',
+                'expire_date' => '2026-08-25',
+                'start_date' => '2026-09-20',
+                'end_date' => '2026-10-20',
+                'sum_description' => 'Volontariato Europeo di un mese in Sicilia dedicato a inclusione, comunità locale e partecipazione giovanile.',
+                'full_description' => 'VITALITY è un progetto di Corpo Europeo di Solidarietà pensato per giovani che vogliono vivere un mese di volontariato nel territorio siciliano, in collaborazione con l\'Area Cooperativa e la Regione Siciliana. I partecipanti saranno coinvolti in attività educative e sociali rivolte alla comunità locale, con un approccio pratico basato su collaborazione, responsabilità condivisa e apprendimento non formale. L\'esperienza mira a rafforzare competenze trasversali, spirito di iniziativa e capacità di lavorare in contesti interculturali, valorizzando allo stesso tempo il patrimonio sociale e culturale del territorio.',
+                'requirements' => 'Età tra i 18 e i 30 anni. Cerchiamo giovani motivati al volontariato, con attitudine al lavoro di gruppo, flessibilità e sensibilità verso le dinamiche sociali locali. È richiesta una conoscenza base della lingua inglese e la disponibilità a partecipare attivamente a tutte le attività previste.',
+                'travel_conditions' => 'Vitto e alloggio coperti per tutta la durata del progetto. Rimborso viaggio secondo le fasce Erasmus+ e pocket money mensile previsto dal programma CES.',
+            ],
         ];
     }
 
@@ -458,7 +473,8 @@ class ProjectSeeder extends Seeder
             );
         }
 
-        $this->command->info('✓ Creati/Aggiornati 26 progetti strutturati e coerenti');
+        $this->command->info('✓ Creati/Aggiornati 28 progetti strutturati e coerenti');
+        $this->command->info('  - Bozze: ' . Project::where('status', 'draft')->count());
         $this->command->info('  - Pubblicati: ' . Project::where('status', 'published')->count());
         $this->command->info('  - Completati: ' . Project::where('status', 'completed')->count());
     }

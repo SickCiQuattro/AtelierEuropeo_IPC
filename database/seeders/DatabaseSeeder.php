@@ -18,6 +18,7 @@ class DatabaseSeeder extends Seeder
             CategorySeeder::class,   
             AssociationSeeder::class, 
             ProjectSeeder::class,
+            FavoriteSeeder::class,
             ApplicationSeeder::class,
             TestimonialSeeder::class,      
         ]);
