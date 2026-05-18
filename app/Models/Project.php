@@ -82,7 +82,12 @@ class Project extends Model
             return asset($this->image_path);
         }
 
-        // Altrimenti è un file di storage (upload)
+        // Altrimenti è un file caricato su storage/app/public.
+        // Usiamo una route dedicata per evitare dipendenza dal symlink public/storage.
+        if (\Illuminate\Support\Facades\Route::has('project.image')) {
+            return route('project.image', ['path' => ltrim($this->image_path, '/')]);
+        }
+
         return asset('storage/' . $this->image_path);
     }
 

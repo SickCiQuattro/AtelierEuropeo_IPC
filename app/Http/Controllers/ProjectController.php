@@ -145,6 +145,24 @@ class ProjectController extends Controller
     }
 
     /**
+     * Espone le immagini caricate dei progetti dal disco "public" senza dipendere dal symlink public/storage.
+     */
+    public function showImage(string $path)
+    {
+        $normalizedPath = ltrim($path, '/');
+
+        if (
+            str_contains($normalizedPath, '..')
+            || !str_starts_with($normalizedPath, 'projects/')
+            || !Storage::disk('public')->exists($normalizedPath)
+        ) {
+            abort(404);
+        }
+
+        return response()->file(Storage::disk('public')->path($normalizedPath));
+    }
+
+    /**
      * Renderizza una pagina di anteprima in una nuova scheda senza persistere i dati.
      */
     public function preview(Request $request)

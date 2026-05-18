@@ -36,6 +36,9 @@ Route::get('/lang/{locale}', function ($locale) {
 
 // Homepage
 Route::get('/', [FrontController::class, 'getHome'])->name('home');
+Route::get('/project-image/{path}', [ProjectController::class, 'showImage'])
+    ->where('path', '.*')
+    ->name('project.image');
 
 // Route compatibile con gli scaffold auth Laravel/Breeze usati dai test
 Route::get('/dashboard', function () {
