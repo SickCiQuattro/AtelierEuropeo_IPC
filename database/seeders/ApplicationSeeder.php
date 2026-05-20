@@ -109,16 +109,17 @@ class ApplicationSeeder extends Seeder
         $applicationsCreated = 0;
 
         foreach ($projects as $project) {
+            if ($project->status === 'draft') {
+                continue;
+            }
+
             // Numero di candidature rispetta il limite di requested_people
             // Non deve mai superare requested_people
             $maxApplications = $project->requested_people;
             
             if ($project->status === 'completed') {
-                // Progetti completati: almeno 50% dei posti, al massimo il numero di posti
-                $numApplications = random_int(
-                    max(1, intval(ceil($maxApplications / 2))),
-                    $maxApplications
-                );
+                // Progetti completati: tutte le candidature devono essere accettate
+                $numApplications = $maxApplications;
             } else {
                 // Progetti in corso: 40-80% dei posti disponibili
                 $numApplications = random_int(
@@ -173,7 +174,9 @@ class ApplicationSeeder extends Seeder
                 $cvName = $this->generateCvName($user->name);
 
                 // Determina status e metadata
-                $status = $this->randomStatus();
+                $status = $project->status === 'completed'
+                    ? 'approved'
+                    : $this->randomStatus();
                 $statusUpdatedAt = null;
                 $updatedByAdminId = null;
 

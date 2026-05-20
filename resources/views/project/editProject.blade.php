@@ -328,7 +328,7 @@
                                             required />
                                     </div>
                                     <div class="col-md-4">
-                                        <label class="form-label fw-semibold">Scadenza Iscrizioni <span
+                                        <label class="form-label fw-semibold">Scadenza Candidatura <span
                                                 class="text-danger">*</span></label>
                                         <input class="form-control bg-light border-0 py-2" style="border-radius: 0.75rem;"
                                             type="date" name="expire_date"
@@ -619,7 +619,7 @@
                                                             <span id="preview-people" class="fw-semibold">N/D</span>
                                                         </div>
                                                         <div class="col-12 col-md-6">
-                                                            <small class="text-muted d-block">Scadenza iscrizioni</small>
+                                                            <small class="text-muted d-block">Scadenza Candidatura</small>
                                                             <span id="preview-expire-date" class="fw-semibold">N/D</span>
                                                         </div>
                                                         <div class="col-12 col-md-6">
