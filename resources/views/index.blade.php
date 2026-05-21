@@ -63,7 +63,7 @@
             <div class="container py-5">
                 <div class="text-center mb-5">
                     <h2 class="section-title text-dark">Scopri. Partecipa.</h2>
-                    <p class="section-subtitle">Vivi nuove esperienze ed entra nel cuore dell'Europa.</p>
+                    <p class="section-subtitle">Esplora i nostri programmi europei.</p>
                 </div>
                 <div class="program-cards-grid">
 
