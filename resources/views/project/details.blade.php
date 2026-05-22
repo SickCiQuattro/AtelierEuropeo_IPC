@@ -210,16 +210,21 @@
                             @if (!$isAdmin)
                                 @guest
                                     <button type="button" class="btn-favorite shadow-sm m-4" data-bs-toggle="modal"
-                                        data-bs-target="#loginRequiredModal">
+                                        data-bs-target="#loginRequiredModal" data-tooltip="true" data-bs-placement="top"
+                                        title="Aggiungi ai Preferiti" aria-label="Aggiungi ai Preferiti">
                                         <i class="bi bi-heart"></i>
                                     </button>
                                 @endguest
                                 @auth
-                                    @php $isFavorite = auth()->user()->favorites->contains($project->id); @endphp
+                                    @php
+                                        $isFavorite = auth()->user()->favorites->contains($project->id);
+                                        $favoriteTooltip = $isFavorite ? 'Rimuovi dai Preferiti' : 'Aggiungi ai Preferiti';
+                                    @endphp
                                     <button type="button" class="btn-favorite js-favorite-toggle shadow-sm m-4"
                                         data-project-id="{{ $project->id }}"
-                                        data-url="{{ route('project.favorite.toggle', $project->id) }}"
-                                        aria-label="Salva nei preferiti" aria-pressed="{{ $isFavorite ? 'true' : 'false' }}">
+                                        data-url="{{ route('project.favorite.toggle', $project->id) }}" data-bs-toggle="tooltip"
+                                        data-bs-placement="top" title="{{ $favoriteTooltip }}" aria-label="{{ $favoriteTooltip }}"
+                                        aria-pressed="{{ $isFavorite ? 'true' : 'false' }}">
                                         <i class="bi bi-heart{{ $isFavorite ? '-fill' : '' }}"></i>
                                     </button>
                                 @endauth

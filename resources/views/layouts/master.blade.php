@@ -617,12 +617,30 @@
                         icon.classList.remove('bi-heart');
                         icon.classList.add('bi-heart-fill');
                         favoriteButton.setAttribute('aria-pressed', 'true');
+                        favoriteButton.setAttribute('aria-label', 'Rimuovi dai Preferiti');
+                        favoriteButton.setAttribute('title', 'Rimuovi dai Preferiti');
+                        favoriteButton.setAttribute('data-bs-original-title', 'Rimuovi dai Preferiti');
                         window.showFavoriteToast('Progetto aggiunto ai preferiti!', 'success');
                     } else {
                         icon.classList.remove('bi-heart-fill');
                         icon.classList.add('bi-heart');
                         favoriteButton.setAttribute('aria-pressed', 'false');
+                        favoriteButton.setAttribute('aria-label', 'Aggiungi ai Preferiti');
+                        favoriteButton.setAttribute('title', 'Aggiungi ai Preferiti');
+                        favoriteButton.setAttribute('data-bs-original-title', 'Aggiungi ai Preferiti');
                         window.showFavoriteToast('Progetto rimosso dai preferiti.', 'secondary');
+                    }
+
+                    if (window.bootstrap && window.bootstrap.Tooltip) {
+                        const tooltipInstance = bootstrap.Tooltip.getInstance(favoriteButton);
+                        if (tooltipInstance) {
+                            const tooltipText = data.is_favorited ? 'Rimuovi dai Preferiti' : 'Aggiungi ai Preferiti';
+                            if (typeof tooltipInstance.setContent === 'function') {
+                                tooltipInstance.setContent({ '.tooltip-inner': tooltipText });
+                            } else {
+                                tooltipInstance.update();
+                            }
+                        }
                     }
                 }
             } catch (error) {
@@ -637,7 +655,7 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"], [data-tooltip="true"]'));
             tooltipTriggerList.map(function (tooltipTriggerEl) {
                 return new bootstrap.Tooltip(tooltipTriggerEl);
             });
