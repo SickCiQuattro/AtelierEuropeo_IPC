@@ -24,10 +24,6 @@ class DataLayer {
                     ->get();
     }
 
-    public function findAuthorById($id) {
-        return User::find($id)->where('role', 'admin')->first();
-    }
-
     public function findProjectById($id) {
         return Project::find($id);
     }
@@ -72,15 +68,5 @@ class DataLayer {
                          ->inRandomOrder()
                          ->limit($limit)
                          ->get();
-    } 
-
-    public function findUserByemail($email) {
-        $users = User::where('email', $email)->get();
-        
-        if (count($users) == 0) {
-            return false;
-        } else {
-            return true;
-        }
     }
 }

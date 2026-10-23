@@ -115,6 +115,7 @@ Route::middleware('auth')->group(function () {
     Route::prefix('applications')->name('applications.')->group(function () {
         Route::get('/', [ApplicationController::class, 'index'])->name('index');
         Route::get('/{application}', [ApplicationController::class, 'show'])->name('show');
+        Route::get('/{application}/document', [ApplicationController::class, 'document'])->name('document');
         Route::delete('/{application}/withdraw', [ApplicationController::class, 'withdraw'])->name('withdraw');
     });
 

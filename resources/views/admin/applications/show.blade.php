@@ -125,7 +125,7 @@
 
                         {{-- Curriculum Vitae --}}
                         @if($application->document_path)
-                            <a href="{{ asset('storage/' . $application->document_path) }}" target="_blank" rel="noopener"
+                            <a href="{{ route('applications.document', $application) }}" target="_blank" rel="noopener"
                                 download class="d-flex align-items-center gap-3 px-4 py-3 text-decoration-none rounded-3"
                                 style="background:#f8fafc; border: 1px solid #e2e8f0; transition:background .15s;"
                                 onmouseover="this.style.background='#eaf0ff'" onmouseout="this.style.background='#f8fafc'">

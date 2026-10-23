@@ -30,58 +30,13 @@ class ProjectController extends Controller
             $status = 'published';
         }
 
-        $query = Project::query();
+        $query = Project::query()->with('category');
 
         if ($status !== 'all') {
             $query->where('status', $status);
         }
 
-        if ($request->filled('q')) {
-            $search = trim($request->input('q'));
-            $query->where(function ($q) use ($search) {
-                $q->where('title', 'like', "%{$search}%")
-                    ->orWhere('sum_description', 'like', "%{$search}%")
-                    ->orWhere('location', 'like', "%{$search}%");
-            });
-        }
-
-        if ($request->filled('category') && is_array($request->category)) {
-            $query->whereIn('category_id', $request->category);
-        }
-
-        if ($request->filled('duration') && is_array($request->duration)) {
-            $durations = array_filter($request->duration, fn($item) => in_array($item, ['short', 'medium', 'long', 'very_long'], true));
-
-            if (!empty($durations)) {
-                $query->where(function ($durationQuery) use ($durations) {
-                    foreach ($durations as $duration) {
-                        if ($duration === 'short') {
-                            $durationQuery->orWhereRaw('DATEDIFF(end_date, start_date) < 15');
-                        }
-
-                        if ($duration === 'medium') {
-                            $durationQuery->orWhereRaw('DATEDIFF(end_date, start_date) BETWEEN 15 AND 60');
-                        }
-
-                        if ($duration === 'long') {
-                            $durationQuery->orWhereRaw('DATEDIFF(end_date, start_date) BETWEEN 60 AND 180');
-                        }
-
-                        if ($duration === 'very_long') {
-                            $durationQuery->orWhereRaw('DATEDIFF(end_date, start_date) > 180');
-                        }
-                    }
-                });
-            }
-        }
-
-        if ($request->filled('date_from')) {
-            $query->whereDate('start_date', '>=', $request->date_from);
-        }
-
-        if ($request->filled('date_to')) {
-            $query->whereDate('start_date', '<=', $request->date_to);
-        }
+        $query->applyCatalogFilters($request);
 
         $sort = $request->input('sort', 'relevance');
 
@@ -101,34 +56,6 @@ class ProjectController extends Controller
             ->with('categories', $categories)
             ->with('currentStatus', $status);
     }
-
-    /**
-     * Metodo helper per filtrare i progetti
-     */
-    private function getFilteredProjects($dl, $status)
-    {
-        switch ($status) {
-            case 'published':
-                return $dl->listProjectsByStatus('published');
-
-            case 'draft':
-                // Il middleware ha già verificato che solo admin arrivino qui
-                return $dl->listProjectsByStatus('draft');
-
-            case 'completed':
-                return $dl->listProjectsByStatus('completed');
-           
-            default:
-                // Solo per il caso 'all' verifichiamo il ruolo per decidere cosa mostrare
-                $isAdmin = Auth::check() && Auth::user()->role === 'admin';
-                if ($isAdmin) {
-                    return $dl->listProjects(); // Tutti i progetti
-                } else {
-                    return $dl->listProjectsByStatus('published'); // Solo pubblicati per non-admin
-                }
-        }
-    }
-
 
     /**
      * Show the form for creating a new resource.
@@ -347,7 +274,7 @@ class ProjectController extends Controller
                 ->with('project', $project)
                 ->with('testimonials', $testimonials);
         } else {
-            $fallbackRoute = Auth::check() && (bool) Auth::user()->is_admin && \Illuminate\Support\Facades\Route::has('admin.projects.index')
+            $fallbackRoute = Auth::check() && Auth::user()->role === 'admin' && \Illuminate\Support\Facades\Route::has('admin.projects.index')
                 ? 'admin.projects.index'
                 : 'project.index';
 
@@ -648,54 +575,9 @@ class ProjectController extends Controller
      */
     public function portfolio(Request $request)
     {
-        $query = Project::query()->where('status', 'completed');
+        $query = Project::query()->with('category')->where('status', 'completed');
 
-        if ($request->filled('q')) {
-            $search = trim($request->q);
-            $query->where(function ($q) use ($search) {
-                $q->where('title', 'like', "%{$search}%")
-                    ->orWhere('sum_description', 'like', "%{$search}%")
-                    ->orWhere('location', 'like', "%{$search}%");
-            });
-        }
-
-        if ($request->filled('category') && is_array($request->category)) {
-            $query->whereIn('category_id', $request->category);
-        }
-
-        if ($request->filled('duration') && is_array($request->duration)) {
-            $durations = array_filter($request->duration, fn($item) => in_array($item, ['short', 'medium', 'long', 'very_long'], true));
-
-            if (!empty($durations)) {
-                $query->where(function ($durationQuery) use ($durations) {
-                    foreach ($durations as $duration) {
-                        if ($duration === 'short') {
-                            $durationQuery->orWhereRaw('DATEDIFF(end_date, start_date) < 15');
-                        }
-
-                        if ($duration === 'medium') {
-                            $durationQuery->orWhereRaw('DATEDIFF(end_date, start_date) BETWEEN 15 AND 60');
-                        }
-
-                        if ($duration === 'long') {
-                            $durationQuery->orWhereRaw('DATEDIFF(end_date, start_date) BETWEEN 60 AND 180');
-                        }
-
-                        if ($duration === 'very_long') {
-                            $durationQuery->orWhereRaw('DATEDIFF(end_date, start_date) > 180');
-                        }
-                    }
-                });
-            }
-        }
-
-        if ($request->filled('date_from')) {
-            $query->whereDate('start_date', '>=', $request->date_from);
-        }
-
-        if ($request->filled('date_to')) {
-            $query->whereDate('start_date', '<=', $request->date_to);
-        }
+        $query->applyCatalogFilters($request);
 
         $sort = $request->input('sort', 'relevance');
 

@@ -194,7 +194,8 @@ class AdminProjectController extends Controller
             ->values()
             ->all();
 
-        $deletedCount = Project::whereIn('id', $projectIds)->delete();
+        // ->each->delete() (non il delete di massa) per far scattare la pulizia dei file
+        $deletedCount = Project::whereIn('id', $projectIds)->get()->each->delete()->count();
 
         return redirect()->back()->with('success', "{$deletedCount} progetti eliminati con successo.");
     }

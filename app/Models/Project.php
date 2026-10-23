@@ -3,7 +3,11 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class Project extends Model
 {
@@ -38,6 +42,72 @@ class Project extends Model
         'end_date' => 'date',
         'expire_date' => 'date',
     ];
+
+    /**
+     * Filtri condivisi da catalogo e portfolio: testo, categoria, durata, data di inizio.
+     */
+    public function scopeApplyCatalogFilters(Builder $query, Request $request): Builder
+    {
+        if ($request->filled('q')) {
+            $search = trim($request->input('q'));
+            $query->where(function ($q) use ($search) {
+                $q->where('title', 'like', "%{$search}%")
+                    ->orWhere('sum_description', 'like', "%{$search}%")
+                    ->orWhere('location', 'like', "%{$search}%");
+            });
+        }
+
+        if ($request->filled('category') && is_array($request->category)) {
+            $query->whereIn('category_id', $request->category);
+        }
+
+        if ($request->filled('duration') && is_array($request->duration)) {
+            // Giorni tra start_date e end_date, valido sia su SQLite sia su MySQL
+            $days = DB::connection()->getDriverName() === 'sqlite'
+                ? 'CAST(julianday(end_date) - julianday(start_date) AS INTEGER)'
+                : 'DATEDIFF(end_date, start_date)';
+
+            $ranges = [
+                'short' => "{$days} < 15",
+                'medium' => "{$days} BETWEEN 15 AND 60",
+                'long' => "{$days} BETWEEN 60 AND 180",
+                'very_long' => "{$days} > 180",
+            ];
+            $selected = array_intersect_key($ranges, array_flip($request->duration));
+
+            if ($selected) {
+                $query->where(function ($q) use ($selected) {
+                    foreach ($selected as $condition) {
+                        $q->orWhereRaw($condition);
+                    }
+                });
+            }
+        }
+
+        if ($request->filled('date_from')) {
+            $query->whereDate('start_date', '>=', $request->date_from);
+        }
+
+        if ($request->filled('date_to')) {
+            $query->whereDate('start_date', '<=', $request->date_to);
+        }
+
+        return $query;
+    }
+
+    protected static function booted(): void
+    {
+        // Pulisce i file orfani; il delete a cascata del DB non li tocca
+        static::deleting(function (Project $project) {
+            $image = $project->image_path;
+            if ($image && !str_starts_with($image, 'http') && !str_starts_with($image, 'img/')) {
+                Storage::disk('public')->delete($image);
+            }
+
+            $project->application()->whereNotNull('document_path')->pluck('document_path')
+                ->each(fn ($path) => Storage::disk('local')->delete($path));
+        });
+    }
 
     public static function allowedStatusTransitions(?string $currentStatus): array
     {

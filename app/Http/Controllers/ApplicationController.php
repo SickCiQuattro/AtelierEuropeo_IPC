@@ -108,7 +108,7 @@ class ApplicationController extends Controller
             
             // Crea un nome file unico per evitare conflitti
             $uniqueName = time() . '_' . Auth::id() . '_' . $documentName;
-            $documentPath = $file->storeAs('applications', $uniqueName, 'public');
+            $documentPath = $file->storeAs('applications', $uniqueName, 'local');
         }
 
         // Crea la candidatura
@@ -141,7 +141,7 @@ class ApplicationController extends Controller
 
         // Elimina il documento allegato se presente
         if ($application->document_path) {
-            Storage::disk('public')->delete($application->document_path);
+            Storage::disk('local')->delete($application->document_path);
         }
 
         $application->delete();
@@ -161,5 +161,22 @@ class ApplicationController extends Controller
         }
 
         return view('applications.show', compact('application'));
+    }
+
+    /**
+     * Scarica il PDF allegato (solo proprietario o admin; il file è sul disco privato)
+     */
+    public function document(Application $application)
+    {
+        if ($application->user_id !== Auth::id() && Auth::user()->role !== 'admin') {
+            abort(403);
+        }
+
+        abort_unless(
+            $application->document_path && Storage::disk('local')->exists($application->document_path),
+            404
+        );
+
+        return Storage::disk('local')->response($application->document_path, $application->document_name);
     }
 }

@@ -204,7 +204,7 @@
                                 <div class="text-muted small fw-semibold mb-2 tracking-wide">Curriculum Vitae
                                 </div>
                                 @if($application->document_path)
-                                    <a href="{{ asset('storage/' . $application->document_path) }}" target="_blank"
+                                    <a href="{{ route('applications.document', $application) }}" target="_blank"
                                         rel="noopener" download
                                         class="d-flex align-items-center gap-3 px-3 py-3 text-decoration-none rounded-3 border"
                                         style="background:#f8fafc; transition:background .15s;"
